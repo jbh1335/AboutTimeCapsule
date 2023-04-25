@@ -20,13 +20,13 @@ public class Capsule extends BaseEntity {
     private Range range;
     private boolean isLocked;
     private boolean isGroup;
-    @OneToMany(mappedBy = "Capsule")
+    @OneToMany(mappedBy = "capsule")
     private List<Memory> memoryList = new ArrayList<>();
-    @OneToMany(mappedBy = "Capsule")
+    @OneToMany(mappedBy = "capsule")
     private List<CapsuleMember> capsuleMemberList = new ArrayList<>();
-    @OneToMany(mappedBy = "Capsule")
+    @OneToMany(mappedBy = "capsule")
     private List<CapsuleOpenMember> capsuleOpenMemberList = new ArrayList<>();
-    @OneToOne(mappedBy = "Capsule")
+    @OneToOne(mappedBy = "capsule")
     private Place place;
 
 }

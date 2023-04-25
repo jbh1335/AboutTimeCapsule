@@ -3,7 +3,6 @@ package com.timecapsule.capsuleservice.db.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,13 +12,12 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 public class Friend extends BaseEntity {
     @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "from_member_id", insertable = false, updatable = false)
     private Member fromMemberId;
 
     @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "to_member_id", insertable = false, updatable = false)
     private Member toMemberId;
 
-    @Column(columnDefinition = "TINYINT", length=1)
-    private int isAccepted;
+    private boolean isAccepted;
 }
