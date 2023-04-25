@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  datasource:
+      url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+      username: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      password: root
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+        globally_quoted_identifiers: true
+        format_sql: true
+        check_nullability: true
