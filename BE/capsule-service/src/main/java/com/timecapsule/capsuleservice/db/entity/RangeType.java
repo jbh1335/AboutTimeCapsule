@@ -1,5 +1,5 @@
 package com.timecapsule.capsuleservice.db.entity;
 
-public enum Range {
+public enum RangeType {
     ALL, FREIND, GROUP, PRIVATE
 }

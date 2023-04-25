@@ -1,5 +1,5 @@
 package com.timecapsule.capsuleservice.db.entity;
 
-public enum Category {
+public enum CategoryType {
     CAPSULE, COMMENT, FREIND
 }

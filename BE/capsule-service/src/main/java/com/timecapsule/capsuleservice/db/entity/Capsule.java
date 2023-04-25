@@ -14,10 +14,9 @@ import java.util.List;
 public class Capsule extends BaseEntity {
     @Column(length = 128)
     private String title;
-    private Date openDate;
     private boolean isDeleted;
     @Enumerated(EnumType.STRING)
-    private Range range;
+    private RangeType rangeType;
     private boolean isLocked;
     private boolean isGroup;
     @OneToMany(mappedBy = "capsule")

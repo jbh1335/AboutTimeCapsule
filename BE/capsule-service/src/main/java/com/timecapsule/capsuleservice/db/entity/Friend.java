@@ -13,11 +13,11 @@ import javax.persistence.ManyToOne;
 public class Friend extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "from_member_id", insertable = false, updatable = false)
-    private Member fromMemberId;
+    private Member fromMember;
 
     @ManyToOne
     @JoinColumn(name = "to_member_id", insertable = false, updatable = false)
-    private Member toMemberId;
+    private Member toMember;
 
     private boolean isAccepted;
 }

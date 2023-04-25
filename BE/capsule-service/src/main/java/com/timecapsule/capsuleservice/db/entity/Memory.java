@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,7 @@ public class Memory extends BaseEntity {
     private String image;
     private boolean isDeleted;
     private boolean isLocked;
+    private Date openDate;
     @OneToMany(mappedBy = "memory")
     private List<Comment> commentList = new ArrayList<>();
 }

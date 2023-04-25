@@ -15,6 +15,6 @@ public class Alarm extends BaseEntity{
     @Column(length = 255)
     private String content;
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private CategoryType categoryType;
     private int capsuleId;
 }
