@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Member extends BaseEntity{
     @Column(length = 64)
