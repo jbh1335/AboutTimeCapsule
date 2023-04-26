@@ -1,7 +1,7 @@
 package com.timecapsule.capsuleservice.controller;
 
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
-import com.timecapsule.capsuleservice.api.response.MyCapsuleRes;
+import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
 import com.timecapsule.capsuleservice.service.CapsuleService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +18,11 @@ public class CapsuleController {
     @PostMapping
     public SuccessRes<Integer> registCapsule(@RequestBody CapsuleRegistReq capsuleRegistReq) {
         return capsuleService.registCapsule(capsuleRegistReq);
+    }
+
+    @GetMapping("/me/list/{memberId}")
+    public SuccessRes<CapsuleListRes> getMyCapsule(@PathVariable("memberId") int memberId) {
+        return capsuleService.getMyCapsule(memberId);
     }
 
 }

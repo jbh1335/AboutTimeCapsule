@@ -3,7 +3,6 @@ package com.timecapsule.capsuleservice.db.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,5 +26,11 @@ public class Member extends BaseEntity{
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
     private List<Friend> toMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<CapsuleMember> capsuleMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<CapsuleOpenMember> capsuleOpenMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Comment> commentList = new ArrayList<>();
 
 }
