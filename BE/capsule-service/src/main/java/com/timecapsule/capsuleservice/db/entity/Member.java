@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -21,4 +23,9 @@ public class Member extends BaseEntity{
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
+    @OneToMany(mappedBy = "fromMember")
+    private List<Friend> fromMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "toMember")
+    private List<Friend> toMemberList = new ArrayList<>();
+
 }
