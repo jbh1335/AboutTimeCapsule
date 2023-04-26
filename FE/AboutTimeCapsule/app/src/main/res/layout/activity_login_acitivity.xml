@@ -11,7 +11,7 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginTop="100dp"
         app:srcCompat="@drawable/login_image" />
 
     <RelativeLayout
@@ -20,26 +20,57 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_marginTop="350px">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="어바웃"
+                android:textSize="128px"
+                android:textColor="#E6494B"
+                android:layout_marginRight="15px"
+                android:fontFamily="@font/gugi_regular"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="타임캡슐"
+                android:textSize="128px"
+                android:fontFamily="@font/gugi_regular"/>
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/googleLoginBtn"
             android:layout_width="870px"
             android:layout_height="180px"
-            android:gravity="left"
+            android:gravity="center_horizontal"
             android:outlineAmbientShadowColor="@color/black"
-            >
-
+            android:paddingLeft="150px"
+            android:paddingRight="150px"
+            android:outlineSpotShadowColor="@color/black"
+            android:background="@color/white"
+            android:elevation="10dp"
+            android:layout_above="@+id/kakaoLoginBtn"
+            android:layout_marginBottom="20dp">
             <ImageView
-                android:layout_width="124dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="left"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:src="@drawable/google_login_symbol"></ImageView>
+                android:src="@drawable/google_login_symbol"
+                android:layout_marginLeft="25dp"
+                />
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="4"
-                android:text="구글 로그인"
+                android:text="Google 로그인"
                 android:textSize="20dp"
-                android:layout_marginVertical="50px"/>
+                android:textStyle="bold"
+                android:fontFamily="@font/noto_sans_kr_medium"
+                android:layout_marginTop="10px"
+                />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/kakaoLoginBtn"
@@ -47,7 +78,9 @@
             android:layout_height="180px"
             android:gravity="center_horizontal"
             android:background="#FFE600"
+            android:elevation="10dp"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="60dp"
             >
             <ImageView
                 android:layout_width="match_parent"
