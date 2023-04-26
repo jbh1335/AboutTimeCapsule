@@ -20,6 +20,6 @@ public class Memory extends BaseEntity {
     private String image;
     private boolean isDeleted;
     private boolean isLocked;
-    @OneToMany(mappedBy = "Memory")
+    @OneToMany(mappedBy = "memory")
     private List<Comment> commentList = new ArrayList<>();
 }
