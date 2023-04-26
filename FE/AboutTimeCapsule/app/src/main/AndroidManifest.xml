@@ -12,14 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AboutTimeCapsule"
         tools:targetApi="31">
+
         <activity
             android:name=".views.login.LoginAcitivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.chat.ChatMainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.capsule.CapsuleMainActivity"
             android:exported="false" />
         <activity
             android:name=".views.MainActivity"
