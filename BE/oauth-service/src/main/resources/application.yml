@@ -5,12 +5,16 @@ server:
       charset: UTF-8
       force: true
 
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+
 spring:
   datasource:
-      url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
-      username: root
+      url: ENC(KaOl4PVIKbGwb9QY3nUNzTuR7DXv4kH2qxldE9E/3lZAcP7sIfuz9JRJnBT5ORNd0FQ7mAxhhmlU3XqSkY53/4rd1ha2tPYUElIV0j9nr1smy/x1zzT1drEg2xYPRNvoCQDOsmeMPaZqtDcOfkjw98HFTb/xgKIDCwg85mgqRmCXKgKI17uX+FFnRPoZN0uDdZNW2k5p/+62TprQUz4Qp6bJQl4Ez+4Evoc8yFEDoU6ayRqqmslewQ==)
+      username: ENC(OKeWGkiqftrwASd9hdvTVw==)
       driver-class-name: com.mysql.cj.jdbc.Driver
-      password: root
+      password: ENC(zOFLXE2MDlGqH25weLzgQg==)
   jpa:
     open-in-view: false
     generate-ddl: true

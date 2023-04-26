@@ -4,20 +4,20 @@ spring:
       client:
         registration:
           google:
-            client-id:
-            client-secret:
+            client-id: ENC(Kps5qxepmvZEMtBZ69hIhdaUOwc88CI23VKdRbatV87BGA2IKHzlqud)
+            client-secret: ENC(4quBPwV3qe/Kw75Pniqwe8pU+j/ns/caFraGUPqS5a3GIOkvGSYOETEjarGJLlVd)
             scope : profile, email
           kakao:
-            client-id: ENC(MIphkkA0IKWDEyl7CnbwR7It5pgFcV6xPtiXmKKX4V9RVKqs5U17XA+63e7Ql2AI)
-            #            redirect-uri: http://localhost:3000/oauth/callback/kakao
-            redirect-uri: ENC(BWxUAeZaUXpUs+ZZxOzlNkJGfvFOdCZsHfCdRFM+rbS6rFw9K7PZ2yXN+RRMQz2GOF8JFZYD0ek=)
+            client-id: ENC(1mu2EhYt4Uz895B00Wq1GrHjzx95xXBiu4BJx8A9IABaLD5b+bcZl8zQG9K7WdMB)
+            redirect-uri: http://localhost:8080/auth/kakao/callback
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope:
+              - profile_image
               - profile_nickname
               - account_email
             client_name: kakao
-        provider:
+        provider: # Spring Security에서 제공하지 않는 다른 Provider(kakao 등)의 Oauth2 사용 설정
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
             token-uri: https://kauth.kakao.com/oauth/token
