@@ -20,9 +20,9 @@ spring:
   datasource:
     # local
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
-    username: ssafy
-    password: ssafy
+    url: ENC(V2sobPqMk9cphQxxnwrsZQrN8HOJrW6muaOXOCUUhMi32xwi/3ZOnhdyG3eDJC5WFnsRWE8Eg3lHZeVj2IY5hkTpolWSRo72Bq6enPin+eGE9V7dM4RIcP/kyXwngI4bIYtCDGxq9NCwkG6HnPU2MlecG8y7ptaB8STYStmXuDiJxJv+mCv2jJ4jIa9csNsxE3FQFH+GQ0feo9dCc2yiCKWKyDS0AmsPU2l+L+FmxddMJ0gYSLlujw==)
+    username: ENC(mMTUeGQ08LXkmU5ehBclUQ==)
+    password: ENC(mMTUeGQ08LXkmU5ehBclUQ==)
 
   jpa:
     open-in-view: false
@@ -40,3 +40,7 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+  jasypt:
+    encryptor:
+      bean: jasyptStringEncryptor

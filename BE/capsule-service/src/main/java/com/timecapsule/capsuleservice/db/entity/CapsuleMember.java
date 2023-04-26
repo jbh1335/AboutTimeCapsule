@@ -1,5 +1,6 @@
 package com.timecapsule.capsuleservice.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,4 +19,10 @@ public class CapsuleMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capsule_id")
     private Capsule capsule;
+
+    @Builder
+    public CapsuleMember(Member member, Capsule capsule) {
+        this.member = member;
+        this.capsule = capsule;
+    }
 }
