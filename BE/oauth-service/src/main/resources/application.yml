@@ -9,7 +9,17 @@ jasypt:
   encryptor:
     bean: jasyptStringEncryptor
 
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
 spring:
+  application:
+    name: outh-service
+
   datasource:
       url: ENC(KaOl4PVIKbGwb9QY3nUNzTuR7DXv4kH2qxldE9E/3lZAcP7sIfuz9JRJnBT5ORNd0FQ7mAxhhmlU3XqSkY53/4rd1ha2tPYUElIV0j9nr1smy/x1zzT1drEg2xYPRNvoCQDOsmeMPaZqtDcOfkjw98HFTb/xgKIDCwg85mgqRmCXKgKI17uX+FFnRPoZN0uDdZNW2k5p/+62TprQUz4Qp6bJQl4Ez+4Evoc8yFEDoU6ayRqqmslewQ==)
       username: ENC(OKeWGkiqftrwASd9hdvTVw==)
