@@ -9,13 +9,14 @@ spring:
             scope : profile, email
           kakao:
             client-id: ENC(1mu2EhYt4Uz895B00Wq1GrHjzx95xXBiu4BJx8A9IABaLD5b+bcZl8zQG9K7WdMB)
-            redirect-uri: http://localhost:8080/auth/kakao/callback
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope:
               - profile_image
               - profile_nickname
               - account_email
+            client-secret : ENC(GEVZcIdptJ4Sf1QEx0RQ7gwKGRg/ydVSLF1hZbQ7FqNIwlTsN0IG59yV3Ohe9RsD)
             client_name: kakao
         provider: # Spring Security에서 제공하지 않는 다른 Provider(kakao 등)의 Oauth2 사용 설정
           kakao:

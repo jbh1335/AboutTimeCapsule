@@ -37,3 +37,6 @@ spring:
         globally_quoted_identifiers: true
         format_sql: true
         check_nullability: true
+
+profiles:
+  include: oauth
