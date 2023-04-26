@@ -15,10 +15,6 @@
 
         <activity
             android:name=".views.MainActivity"
-            android:exported="false"/>
-
-        <activity
-            android:name=".views.common.BottomNaviActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

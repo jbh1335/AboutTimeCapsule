@@ -1,18 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.AboutTimeCapsule" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/white</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" >@color/white</item>
 
-<!--        onemobile 폰트 적용      -->
+    <style name="Base.Theme.AboutTimeCapsule" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+<!--        상태바(시계,배터리,와이파이,etc) 색상   -->
+        <item name="android:statusBarColor" >@color/white</item>
+<!--        상태바 글씨 색상                     -->
+        <item name="android:windowLightStatusBar">true</item>
+
+<!--         onemobile 폰트 적용                -->
         <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
         <item name="android:buttonStyle">@style/customButtonFontStyle</item>
         <item name="android:editTextStyle">@style/customEditTextFontStyle</item>
         <item name="android:radioButtonStyle">@style/customRadioButtonFontStyle</item>
         <item name="android:checkboxStyle">@style/customCheckboxFontStyle</item>
     </style>
-
-    <style name="Theme.AboutTimeCapsule" parent="Base.Theme.AboutTimeCapsule" />
 </resources>
