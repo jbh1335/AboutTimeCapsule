@@ -7,7 +7,8 @@
         <item name="android:statusBarColor" >@color/white</item>
 <!--        상태바 글씨 색상                     -->
         <item name="android:windowLightStatusBar">true</item>
-
+<!--        기본 글씨 색상                       -->
+        <item name="android:textColor">@color/black</item>
 <!--         onemobile 폰트 적용                -->
         <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
         <item name="android:buttonStyle">@style/customButtonFontStyle</item>

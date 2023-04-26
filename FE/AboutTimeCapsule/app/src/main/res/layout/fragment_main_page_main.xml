@@ -1,16 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/defaultBackColor"
+    android:orientation="vertical"
     tools:context=".views.mainpage.MainPageMainFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- TODO: 메인페이지-메인 / 프래그먼트입니다 -->
+   <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fontFamily="@font/onemobile"
-        android:text="메인페이지 프래그먼트입니다 " />
+        android:layout_height="170dp"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="10dp">
 
-</FrameLayout>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="vertical">
+
+           <TextView
+               android:id="@+id/main_section1_title"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginLeft="20dp"
+               android:layout_marginTop="20dp"
+               android:layout_marginBottom="10dp"
+               android:text="000님의 타임 캡슐"
+               android:textSize="18sp" />
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="horizontal">
+
+               <LinearLayout
+                   android:layout_width="100dp"
+                   android:layout_height="match_parent"
+                   android:layout_marginLeft="20dp"
+                   android:orientation="vertical">
+
+                   <FrameLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="85dp">
+
+                       <ImageView
+                           android:id="@+id/main_section1_capsule1img"
+                           android:layout_width="70dp"
+                           android:layout_height="70dp"
+                           android:layout_gravity="center"
+                           android:background="@drawable/circle_background"
+                           android:padding="2dp"
+                           android:src="@drawable/redcapsule" />
+                       <TextView
+                           android:id="@+id/main_section1_capsule1"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="center"
+                           tools:text="13"
+                           android:textColor="@color/white"/>
+
+                   </FrameLayout>
+
+                   <TextView
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="5dp"
+                       android:gravity="center"
+                       android:text="나의 캡슐"
+                       android:textSize="11sp" />
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="100dp"
+                   android:layout_height="match_parent"
+                   android:layout_marginLeft="10dp"
+                   android:orientation="vertical">
+
+                   <FrameLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="85dp">
+
+                       <ImageView
+                           android:id="@+id/main_section1_capsule2img"
+                           android:layout_width="70dp"
+                           android:layout_height="70dp"
+                           android:layout_gravity="center"
+                           android:background="@drawable/circle_background"
+                           android:padding="2dp"
+                           android:src="@drawable/yellowcapsule" />
+                       <TextView
+                           android:id="@+id/main_section1_capsule2"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="center"
+                           tools:text="11"
+                           android:textColor="@color/white"/>
+                   </FrameLayout>
+
+                   <TextView
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:gravity="center"
+                       android:layout_marginTop="5dp"
+                       android:text="친구의 캡슐"
+                       android:textSize="11sp" />
+               </LinearLayout>
+
+
+               <LinearLayout
+                   android:layout_width="100dp"
+                   android:layout_height="match_parent"
+                   android:layout_marginLeft="10dp"
+                   android:orientation="vertical">
+
+                   <FrameLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="85dp">
+
+                       <ImageView
+                           android:id="@+id/main_section1_capsule3img"
+                           android:layout_width="70dp"
+                           android:layout_height="70dp"
+                           android:layout_gravity="center"
+                           android:background="@drawable/circle_background"
+                           android:padding="2dp"
+                           android:src="@drawable/redcapsule" />
+                       <TextView
+                           android:id="@+id/main_section1_capsule3"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="center"
+                           android:text="7"
+                           android:textColor="@color/white"/>
+                   </FrameLayout>
+
+                   <TextView
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:gravity="center"
+                       android:layout_marginTop="5dp"
+                       android:text="나의 방문 캡슐"
+                       android:textSize="11sp" />
+               </LinearLayout>
+
+
+           </LinearLayout>
+       </LinearLayout>
+
+   </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/main_section2_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="내 주변의 타임 캡슐"
+            android:textSize="18sp" />
+            <ImageView
+                android:id="@+id/main_section2_question"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/questionimg"/>
+                />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="10dp">
+
+        <TextView
+            android:id="@+id/main_section3_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="내 주변의 인기 장소"
+            android:textSize="18sp" />
+
+    </androidx.cardview.widget.CardView>
+
+
+</LinearLayout>

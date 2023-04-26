@@ -6,6 +6,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" >@color/white</item>
 
+        <item name="android:textColor">@color/black</item>
 <!--        onemobile 폰트 적용      -->
         <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
         <item name="android:buttonStyle">@style/customButtonFontStyle</item>
