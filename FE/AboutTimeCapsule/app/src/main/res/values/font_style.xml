@@ -21,6 +21,17 @@
     <style name="customCheckboxFontStyle" parent="@android:style/Widget.DeviceDefault.CompoundButton.CheckBox">
         <item name="android:fontFamily">@font/custom_font_family</item>
     </style>
+<<<<<<< HEAD
+<!-- 바텀 네비 글자 크기 조절 -->
+    <style name="BottomNavigationView" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">8sp</item>
+    </style>
+
+    <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">12sp</item>
+    </style>
+=======
+>>>>>>> 414cc4c76032d450c358a785f01ca74f5fbbe4e1
 
 
 </resources>
