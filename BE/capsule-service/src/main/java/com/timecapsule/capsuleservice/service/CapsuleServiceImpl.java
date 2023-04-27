@@ -10,14 +10,14 @@ import com.timecapsule.capsuleservice.db.repository.CapsuleMemberRepository;
 import com.timecapsule.capsuleservice.db.repository.CapsuleOpenMemberRepository;
 import com.timecapsule.capsuleservice.db.repository.CapsuleRepository;
 import com.timecapsule.capsuleservice.db.repository.MemberRepository;
+import com.timecapsule.capsuleservice.dto.MapInfoDto;
 import com.timecapsule.capsuleservice.dto.OpenedCapsuleDto;
 import com.timecapsule.capsuleservice.dto.UnopenedCapsuleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 
 @Service("capsuleService")
@@ -60,37 +60,51 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
+        List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
 
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
-
             boolean isExisted = capsuleOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), memberId);
-
+            Date now = new Date();
             // 잠겨O 열람 O -> 불가능
             // 잠겨O 열람 X -> 위에
 
-            // 잠겨X 열람 O -> 밑에
             // 잠겨X 열람 X -> 위에
-            if(!isExisted && capsule.isLocked()) {
+            // 잠겨X 열람 O -> 밑에
+            if(capsule.isLocked() || (!capsule.isLocked() && !isExisted)) {
                 unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
-                        .capsuleId(capsule.getId()) // openDate 추가
+                        .capsuleId(capsule.getId())
+                        .openDate(now) // opendDate 추가
                         .address(capsule.getAddress())
                         .isLocked(true)
                         .build());
             } else {
-
                 // 열람
-                if(isExisted) {
-
-                } else {
-
-                }
-
-                // 미열람
-
+                openedCapsuleDtoList.add(OpenedCapsuleDto.builder()
+                        .capsuleId(capsule.getId())
+                        .openDate(now) // opendDate 추가
+                        .address(capsule.getAddress())
+                        .build());
             }
 
+            mapInfoDtoList.add(MapInfoDto.builder()
+                    .capsuleId(capsule.getId())
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
+                    .isOpened(isExisted)
+                    .isLocked(capsule.isLocked())
+                    .build());
         }
-        return null;
+
+        Collections.sort(unopenedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
+        Collections.sort(openedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
+
+        CapsuleListRes capsuleListRes = CapsuleListRes.builder()
+                .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
+                .openedCapsuleDtoList(openedCapsuleDtoList)
+                .mapInfoDtoList(mapInfoDtoList)
+                .build();
+
+        return new SuccessRes<CapsuleListRes>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
     }
 }
