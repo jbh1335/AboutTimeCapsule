@@ -51,7 +51,7 @@
             android:outlineSpotShadowColor="@color/black"
             android:background="@color/white"
             android:elevation="10dp"
-            android:layout_above="@+id/kakaoLoginBtn"
+            android:layout_above="@+id/kakaoLoginBtnLayout"
             android:layout_marginBottom="20dp">
             <ImageView
                 android:layout_width="30dp"
@@ -73,7 +73,7 @@
                 />
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/kakaoLoginBtn"
+            android:id="@+id/kakaoLoginBtnLayout"
             android:layout_width="870px"
             android:layout_height="180px"
             android:gravity="center_horizontal"
@@ -83,6 +83,7 @@
             android:layout_marginBottom="60dp"
             >
             <ImageView
+                android:id="@+id/kakaoLoginBtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/kakao_login_symbol">

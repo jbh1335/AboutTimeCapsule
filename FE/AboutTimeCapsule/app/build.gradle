@@ -1,8 +1,11 @@
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
-
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def NATIVE_APP_KEY = properties.getProperty("NATIVE_APP_KEY")
 android {
     namespace 'com.aboutcapsule.android'
     compileSdk 33
@@ -13,8 +16,10 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
+        buildConfigField "String", "NATIVE_APP_KEY", NATIVE_APP_KEY
+        manifestPlaceholders = [NATIVE_APP_KEY:NATIVE_APP_KEY]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -41,4 +46,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    // 카카오 로그인 모듈
+    implementation "com.kakao.sdk:v2-user:2.13.0"
 }
