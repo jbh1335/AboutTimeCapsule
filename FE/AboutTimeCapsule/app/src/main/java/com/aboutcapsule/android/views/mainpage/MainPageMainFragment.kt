@@ -1,9 +1,11 @@
 package com.aboutcapsule.android.views.mainpage
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
@@ -34,7 +36,24 @@ class MainPageMainFragment : Fragment() {
         binding.section3RecyclerView.adapter= section3adapter
         binding.section3RecyclerView.layoutManager=LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
 
+//      최초 렌더링시,  말풍선 비활성화
+        binding.section2Banner.visibility=View.INVISIBLE
+
+        bannerToggle()
+
         return binding.root
+    }
+
+    fun bannerToggle() {
+        val banner = binding.section2Banner
+        val btn = binding.mainSection2Question
+        btn.setOnClickListener{
+            if(banner.visibility == View.INVISIBLE) {
+                banner.visibility = View.VISIBLE
+            }else{
+                banner.visibility = View.INVISIBLE
+            }
+        }
     }
 
     fun getSection2datas() : MutableList<Section2Data>{
