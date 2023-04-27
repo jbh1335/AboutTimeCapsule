@@ -1,60 +1,66 @@
 package com.aboutcapsule.android.views.mainpage
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MainPageMainFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MainPageMainFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
+    val binding by lazy { FragmentMainPageMainBinding.inflate(layoutInflater)}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View? {
+
+        val section2DataList = getSection2datas()
+        val section2adapter = Section2Adapter()
+//       어댑터에 api 받아온 데이터 넘겨주기
+        section2adapter.itemList = section2DataList
+        binding.section2RecyclerView.adapter = section2adapter
+        binding.section2RecyclerView.layoutManager=LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+
+        val section3DataList = getSection3datas()
+        val section3adapter = Section3Adapter()
+//       section3 어댑터에 itemList라는 곳에 데이터 넘겨주기
+        section3adapter.itemList = section3DataList
+        binding.section3RecyclerView.adapter= section3adapter
+        binding.section3RecyclerView.layoutManager=LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+
+        return binding.root
+    }
+
+    fun getSection2datas() : MutableList<Section2Data>{
+        var itemList = mutableListOf<Section2Data>()
+
+        for(i in 1..10) {
+            var username="유저${i}님의 캡슐"
+            var userpos ="장소 ${i}"
+            var img = R.drawable.redcapsule
+            val tmp =Section2Data(img,username,userpos )
+            itemList.add(tmp)
         }
+        return itemList
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_page_main, container, false)
+    fun getSection3datas() : MutableList<Section3Data>{
+        var itemList = mutableListOf<Section3Data>()
+
+        itemList.apply {
+            add(Section3Data(R.drawable.sunglass,"투썸 플레이스1"))
+            add(Section3Data(R.drawable.heartimg,"삼성 화재 유성연수원1"))
+            add(Section3Data(R.drawable.sunglass,"투썸 플레이스2"))
+            add(Section3Data(R.drawable.heartimg,"삼성 화재 유성연수원2"))
+        }
+        return itemList
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MainPageMainFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MainPageMainFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }

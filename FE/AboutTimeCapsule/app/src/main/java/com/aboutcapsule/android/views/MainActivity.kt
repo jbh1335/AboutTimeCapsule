@@ -34,25 +34,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.mainPageFragment -> setFragment(
-                    TAG_HOME,
-                    MainPageMainFragment()
-                )
+                R.id.mainPageFragment -> setFragment(TAG_HOME, MainPageMainFragment())
 
-                R.id.mapFragment -> setFragment(
-                    TAG_MAP,
-                    MapMainFragment()
-                )
+                R.id.mapFragment -> setFragment(TAG_MAP, MapMainFragment())
 
-                R.id.chatFragment -> setFragment(
-                    TAG_CHAT,
-                    ChatMainFragment()
-                )
+                R.id.chatFragment -> setFragment(TAG_CHAT, ChatMainFragment())
 
-                R.id.myPageFragment -> setFragment(
-                    TAG_MYPAGE,
-                    MyPageMainFragment()
-                )
+                R.id.myPageFragment -> setFragment(TAG_MYPAGE, MyPageMainFragment())
             }
             true
         }
