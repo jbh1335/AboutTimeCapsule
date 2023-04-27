@@ -3,10 +3,16 @@ spring:
     oauth2:
       client:
         registration:
-          google:
-            client-id: ENC(Kps5qxepmvZEMtBZ69hIhdaUOwc88CI23VKdRbatV87BGA2IKHzlqud)
-            client-secret: ENC(4quBPwV3qe/Kw75Pniqwe8pU+j/ns/caFraGUPqS5a3GIOkvGSYOETEjarGJLlVd)
-            scope : profile, email
+          naver:
+            clientId: ENC(+sTIHmL7gkN4qC0UoAzylD9AGewWlHD6nXeU3iWWD9Y=)
+            clientSecret: ENC(0k+CXahE0UeIMpilk9feCzkzmczvVvfeu1YxLAHxPocOoZ909y/pKRHDDW+OveIWFgRXNyHPuSA=)
+            clientAuthenticationMethod: post
+            authorizationGrantType: authorization_code
+            redirectUri: http://localhost:8080/login/oauth2/code/naver
+            scope:
+              - email
+              - profile_image
+            clientName: naver
           kakao:
             client-id: ENC(1mu2EhYt4Uz895B00Wq1GrHjzx95xXBiu4BJx8A9IABaLD5b+bcZl8zQG9K7WdMB)
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
@@ -14,13 +20,21 @@ spring:
             authorization-grant-type: authorization_code
             scope:
               - profile_image
-              - profile_nickname
               - account_email
             client-secret : ENC(GEVZcIdptJ4Sf1QEx0RQ7gwKGRg/ydVSLF1hZbQ7FqNIwlTsN0IG59yV3Ohe9RsD)
             client_name: kakao
-        provider: # Spring Security에서 제공하지 않는 다른 Provider(kakao 등)의 Oauth2 사용 설정
+        # Spring security에서 제공하는 oauth2-client 라이브러리에는 유명한 google, facebook, twitter 등 웹사이트에 대한 Provider들은 제공을 한다.
+        # 하지만 우리나라에서만 한정적으로 사용하는 네이버나, 카카오 같은 서비스에 대한 정보들을 제공해주지 못한다.
+        # 따라서 Spring Security에서 제공하지 않는 Provider의 oauth2를 사용하기 위한 설정을 해야 한다.
+        # CommonOAuth2Provider에서 해주던 값들을 application-oauth.yml 파일에 모두 수동으로 입력한다.
+        provider:
+          naver:
+            authorizationUri: https://nid.naver.com/oauth2.0/authorize
+            tokenUri: https://nid.naver.com/oauth2.0/token
+            userInfoUri: https://openapi.naver.com/v1/nid/me
+            userNameAttribute: response # 네이버가 회원정보를 json으로 넘겨주는데, response라는 키값으로 리턴해준다.
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
+            user-name-attribute: id # 카카오가 회원정보를 json으로 넘겨주는데, id라는 키값으로 리턴해준다.

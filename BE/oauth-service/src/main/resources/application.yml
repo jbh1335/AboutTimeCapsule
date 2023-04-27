@@ -13,13 +13,17 @@ eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
+#    register-with-eureka: false
+#    fetch-registry: false
     service-url:
       defaultZone: http://localhost:8761/eureka
 
 spring:
   application:
     name: outh-service
-
+  redis:
+    host: localhost
+    port: 6379
   datasource:
       url: ENC(KaOl4PVIKbGwb9QY3nUNzTuR7DXv4kH2qxldE9E/3lZAcP7sIfuz9JRJnBT5ORNd0FQ7mAxhhmlU3XqSkY53/4rd1ha2tPYUElIV0j9nr1smy/x1zzT1drEg2xYPRNvoCQDOsmeMPaZqtDcOfkjw98HFTb/xgKIDCwg85mgqRmCXKgKI17uX+FFnRPoZN0uDdZNW2k5p/+62TprQUz4Qp6bJQl4Ez+4Evoc8yFEDoU6ayRqqmslewQ==)
       username: ENC(OKeWGkiqftrwASd9hdvTVw==)
@@ -28,7 +32,7 @@ spring:
   jpa:
     open-in-view: false
     generate-ddl: true
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: none
     properties:
@@ -37,6 +41,14 @@ spring:
         globally_quoted_identifiers: true
         format_sql: true
         check_nullability: true
+
+logging.level:
+  org.hibernate.SQL: debug
+
+jwt:
+  secret: ENC(A8+SVnn87vjKG/4udGeW0wpGZaYPay993ScsasGAMtK/M9HezBDAPWA5aQOL2pCoYFomu96hGsaFaZMUHKKeI94aJgfZw3kboui4OvS+2Bckcxt7eaDotjoG9OzQ0LKH0pl+b+sbCFHGcND49/KEXg==)
+  refresh-token-validity-in-seconds: 1209600 # 14일
+  access-token-validity-in-seconds: 43200 # 12시간
 
 profiles:
   include: oauth
