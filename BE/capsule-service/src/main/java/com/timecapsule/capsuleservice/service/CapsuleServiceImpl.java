@@ -1,6 +1,11 @@
 package com.timecapsule.capsuleservice.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
+import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
 import com.timecapsule.capsuleservice.db.entity.Capsule;
@@ -14,15 +19,25 @@ import com.timecapsule.capsuleservice.dto.MapInfoDto;
 import com.timecapsule.capsuleservice.dto.OpenedCapsuleDto;
 import com.timecapsule.capsuleservice.dto.UnopenedCapsuleDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+
+import static com.google.common.io.Files.getFileExtension;
 
 
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+    private final AmazonS3 amazonS3;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
@@ -51,6 +66,51 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         return new SuccessRes<Integer>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
+    }
+
+//    @Override
+//    public SuccessRes<Integer> registMemory(MemoryRegistReq memoryRegistReq) {
+//        List<String> list = uploadFile(memoryRegistReq.getImageList());
+//        for(String str : list) {
+//            System.out.println("이름: " + str);
+//        }
+//        return new SuccessRes<Integer>(true, "이미지 등록을 완료했습니다.", 12345);
+//    }
+    @Override
+    public SuccessRes<Integer> registMemory(List<MultipartFile> multipartFile) {
+        System.out.println("service 들어옴");
+        System.out.println("크기: " + multipartFile.size());
+
+        List<String> list = uploadFile(multipartFile);
+        for(String str : list) {
+            System.out.println("이름: " + str);
+        }
+        return new SuccessRes<Integer>(true, "이미지 등록을 완료했습니다.", 12345);
+    }
+
+    public List<String> uploadFile(List<MultipartFile> multipartFileList) {
+        List<String> fileNameList = new ArrayList<>();
+        multipartFileList.forEach(file -> {
+            String fileName = createFileName(file.getOriginalFilename());
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength((file.getSize()));
+            objectMetadata.setContentType(file.getContentType());
+
+            try(InputStream inputStream = file.getInputStream()) {
+                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+            } catch(IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+            }
+
+            fileNameList.add(fileName);
+        });
+
+        return fileNameList;
+    }
+
+    private String createFileName(String fileName) {
+        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 
     @Override
