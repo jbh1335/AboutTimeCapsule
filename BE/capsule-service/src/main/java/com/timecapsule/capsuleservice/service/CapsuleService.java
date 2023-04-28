@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CapsuleService {
     SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq);
-    SuccessRes<Integer> registMemory(MemoryRegistReq memoryRegistReq);
+    SuccessRes<Integer> registMemory(List<MultipartFile> multipartFileList, MemoryRegistReq memoryRegistReq);
     SuccessRes<CapsuleListRes> getMyCapsule(int memberId);
 
 }

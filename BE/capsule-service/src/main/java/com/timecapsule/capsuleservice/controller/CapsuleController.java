@@ -25,15 +25,11 @@ public class CapsuleController {
     }
 
     @PostMapping("/memory")
-    public SuccessRes<Integer> registMemory(@RequestBody MemoryRegistReq memoryRegistReq) {
-        return capsuleService.registMemory(memoryRegistReq);
+    public SuccessRes<Integer> registMemory(
+            @RequestPart(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
+            @RequestPart MemoryRegistReq memoryRegistReq) {
+        return capsuleService.registMemory(multipartFileList, memoryRegistReq);
     }
-
-//    @PostMapping("/image")
-//    public SuccessRes<Integer> imageupload(@RequestPart(value="file",required = false)  List<MultipartFile> multipartFile) {
-//        System.out.println("여기");
-//        return capsuleService.registMemory(multipartFile);
-//    }
 
     @GetMapping("/me/list/{memberId}")
     public SuccessRes<CapsuleListRes> getMyCapsule(@PathVariable("memberId") int memberId) {

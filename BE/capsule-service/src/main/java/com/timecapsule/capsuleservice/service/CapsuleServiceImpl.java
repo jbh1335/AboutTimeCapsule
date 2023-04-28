@@ -1,9 +1,5 @@
 package com.timecapsule.capsuleservice.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
@@ -17,25 +13,14 @@ import com.timecapsule.capsuleservice.dto.MapInfoDto;
 import com.timecapsule.capsuleservice.dto.OpenedCapsuleDto;
 import com.timecapsule.capsuleservice.dto.UnopenedCapsuleDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
-
-import static com.google.common.io.Files.getFileExtension;
-
 
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-    private final AmazonS3 amazonS3;
     private final AwsS3Service awsS3Service;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
@@ -69,14 +54,14 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
-    public SuccessRes<Integer> registMemory(MemoryRegistReq memoryRegistReq) {
+    public SuccessRes<Integer> registMemory(List<MultipartFile> multipartFileList, MemoryRegistReq memoryRegistReq) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(memoryRegistReq.getCapsuleId());
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
         Optional<Member> oMember = memberRepository.findById(memoryRegistReq.getMemberId());
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
-        String image = awsS3Service.uploadFile(memoryRegistReq.getImageList());
+        String image = awsS3Service.uploadFile(multipartFileList);
 
         Memory memory = Memory.builder()
                 .capsule(capsule)

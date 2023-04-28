@@ -11,7 +11,6 @@ public class MemoryRegistReq {
     private int memberId;
     private int capsuleId;
     private String title;
-    private List<MultipartFile> imageList;
     private String content;
     private Date openDate;
 }
