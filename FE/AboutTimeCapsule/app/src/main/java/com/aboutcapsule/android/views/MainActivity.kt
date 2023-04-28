@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import android.util.Log
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
 import com.aboutcapsule.android.views.chat.ChatMainFragment
@@ -16,6 +17,7 @@ private const val TAG_HOME = "main_page_fragment"
 private const val TAG_MAP = "map_fragment"
 private const val TAG_CHAT = "chat_fragment"
 private const val TAG_MYPAGE = "my_page_fragment"
+
 
 class MainActivity : AppCompatActivity() {
 
