@@ -56,7 +56,6 @@ class LoginAcitivity : AppCompatActivity() {
 
     }
 
-    // 카카오 로그인 클릭 시
 
 
 
