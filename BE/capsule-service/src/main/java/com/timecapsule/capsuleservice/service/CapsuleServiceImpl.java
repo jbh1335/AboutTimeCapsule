@@ -3,11 +3,9 @@ package com.timecapsule.capsuleservice.service;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
+import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
-import com.timecapsule.capsuleservice.db.entity.Capsule;
-import com.timecapsule.capsuleservice.db.entity.CapsuleMember;
-import com.timecapsule.capsuleservice.db.entity.Member;
-import com.timecapsule.capsuleservice.db.entity.Memory;
+import com.timecapsule.capsuleservice.db.entity.*;
 import com.timecapsule.capsuleservice.db.repository.*;
 import com.timecapsule.capsuleservice.dto.MapInfoDto;
 import com.timecapsule.capsuleservice.dto.OpenedCapsuleDto;
@@ -32,9 +30,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     public SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq) {
         Capsule capsule = Capsule.builder()
                 .title(capsuleRegistReq.getTitle())
-                .isDeleted(false)
                 .rangeType(capsuleRegistReq.getRangeType())
-                .isLocked(true)
                 .isGroup(capsuleRegistReq.isGroup())
                 .latitude(capsuleRegistReq.getLatitude())
                 .longitude(capsuleRegistReq.getLongitude())
@@ -75,6 +71,8 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build();
 
         int memoryId = memoryRepository.save(memory).getId();
+        capsuleRepository.save(Capsule.of(capsule, true));
+
         return new SuccessRes<Integer>(true, "추억 등록을 완료했습니다.", memoryId);
     }
 
@@ -89,8 +87,14 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
+            int capsuleId = capsule.getId();
             boolean isExisted = capsuleOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), memberId);
-            Date now = new Date();
+
+            int memorySize = capsule.getMemoryList().size();
+            Date openDate = new Date();
+            if(memorySize != 0) openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
+
+            Date now = null;
             // 잠겨O 열람 O -> 불가능
             // 잠겨O 열람 X -> 위에
 
@@ -98,22 +102,22 @@ public class CapsuleServiceImpl implements CapsuleService {
             // 잠겨X 열람 O -> 밑에
             if(capsule.isLocked() || (!capsule.isLocked() && !isExisted)) {
                 unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
-                        .capsuleId(capsule.getId())
-                        .openDate(now) // opendDate 추가
+                        .capsuleId(capsuleId)
+                        .openDate(openDate)
                         .address(capsule.getAddress())
-                        .isLocked(true)
+                        .isLocked(capsule.isLocked())
                         .build());
             } else {
                 // 열람
                 openedCapsuleDtoList.add(OpenedCapsuleDto.builder()
-                        .capsuleId(capsule.getId())
-                        .openDate(now) // opendDate 추가
+                        .capsuleId(capsuleId)
+                        .openDate(openDate)
                         .address(capsule.getAddress())
                         .build());
             }
 
             mapInfoDtoList.add(MapInfoDto.builder()
-                    .capsuleId(capsule.getId())
+                    .capsuleId(capsuleId)
                     .latitude(capsule.getLatitude())
                     .longitude(capsule.getLongitude())
                     .isOpened(isExisted)
@@ -131,5 +135,39 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build();
 
         return new SuccessRes<CapsuleListRes>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
+    }
+
+    @Override
+    public SuccessRes<OpenedCapsuleListRes> getOpenCapsule(int memberId) {
+        Optional<Member> oMember = memberRepository.findById(memberId);
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
+        List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
+
+        for(CapsuleOpenMember capsuleOpenMember : member.getCapsuleOpenMemberList()) {
+            Capsule capsule = capsuleOpenMember.getCapsule();
+            int capsuleId = capsule.getId();
+
+            int memorySize = capsule.getMemoryList().size();
+            Date openDate = new Date();
+            if(memorySize != 0) openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
+
+            openedCapsuleDtoList.add(OpenedCapsuleDto.builder()
+                    .capsuleId(capsuleId)
+                    .openDate(openDate)
+                    .address(capsule.getAddress())
+                    .build());
+
+            mapInfoDtoList.add(MapInfoDto.builder()
+                    .capsuleId(capsuleId)
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
+                    .isOpened(true)
+                    .isLocked(capsule.isLocked())
+                    .build());
+        }
+
+        return null;
     }
 }

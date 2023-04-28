@@ -3,6 +3,7 @@ package com.timecapsule.capsuleservice.controller;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
+import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
 import com.timecapsule.capsuleservice.service.CapsuleService;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,10 @@ public class CapsuleController {
     public SuccessRes<CapsuleListRes> getMyCapsule(@PathVariable("memberId") int memberId) {
         return capsuleService.getMyCapsule(memberId);
     }
+
+//    @GetMapping("/friend/list/{memberId}")
+//    public SuccessRes<OpenedCapsuleListRes> getOpenCapsule(@PathVariable("memberId") int memberId) {
+//
+//    }
 
 }
