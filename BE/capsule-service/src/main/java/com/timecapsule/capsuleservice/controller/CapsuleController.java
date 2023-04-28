@@ -24,16 +24,16 @@ public class CapsuleController {
         return capsuleService.registCapsule(capsuleRegistReq);
     }
 
-//    @PostMapping("/memory")
-//    public SuccessRes<Integer> registMemory(@RequestBody MemoryRegistReq memoryRegistReq) {
-//        return capsuleService.registMemory(memoryRegistReq);
-//    }
-
-    @PostMapping("/image")
-    public SuccessRes<Integer> imageupload(@RequestPart(value="file",required = false)  List<MultipartFile> multipartFile) {
-        System.out.println("여기");
-        return capsuleService.registMemory(multipartFile);
+    @PostMapping("/memory")
+    public SuccessRes<Integer> registMemory(@RequestBody MemoryRegistReq memoryRegistReq) {
+        return capsuleService.registMemory(memoryRegistReq);
     }
+
+//    @PostMapping("/image")
+//    public SuccessRes<Integer> imageupload(@RequestPart(value="file",required = false)  List<MultipartFile> multipartFile) {
+//        System.out.println("여기");
+//        return capsuleService.registMemory(multipartFile);
+//    }
 
     @GetMapping("/me/list/{memberId}")
     public SuccessRes<CapsuleListRes> getMyCapsule(@PathVariable("memberId") int memberId) {

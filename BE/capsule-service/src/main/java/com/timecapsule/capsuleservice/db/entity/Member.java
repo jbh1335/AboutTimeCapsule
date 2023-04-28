@@ -32,5 +32,7 @@ public class Member extends BaseEntity{
     private List<CapsuleOpenMember> capsuleOpenMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "member")
     private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Memory> memoryList = new ArrayList<>();
 
 }

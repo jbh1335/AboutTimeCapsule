@@ -11,10 +11,8 @@ import com.timecapsule.capsuleservice.api.response.SuccessRes;
 import com.timecapsule.capsuleservice.db.entity.Capsule;
 import com.timecapsule.capsuleservice.db.entity.CapsuleMember;
 import com.timecapsule.capsuleservice.db.entity.Member;
-import com.timecapsule.capsuleservice.db.repository.CapsuleMemberRepository;
-import com.timecapsule.capsuleservice.db.repository.CapsuleOpenMemberRepository;
-import com.timecapsule.capsuleservice.db.repository.CapsuleRepository;
-import com.timecapsule.capsuleservice.db.repository.MemberRepository;
+import com.timecapsule.capsuleservice.db.entity.Memory;
+import com.timecapsule.capsuleservice.db.repository.*;
 import com.timecapsule.capsuleservice.dto.MapInfoDto;
 import com.timecapsule.capsuleservice.dto.OpenedCapsuleDto;
 import com.timecapsule.capsuleservice.dto.UnopenedCapsuleDto;
@@ -38,10 +36,12 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
+    private final AwsS3Service awsS3Service;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
     private final CapsuleOpenMemberRepository capsuleOpenMemberRepository;
+    private final MemoryRepository memoryRepository;
 
     @Override
     public SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq) {
@@ -68,49 +68,29 @@ public class CapsuleServiceImpl implements CapsuleService {
         return new SuccessRes<Integer>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
     }
 
-//    @Override
-//    public SuccessRes<Integer> registMemory(MemoryRegistReq memoryRegistReq) {
-//        List<String> list = uploadFile(memoryRegistReq.getImageList());
-//        for(String str : list) {
-//            System.out.println("이름: " + str);
-//        }
-//        return new SuccessRes<Integer>(true, "이미지 등록을 완료했습니다.", 12345);
-//    }
     @Override
-    public SuccessRes<Integer> registMemory(List<MultipartFile> multipartFile) {
-        System.out.println("service 들어옴");
-        System.out.println("크기: " + multipartFile.size());
+    public SuccessRes<Integer> registMemory(MemoryRegistReq memoryRegistReq) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(memoryRegistReq.getCapsuleId());
+        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
-        List<String> list = uploadFile(multipartFile);
-        for(String str : list) {
-            System.out.println("이름: " + str);
-        }
-        return new SuccessRes<Integer>(true, "이미지 등록을 완료했습니다.", 12345);
-    }
+        Optional<Member> oMember = memberRepository.findById(memoryRegistReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
-    public List<String> uploadFile(List<MultipartFile> multipartFileList) {
-        List<String> fileNameList = new ArrayList<>();
-        multipartFileList.forEach(file -> {
-            String fileName = createFileName(file.getOriginalFilename());
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength((file.getSize()));
-            objectMetadata.setContentType(file.getContentType());
+        String image = awsS3Service.uploadFile(memoryRegistReq.getImageList());
 
-            try(InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead));
-            } catch(IOException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
-            }
+        Memory memory = Memory.builder()
+                .capsule(capsule)
+                .member(member)
+                .title(memoryRegistReq.getTitle())
+                .content(memoryRegistReq.getContent())
+                .image(image)
+                .isDeleted(false)
+                .isLocked(true)
+                .openDate(memoryRegistReq.getOpenDate())
+                .build();
 
-            fileNameList.add(fileName);
-        });
-
-        return fileNameList;
-    }
-
-    private String createFileName(String fileName) {
-        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
+        int memoryId = memoryRepository.save(memory).getId();
+        return new SuccessRes<Integer>(true, "추억 등록을 완료했습니다.", memoryId);
     }
 
     @Override
