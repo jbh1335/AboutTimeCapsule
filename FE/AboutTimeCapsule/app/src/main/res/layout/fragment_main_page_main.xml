@@ -174,15 +174,43 @@
             android:layout_marginBottom="10dp"
             android:text="내 주변의 타임 캡슐"
             android:textSize="18sp" />
+
             <ImageView
                 android:id="@+id/main_section2_question"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_height="16dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
-                android:src="@drawable/questionimg"/>
-                />
+                android:src="@drawable/questionimg" />
+
+            <FrameLayout
+                android:id="@+id/section2_banner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/question_banner_tail"
+                    android:layout_marginTop="20dp"
+                    />
+                <TextView
+                    android:id="@+id/textBanner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/question_banner"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:textColor="#ffffff"
+                    android:textSize="8sp"
+                    tools:text="사용자 위치 반경 0km 내에 있습니다."
+                    android:text="사용자 위치 반경 0km 내에 있습니다."/>
+
+            </FrameLayout>
         </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
