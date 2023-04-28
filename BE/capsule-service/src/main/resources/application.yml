@@ -1,0 +1,51 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enable: true
+      force: true
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: capsule-service
+
+  datasource:
+    # local
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(V2sobPqMk9cphQxxnwrsZQrN8HOJrW6muaOXOCUUhMi32xwi/3ZOnhdyG3eDJC5WFnsRWE8Eg3lHZeVj2IY5hkTpolWSRo72Bq6enPin+eGE9V7dM4RIcP/kyXwngI4bIYtCDGxq9NCwkG6HnPU2MlecG8y7ptaB8STYStmXuDiJxJv+mCv2jJ4jIa9csNsxE3FQFH+GQ0feo9dCc2yiCKWKyDS0AmsPU2l+L+FmxddMJ0gYSLlujw==)
+    username: ENC(mMTUeGQ08LXkmU5ehBclUQ==)
+    password: ENC(wH6WFbwV0ZovBbUMJgt78A==)
+
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+        globally_quoted_identifiers: true
+        format_sql: true
+        check_nullability: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jasypt:
+    encryptor:
+      bean: jasyptStringEncryptor
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
