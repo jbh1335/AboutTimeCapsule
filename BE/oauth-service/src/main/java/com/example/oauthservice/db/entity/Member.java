@@ -17,14 +17,17 @@ public class Member extends BaseEntity{
     private String name;
     @Column(length = 64, unique = true)
     private String nickname;
-    @Column(length = 64, unique = true)
+    @Column(length = 64)
     private String email;
     @Column(length = 255)
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
+    private ProviderType providerType;\
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
     private List<Friend> toMemberList = new ArrayList<>();
+
 }
