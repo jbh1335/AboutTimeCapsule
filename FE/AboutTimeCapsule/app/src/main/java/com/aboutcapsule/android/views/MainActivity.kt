@@ -65,18 +65,10 @@ class MainActivity : AppCompatActivity() {
         val chat = manager.findFragmentByTag(TAG_CHAT)
         val myPage = manager.findFragmentByTag(TAG_MYPAGE)
 
-        if (home != null) {
-            fragTransaction.hide(home)
-        }
-        if (map != null) {
-            fragTransaction.hide(map)
-        }
-        if (chat != null) {
-            fragTransaction.hide(chat)
-        }
-        if (myPage != null) {
-            fragTransaction.hide(myPage)
-        }
+        if (home != null) { fragTransaction.hide(home) }
+        if (map != null) { fragTransaction.hide(map) }
+        if (chat != null) { fragTransaction.hide(chat) }
+        if (myPage != null) { fragTransaction.hide(myPage) }
 
         if (tag == TAG_HOME) {
             if (home != null) {
