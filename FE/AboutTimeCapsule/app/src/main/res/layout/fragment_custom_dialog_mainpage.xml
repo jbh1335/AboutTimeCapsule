@@ -38,11 +38,9 @@
          android:textColor="@color/btnColor"
          android:text="2일 3시간 35분 남음"
          />
-    <TextView
+    <net.daum.mf.map.api.MapView
         android:layout_width="300dp"
         android:layout_height="400dp"
-        android:background="@drawable/map_radius"
-        tools:text="지도 올 공간"
         />
 
 

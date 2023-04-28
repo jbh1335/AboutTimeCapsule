@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/defaultBackColor"
     android:orientation="vertical"
-    tools:context=".views.mainpage.MainPageMainFragment">
+    tools:context=".views.mainpage.MainPageMainFragment"
+    android:id="@+id/frame_main_page_main">
 
     <!-- TODO: 메인페이지-메인 / 프래그먼트입니다 -->
     <androidx.cardview.widget.CardView

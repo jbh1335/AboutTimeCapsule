@@ -10,6 +10,7 @@ import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
 import com.aboutcapsule.android.views.chat.ChatMainFragment
 import com.aboutcapsule.android.views.mainpage.MainPageMainFragment
+import com.aboutcapsule.android.views.mainpage.MainPageMyCapsuleFragment
 import com.aboutcapsule.android.views.map.MapMainFragment
 import com.aboutcapsule.android.views.mypage.MyPageMainFragment
 
@@ -28,8 +29,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
 
         // 최초렌더링 시 , 메인페이지로 세팅
         setFragment(TAG_HOME, MainPageMainFragment())
@@ -52,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         val ab = supportActionBar!!
         ab.setDisplayShowTitleEnabled(false)
 
+        setContentView(binding.root)
     }
 
     private fun setFragment(tag: String, fragment: Fragment) {
@@ -92,4 +92,13 @@ class MainActivity : AppCompatActivity() {
 
         fragTransaction.commitAllowingStateLoss()
     }
+
+    fun replaceFragment(fragment: Fragment) {
+        Log.d("페이지리다이렉트", "메인 액티비티 ")
+        Log.d("페이지리다이렉트", "${fragment}")
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mainFrameLayout,ChatMainFragment()).commitAllowingStateLoss();
+    }
+
 }

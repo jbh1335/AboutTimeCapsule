@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-<!--    인터넷 사용 권한 설정-->
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!--   retrofit2 통신을 위한 인터넷 사용 권한 허용  -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 인터넷 사용 권한 설정 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 카카오 지도, 사용자 위치 접근 권한 설정 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".views.login.GlobalAplication"
@@ -34,9 +34,10 @@
             </intent-filter>
         </activity>
 
+        <!-- 카카오 지도 -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value=""/>
+            android:value="${NATIVE_APP_KEY}" />
 
     </application>
 

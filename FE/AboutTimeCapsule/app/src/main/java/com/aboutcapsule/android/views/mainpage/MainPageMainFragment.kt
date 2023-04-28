@@ -11,15 +11,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
+import com.aboutcapsule.android.views.MainActivity
+import com.aboutcapsule.android.views.mypage.MyPageMainFragment.Companion.newInstance
 
 class MainPageMainFragment : Fragment() {
 
     lateinit var binding: FragmentMainPageMainBinding
-
+    val mActivity = activity as? MainActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
 
@@ -37,6 +39,8 @@ class MainPageMainFragment : Fragment() {
 //    리싸이클러뷰나 뷰페이저 ,,는  onViewCreated 에서 초기화 해주는 것이 좋다
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         val section2DataList = getSection2datas()
         val section2adapter = Section2Adapter()
@@ -57,13 +61,15 @@ class MainPageMainFragment : Fragment() {
         })
 
 
-
         val section3DataList = getSection3datas()
         val section3adapter = Section3Adapter()
     //       section3 어댑터의 itemList라는 곳에 데이터 넘겨주기
             section3adapter.itemList = section3DataList
         binding.section3RecyclerView.adapter= section3adapter
         binding.section3RecyclerView.layoutManager=LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+
+// 버튼 클릭시 페이지 전환
+    redirectPages()
 
     }
 
@@ -79,6 +85,19 @@ class MainPageMainFragment : Fragment() {
             }
         }
     }
+
+//    나의 캡슐 클릭시 페이지 이동
+    private fun redirectPages(){
+    Log.d("페이지리다이렉트", "페이지리다이렉트메인페이지메인프래그먼트 ")
+     binding.mainSection1Capsule1img.setOnClickListener {
+        MainActivity().replaceFragment( MainPageMyCapsuleFragment())
+         Log.d("페이지리다이렉트", "페이지리다이렉트메인페이지메인프래그먼트 ")
+    }
+
+
+}
+
+
 
 //   TODO: retrofit으로 내 주변의 타임캡슐 데이터 가져오기
     private fun getSection2datas() : MutableList<Section2Data>{
