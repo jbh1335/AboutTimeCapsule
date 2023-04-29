@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.mainpage.MainPageMyCapsuleFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/defaultBackColor"
-        android:text="메인페이지 리다이렉트 마이캡슐페이지" />
+        tools:context=".views.mainpage.MainPageMyCapsuleFragment">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/defaultBackColor"
+            android:text="메인페이지 리다이렉트 마이캡슐페이지" />
+
+    </FrameLayout>
+</layout>
