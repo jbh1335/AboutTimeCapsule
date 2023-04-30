@@ -1,20 +1,17 @@
 package com.aboutcapsule.android.views.mainpage
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
-import com.aboutcapsule.android.views.MainActivity
-import com.aboutcapsule.android.views.mypage.MyPageMainFragment.Companion.newInstance
 
 class MainPageMainFragment : Fragment() {
 
@@ -25,7 +22,7 @@ class MainPageMainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentMainPageMainBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_main, container, false)
 
 //      최초 렌더링시,  말풍선 비활성화
         binding.section2Banner.visibility = View.INVISIBLE

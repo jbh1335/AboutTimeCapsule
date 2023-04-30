@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
+        android:id="@+id/frame_main_page_my_capsule"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/defaultBackColor"
         tools:context=".views.mainpage.MainPageMyCapsuleFragment">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/defaultBackColor"
-            android:text="메인페이지 리다이렉트 마이캡슐페이지" />
+            android:layout_marginTop="50dp"
+            android:orientation="vertical"
+            android:background="@color/white">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_marginTop="45dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabTextColor="@color/black"
+                app:tabIndicator="@drawable/tab_selector"
+                app:tabIndicatorColor="@color/btnColor"
+                app:tabTextAppearance="@style/tabTextSizeBold"
+                app:tabRippleColor="@android:color/transparent"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/view_pager_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layoutDirection="ltr"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="10dp"
+            android:textSize="20sp"
+            android:text="나의 캡슐"/>
 
     </FrameLayout>
 </layout>

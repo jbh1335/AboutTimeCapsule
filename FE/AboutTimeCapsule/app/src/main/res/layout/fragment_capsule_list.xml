@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".views.mainpage.CapsuleListFragment"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/capsule_list_frag_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="40dp"
+            android:textSize="20dp"
+            android:text="님을 기다리고 있어요!"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/capsule_list_section1_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            tools:listitem="@layout/capsule_list_recycler_item" />
+
+
+    </LinearLayout>
+
+</layout>
