@@ -35,20 +35,46 @@ class CapsuleListFragment : Fragment() {
         binding.capsuleListSection1RecyclerView.layoutManager =
             LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
 
+        val section2DataList = getSection2datas()
+        val section2Adapter = CapsuleListWaitingAdapter()
+
+        section2Adapter.itemList = section2DataList
+        binding.capsuleListSection2RecyclerView.adapter =section2Adapter
+        binding.capsuleListSection2RecyclerView.layoutManager =
+            LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+
     }
 
     private fun getSection1datas(): MutableList<CapsuleListWaitingData>{
         var itemList = mutableListOf<CapsuleListWaitingData>()
 
-        for(i in 1..10){
-            var time = "2023.05.${i}"
+        for(i in 1..9){
+            var time = "2023.05.0${i}"
             var place = "장소 위치 ${i}"
             var img = R.drawable.redcapsule
             var isLock = false
-            val tmp = CapsuleListWaitingData(img,time,place,isLock)
+            var lockimg =R.drawable.lockimg
+            val tmp = CapsuleListWaitingData(img,time,place,isLock,lockimg)
             itemList.add(tmp)
         }
 
         return itemList
     }
+
+    private fun getSection2datas(): MutableList<CapsuleListWaitingData>{
+        var itemList = mutableListOf<CapsuleListWaitingData>()
+
+        for(i in 1..9){
+            var time = "2023.05.1${i}"
+            var place = "삼성 화재 유성캠퍼스${i}"
+            var img = R.drawable.redcapsule
+            var isLock = false
+            var lockimg =R.drawable.lockimg
+            val tmp = CapsuleListWaitingData(img,time,place,isLock,lockimg)
+            itemList.add(tmp)
+        }
+
+        return itemList
+    }
+
 }

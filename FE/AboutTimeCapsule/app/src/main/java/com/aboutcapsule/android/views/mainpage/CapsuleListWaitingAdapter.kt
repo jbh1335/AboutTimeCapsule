@@ -23,6 +23,8 @@ class CapsuleListWaitingAdapter()
         fun bind(capsuleListWaitingData: CapsuleListWaitingData) {
             Glide.with(itemView).load(capsuleListWaitingData.img).into(binding.capsuleListImg)
             binding.capsuleListPlace.text=capsuleListWaitingData.place
+            Glide.with(itemView).load(capsuleListWaitingData.lockimg).into(binding.capsuleListLockimg)
+            binding.capsuleListTime.text=capsuleListWaitingData.time
         }
     }
 

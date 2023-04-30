@@ -28,23 +28,39 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/circle_background_white"
                     android:padding="2dp" />
+
+<!--               boolean 값으로 보여주고 안보여주고 하기    -->
                 <ImageView
+                    android:id="@+id/capsule_list_lockimg"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginLeft="75dp"
+                    android:layout_marginLeft="77dp"
                     android:background="@drawable/lockimg"
+                    android:alpha="0.7"
                     />
+
             </FrameLayout>
 
             <TextView
-                android:id="@+id/capsule_list_place"
+                android:id="@+id/capsule_list_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:gravity="center"
                 android:textSize="12sp"
-                tools:text="날자" />
+                tools:text="날짜" />
+            <TextView
+                android:id="@+id/capsule_list_place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:gravity="center"
+                android:textSize="8sp"
+                tools:text="장소" />
+
 
 
         </LinearLayout>
