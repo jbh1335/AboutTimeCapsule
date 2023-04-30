@@ -3,6 +3,7 @@ package com.timecapsule.capsuleservice.service;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
+import com.timecapsule.capsuleservice.api.response.CommonRes;
 import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
 import com.timecapsule.capsuleservice.db.entity.*;
@@ -130,8 +131,10 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .build());
         }
 
-        Collections.sort(unopenedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
-        Collections.sort(openedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
+//        Collections.sort(unopenedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
+//        Collections.sort(openedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
+        Collections.sort(unopenedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
+        Collections.sort(openedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
 
         CapsuleListRes capsuleListRes = CapsuleListRes.builder()
                 .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
@@ -140,6 +143,19 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build();
 
         return new SuccessRes<CapsuleListRes>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
+    }
+
+    @Override
+    public SuccessRes<CapsuleListRes> getFriendCapsule(int memberId) {
+        Optional<Member> oMember = memberRepository.findById(memberId);
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
+        List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
+        List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
+
+        // 이어서
+        return null;
     }
 
     @Override
@@ -179,10 +195,25 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         }
 
+        Collections.sort(openedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
+
         OpenedCapsuleListRes openedCapsuleListRes = OpenedCapsuleListRes.builder()
                 .openedCapsuleDtoList(openedCapsuleDtoList)
                 .mapInfoDtoList(mapInfoDtoList)
                 .build();
         return new SuccessRes<OpenedCapsuleListRes>(true, "나의 방문 기록을 조회합니다.", openedCapsuleListRes);
+    }
+
+    @Override
+    public CommonRes deleteCapsule(int capsuleId) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
+        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+
+        for(Memory memory : capsule.getMemoryList()) {
+            memoryRepository.save(Memory.of(memory, true));
+        }
+        capsuleRepository.save(Capsule.of(capsule, true));
+
+        return new CommonRes(true, "캡슐 삭제를 완료했습니다.");
     }
 }

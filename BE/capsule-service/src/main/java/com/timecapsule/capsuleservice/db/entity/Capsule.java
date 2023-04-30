@@ -38,4 +38,9 @@ public class Capsule extends BaseEntity {
         this.longitude = longitude;
         this.address = address;
     }
+
+    public static Capsule of(Capsule capsule, boolean isDeleted) {
+        capsule.setDeleted(isDeleted);
+        return capsule;
+    }
 }
