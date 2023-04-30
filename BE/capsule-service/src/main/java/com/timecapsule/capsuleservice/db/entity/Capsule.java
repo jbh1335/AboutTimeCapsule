@@ -43,4 +43,9 @@ public class Capsule extends BaseEntity {
         capsule.setDeleted(isDeleted);
         return capsule;
     }
+
+    public static Capsule of(Capsule capsule, RangeType rangeType) {
+        capsule.setRangeType(rangeType);
+        return capsule;
+    }
 }

@@ -216,4 +216,13 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         return new CommonRes(true, "캡슐 삭제를 완료했습니다.");
     }
+
+    @Override
+    public CommonRes modifyCapsuleRange(int capsuleId, RangeType rangeType) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
+        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+
+        capsuleRepository.save(Capsule.of(capsule, rangeType));
+        return new CommonRes(true, "캡슐의 공개 범위를 변경했습니다.");
+    }
 }

@@ -6,6 +6,7 @@ import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.CommonRes;
 import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
+import com.timecapsule.capsuleservice.db.entity.RangeType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -17,5 +18,6 @@ public interface CapsuleService {
     SuccessRes<CapsuleListRes> getFriendCapsule(int memberId);
     SuccessRes<OpenedCapsuleListRes> getOpenCapsule(int memberId);
     CommonRes deleteCapsule(int capsuleId);
+    CommonRes modifyCapsuleRange(int capsuleId, RangeType rangeType);
 
 }

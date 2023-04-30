@@ -6,6 +6,7 @@ import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.CommonRes;
 import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
+import com.timecapsule.capsuleservice.db.entity.RangeType;
 import com.timecapsule.capsuleservice.service.CapsuleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class CapsuleController {
     private final CapsuleService capsuleService;
 
 //    @ApiOperation(value = "캡슐 등록", notes = "나의 캡슐 등록하기")
-    @PostMapping
+    @PostMapping("/regist")
     public SuccessRes<Integer> registCapsule(@RequestBody CapsuleRegistReq capsuleRegistReq) {
         return capsuleService.registCapsule(capsuleRegistReq);
     }
@@ -52,4 +53,11 @@ public class CapsuleController {
     public CommonRes deleteCapsule(@PathVariable("capsuleId") int capsuleId) {
         return capsuleService.deleteCapsule(capsuleId);
     }
+
+    @PatchMapping("/modify/{capsuleId}/{rangeType}")
+    public CommonRes modifyCapsuleRange(@PathVariable("capsuleId") int capsuleId,
+                                        @PathVariable("rangeType") RangeType rangeType) {
+        return capsuleService.modifyCapsuleRange(capsuleId, rangeType);
+    }
+
 }
