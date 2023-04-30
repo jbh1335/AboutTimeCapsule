@@ -1,4 +1,4 @@
-package com.example.oauthservice.config.handler;
+package com.example.oauthservice.security.handler;
 
 import com.example.oauthservice.config.SendErrorUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;

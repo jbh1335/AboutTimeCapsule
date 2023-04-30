@@ -1,8 +1,8 @@
 package com.example.oauthservice.config;
 
-import com.example.oauthservice.config.handler.LoginSuccessHandler;
-import com.example.oauthservice.config.handler.RestAccessDeniedHandler;
-import com.example.oauthservice.config.handler.RestAuthenticationEntryPoint;
+import com.example.oauthservice.security.handler.LoginSuccessHandler;
+import com.example.oauthservice.security.handler.RestAccessDeniedHandler;
+import com.example.oauthservice.security.handler.RestAuthenticationEntryPoint;
 import com.example.oauthservice.service.CustomOauth2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

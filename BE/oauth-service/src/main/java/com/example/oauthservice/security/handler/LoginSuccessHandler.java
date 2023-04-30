@@ -1,5 +1,6 @@
-package com.example.oauthservice.config.handler;
+package com.example.oauthservice.security.handler;
 
+import com.example.oauthservice.security.jwt.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         String refreshToken = tokenProvider.createRefreshToken(authentication);
         String accessToken = tokenProvider.createAccessToken(authentication);
-        AuthResponse authResponse = AuthResponse.of(accessToken,refreshToken);
+//        AuthResponse authResponse = AuthResponse.of(accessToken,refreshToken);
 
-        objectMapper.writeValue(response.getWriter(), authResponse);
+//        objectMapper.writeValue(response.getWriter(), authResponse);
     }
 }

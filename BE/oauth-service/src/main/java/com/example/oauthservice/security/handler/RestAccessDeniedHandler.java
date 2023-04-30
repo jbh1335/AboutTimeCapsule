@@ -1,4 +1,4 @@
-package com.example.oauthservice.config.handler;
+package com.example.oauthservice.security.handler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;

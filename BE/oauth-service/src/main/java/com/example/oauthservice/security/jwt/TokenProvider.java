@@ -1,4 +1,6 @@
-import com.sun.security.auth.UserPrincipal;
+package com.example.oauthservice.security.jwt;
+
+import com.example.oauthservice.security.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -42,7 +44,7 @@ public class TokenProvider {
         Date expiryDate = new Date(now.getTime() + accessTokenExpirationTimeInMilliSeconds);
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
+                .setSubject(userPrincipal.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)

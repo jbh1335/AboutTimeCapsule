@@ -1,6 +1,7 @@
 package com.example.oauthservice.security;
 
 import com.example.oauthservice.db.entity.Member;
+import com.example.oauthservice.db.entity.RoleType;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,7 +16,6 @@ import java.util.Map;
 public class UserPrincipal implements OAuth2User {
     private Member member;
 
-    p
     private Map<String, Object> attributes;
 
     private UserPrincipal(Member member) {
@@ -37,9 +37,10 @@ public class UserPrincipal implements OAuth2User {
         return attributes;
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(member.getRoleKey()));
+        return Collections.singletonList(new SimpleGrantedAuthority(RoleType.ADMIM.toString()));
     }
 
     @Override
@@ -48,7 +49,7 @@ public class UserPrincipal implements OAuth2User {
     }
 
 
-    public String getUsername() {
+    public String getEmail() {
         return member.getEmail();
     }
 }
