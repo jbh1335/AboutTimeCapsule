@@ -41,5 +41,9 @@ public class CapsuleController {
 //    public SuccessRes<OpenedCapsuleListRes> getOpenCapsule(@PathVariable("memberId") int memberId) {
 //
 //    }
+    @GetMapping("/open/list/{memberId}")
+    public SuccessRes<OpenedCapsuleListRes> getOpenCapsule(@PathVariable("memberId") int memberId) {
+        return capsuleService.getOpenCapsule(memberId);
+    }
 
 }

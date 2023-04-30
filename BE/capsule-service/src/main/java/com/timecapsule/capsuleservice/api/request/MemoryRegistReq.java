@@ -3,6 +3,7 @@ package com.timecapsule.capsuleservice.api.request;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -12,5 +13,5 @@ public class MemoryRegistReq {
     private int capsuleId;
     private String title;
     private String content;
-    private Date openDate;
+    private LocalDate openDate;
 }

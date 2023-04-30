@@ -19,7 +19,6 @@ public class Capsule extends BaseEntity {
     private boolean isDeleted;
     @Enumerated(EnumType.STRING)
     private RangeType rangeType;
-    private boolean isLocked;
     private boolean isGroup;
     private Double latitude;
     private Double longitude;
@@ -29,8 +28,6 @@ public class Capsule extends BaseEntity {
     private List<Memory> memoryList = new ArrayList<>();
     @OneToMany(mappedBy = "capsule")
     private List<CapsuleMember> capsuleMemberList = new ArrayList<>();
-    @OneToMany(mappedBy = "capsule")
-    private List<CapsuleOpenMember> capsuleOpenMemberList = new ArrayList<>();
 
     @Builder
     public Capsule(String title, RangeType rangeType, boolean isGroup, Double latitude, Double longitude, String address) {
@@ -40,10 +37,5 @@ public class Capsule extends BaseEntity {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
-    }
-
-    public static Capsule of(Capsule capsule, boolean isLocked) {
-        capsule.setLocked(isLocked);
-        return capsule;
     }
 }

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service("capsuleService")
@@ -23,7 +24,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
-    private final CapsuleOpenMemberRepository capsuleOpenMemberRepository;
+    private final MemoryOpenMemberRepository memoryOpenMemberRepository;
     private final MemoryRepository memoryRepository;
 
     @Override
@@ -71,7 +72,6 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build();
 
         int memoryId = memoryRepository.save(memory).getId();
-        capsuleRepository.save(Capsule.of(capsule, true));
 
         return new SuccessRes<Integer>(true, "추억 등록을 완료했습니다.", memoryId);
     }
@@ -88,31 +88,36 @@ public class CapsuleServiceImpl implements CapsuleService {
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
             int capsuleId = capsule.getId();
-            boolean isExisted = capsuleOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), memberId);
+            // 캡슐에 대한 열람 기록이 있는지 확인
+            boolean isExisted = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, memberId);
+            boolean isLocked = false;
 
             int memorySize = capsule.getMemoryList().size();
-            Date openDate = new Date();
+            LocalDate openDate = null;
             if(memorySize != 0) openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
 
-            Date now = null;
-            // 잠겨O 열람 O -> 불가능
-            // 잠겨O 열람 X -> 위에
+            // 미열람
+            if(!isExisted) {
+                // 잠김 O
+                if(memorySize > 0 && LocalDate.now().isBefore(openDate)) isLocked = true;
 
-            // 잠겨X 열람 X -> 위에
-            // 잠겨X 열람 O -> 밑에
-            if(capsule.isLocked() || (!capsule.isLocked() && !isExisted)) {
                 unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
                         .capsuleId(capsuleId)
                         .openDate(openDate)
                         .address(capsule.getAddress())
-                        .isLocked(capsule.isLocked())
+                        .isLocked(isLocked)
                         .build());
             } else {
                 // 열람
+                int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, memberId);
+                boolean isAdded = false;
+                if(memorySize != count) isAdded = true;
+
                 openedCapsuleDtoList.add(OpenedCapsuleDto.builder()
                         .capsuleId(capsuleId)
                         .openDate(openDate)
                         .address(capsule.getAddress())
+                        .isAdded(isAdded)
                         .build());
             }
 
@@ -121,7 +126,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .latitude(capsule.getLatitude())
                     .longitude(capsule.getLongitude())
                     .isOpened(isExisted)
-                    .isLocked(capsule.isLocked())
+                    .isLocked(isLocked)
                     .build());
         }
 
@@ -145,18 +150,23 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
 
-        for(CapsuleOpenMember capsuleOpenMember : member.getCapsuleOpenMemberList()) {
-            Capsule capsule = capsuleOpenMember.getCapsule();
+        for(MemoryOpenMember memoryOpenMember : member.getMemoryOpenMemberList()) {
+            Capsule capsule = memoryOpenMember.getCapsule();
             int capsuleId = capsule.getId();
 
             int memorySize = capsule.getMemoryList().size();
-            Date openDate = new Date();
+            LocalDate openDate = null;
             if(memorySize != 0) openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
+
+            int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, memberId);
+            boolean isAdded = false;
+            if(memorySize != count) isAdded = true;
 
             openedCapsuleDtoList.add(OpenedCapsuleDto.builder()
                     .capsuleId(capsuleId)
                     .openDate(openDate)
                     .address(capsule.getAddress())
+                    .isAdded(isAdded)
                     .build());
 
             mapInfoDtoList.add(MapInfoDto.builder()
@@ -164,10 +174,15 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .latitude(capsule.getLatitude())
                     .longitude(capsule.getLongitude())
                     .isOpened(true)
-                    .isLocked(capsule.isLocked())
+                    .isLocked(false)
                     .build());
+
         }
 
-        return null;
+        OpenedCapsuleListRes openedCapsuleListRes = OpenedCapsuleListRes.builder()
+                .openedCapsuleDtoList(openedCapsuleDtoList)
+                .mapInfoDtoList(mapInfoDtoList)
+                .build();
+        return new SuccessRes<OpenedCapsuleListRes>(true, "나의 방문 기록을 조회합니다.", openedCapsuleListRes);
     }
 }

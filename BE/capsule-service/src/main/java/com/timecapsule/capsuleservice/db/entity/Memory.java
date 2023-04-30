@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,12 +26,14 @@ public class Memory extends BaseEntity {
     private String image;
     private boolean isDeleted;
     private boolean isLocked;
-    private Date openDate;
+    private LocalDate openDate;
     @OneToMany(mappedBy = "memory")
     private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "memory")
+    private List<MemoryOpenMember> memoryOpenMemberList = new ArrayList<>();
 
     @Builder
-    public Memory(Capsule capsule, Member member, String title, String content, String image, boolean isDeleted, boolean isLocked, Date openDate) {
+    public Memory(Capsule capsule, Member member, String title, String content, String image, boolean isDeleted, boolean isLocked, LocalDate openDate) {
         this.capsule = capsule;
         this.member = member;
         this.title = title;
