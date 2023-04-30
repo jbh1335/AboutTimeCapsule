@@ -1,13 +1,12 @@
 package com.timecapsule.capsuleservice.service;
 
+import com.timecapsule.capsuleservice.api.request.AroundCapsuleReq;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
-import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
-import com.timecapsule.capsuleservice.api.response.CommonRes;
-import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
-import com.timecapsule.capsuleservice.api.response.SuccessRes;
+import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.*;
 import com.timecapsule.capsuleservice.db.repository.*;
+import com.timecapsule.capsuleservice.dto.AroundCapsuleDto;
 import com.timecapsule.capsuleservice.dto.MapInfoDto;
 import com.timecapsule.capsuleservice.dto.OpenedCapsuleDto;
 import com.timecapsule.capsuleservice.dto.UnopenedCapsuleDto;
@@ -27,6 +26,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final CapsuleMemberRepository capsuleMemberRepository;
     private final MemoryOpenMemberRepository memoryOpenMemberRepository;
     private final MemoryRepository memoryRepository;
+    private final FriendRepository friendRepository;
 
     @Override
     public SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq) {
@@ -224,5 +224,35 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         capsuleRepository.save(Capsule.of(capsule, rangeType));
         return new CommonRes(true, "캡슐의 공개 범위를 변경했습니다.");
+    }
+
+    @Override
+    public SuccessRes<AroundCapsuleRes> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq) {
+        // 그냥 전체 공개로 설정한 사람들의 캡슐 조회
+        // 오픈 기간 지났고 내가 열람한 적 없는 주변 1km 이내에 있는 모든 캡슐 조회
+
+        List<AroundCapsuleDto> aroundCapsuleDtoList = new ArrayList<>();
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
+        for(Capsule capsule : aroundCapsuleList) {
+            // 내 권한 X
+            boolean isMember = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), aroundCapsuleReq.getMemberId());
+            if(isMember) continue;
+
+            if(!capsule.getRangeType().equals("ALL")) continue;
+
+            String memberName = capsule.getCapsuleMemberList().get(0).getMember().getName();
+            int memberSize = capsule.getCapsuleMemberList().size() - 1;
+            if(memberSize > 1) memberName += (" 외 " + memberSize + "명");
+
+            aroundCapsuleDtoList.add(AroundCapsuleDto.builder()
+                    .capsuleId(capsule.getId())
+                    .memberName(memberName)
+                    .address(capsule.getAddress())
+                    .build());
+        }
+
+        AroundCapsuleRes aroundCapsuleRes = AroundCapsuleRes.builder().aroundCapsuleDtoList(aroundCapsuleDtoList).build();
+
+        return new SuccessRes<AroundCapsuleRes>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleRes);
     }
 }

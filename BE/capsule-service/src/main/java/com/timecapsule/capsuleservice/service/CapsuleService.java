@@ -1,11 +1,9 @@
 package com.timecapsule.capsuleservice.service;
 
+import com.timecapsule.capsuleservice.api.request.AroundCapsuleReq;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
-import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
-import com.timecapsule.capsuleservice.api.response.CommonRes;
-import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
-import com.timecapsule.capsuleservice.api.response.SuccessRes;
+import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.RangeType;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,5 +17,6 @@ public interface CapsuleService {
     SuccessRes<OpenedCapsuleListRes> getOpenCapsule(int memberId);
     CommonRes deleteCapsule(int capsuleId);
     CommonRes modifyCapsuleRange(int capsuleId, RangeType rangeType);
+    SuccessRes<AroundCapsuleRes> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq);
 
 }

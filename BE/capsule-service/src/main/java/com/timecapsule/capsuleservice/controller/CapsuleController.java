@@ -1,11 +1,9 @@
 package com.timecapsule.capsuleservice.controller;
 
+import com.timecapsule.capsuleservice.api.request.AroundCapsuleReq;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
-import com.timecapsule.capsuleservice.api.response.CapsuleListRes;
-import com.timecapsule.capsuleservice.api.response.CommonRes;
-import com.timecapsule.capsuleservice.api.response.OpenedCapsuleListRes;
-import com.timecapsule.capsuleservice.api.response.SuccessRes;
+import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.RangeType;
 import com.timecapsule.capsuleservice.service.CapsuleService;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +56,11 @@ public class CapsuleController {
     public CommonRes modifyCapsuleRange(@PathVariable("capsuleId") int capsuleId,
                                         @PathVariable("rangeType") RangeType rangeType) {
         return capsuleService.modifyCapsuleRange(capsuleId, rangeType);
+    }
+
+    @GetMapping("/around")
+    public SuccessRes<AroundCapsuleRes> getAroundCapsule(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
+        return capsuleService.getAroundCapsule(aroundCapsuleReq);
     }
 
 }
