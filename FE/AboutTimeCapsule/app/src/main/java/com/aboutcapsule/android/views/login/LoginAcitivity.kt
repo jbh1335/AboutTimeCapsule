@@ -64,12 +64,6 @@ class LoginAcitivity : AppCompatActivity() {
             kakaoLogin()
         }
 
-
-
     }
-
-
-
-
 
 }

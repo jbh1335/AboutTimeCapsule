@@ -8,6 +8,7 @@ class GlobalAplication:Application() {
     override fun onCreate() {
         super.onCreate()
         KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
+
     }
 
 
