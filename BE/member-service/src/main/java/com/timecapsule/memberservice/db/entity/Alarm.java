@@ -1,15 +1,14 @@
-package com.timecapsule.memberservice.db.entity;
+package com.timecapsule.oauthservice.db.entity;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
+@Entity
 @Getter
 @NoArgsConstructor
-@Entity
 public class Alarm extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
@@ -17,6 +16,6 @@ public class Alarm extends BaseEntity{
     @Column(length = 255)
     private String content;
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private CategoryType categoryType;
     private int capsuleId;
 }

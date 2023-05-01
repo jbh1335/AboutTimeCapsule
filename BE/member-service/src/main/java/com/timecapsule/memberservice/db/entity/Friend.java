@@ -1,26 +1,23 @@
-package com.timecapsule.memberservice.db.entity;
+package com.timecapsule.oauthservice.db.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+@Entity
 @Getter
 @NoArgsConstructor
-@Entity
 public class Friend extends BaseEntity {
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_ID", insertable = false, updatable = false)
-    private Member fromMemberId;
-
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_ID", insertable = false, updatable = false)
-    private Member toMemberId;
-
-    @Column(columnDefinition = "TINYINT", length=1)
-    private int isAccepted;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_member_id", insertable = false, updatable = false)
+    private Member fromMember;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_member_id", insertable = false, updatable = false)
+    private Member toMember;
+    private boolean isAccepted;
 }
+
