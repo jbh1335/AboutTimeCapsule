@@ -229,12 +229,13 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
-    public SuccessRes<AroundCapsuleRes> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq) {
+    public SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq) {
         // 그냥 전체 공개로 설정한 사람들의 캡슐 조회
         // 오픈 기간 지났고 내가 열람한 적 없는 주변 1km 이내에 있는 모든 캡슐 조회
 
-        List<AroundCapsuleDto> aroundCapsuleDtoList = new ArrayList<>();
+        List<AroundCapsuleRes> aroundCapsuleResList = new ArrayList<>();
         List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
+
         for(Capsule capsule : aroundCapsuleList) {
             if(capsule.isDeleted()) continue;
             // 내 권한 X
@@ -247,16 +248,14 @@ public class CapsuleServiceImpl implements CapsuleService {
             int memberSize = capsule.getCapsuleMemberList().size() - 1;
             if(memberSize > 1) memberName += (" 외 " + memberSize + "명");
 
-            aroundCapsuleDtoList.add(AroundCapsuleDto.builder()
+            aroundCapsuleResList.add(AroundCapsuleRes.builder()
                     .capsuleId(capsule.getId())
                     .memberName(memberName)
                     .address(capsule.getAddress())
                     .build());
         }
 
-        AroundCapsuleRes aroundCapsuleRes = AroundCapsuleRes.builder().aroundCapsuleDtoList(aroundCapsuleDtoList).build();
-
-        return new SuccessRes<>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleRes);
+        return new SuccessRes<>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleResList);
     }
 
     @Override
@@ -338,5 +337,24 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build());
 
         return new CommonRes(true, "댓글 등록을 완료했습니다.");
+    }
+
+    @Override
+    public SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
+        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+
+        List<GroupMemberRes> groupMemberResList = new ArrayList<>();
+        for(CapsuleMember capsuleMember : capsule.getCapsuleMemberList()) {
+            Member member = capsuleMember.getMember();
+
+            groupMemberResList.add(GroupMemberRes.builder()
+                    .memberId(member.getId())
+                    .nickname(member.getNickname())
+                    .profileImageUrl(member.getProfileImageUrl())
+                    .build());
+        }
+
+        return new SuccessRes<>(true, "그룹에 해당되는 멤버 목록을 조회합니다.", groupMemberResList);
     }
 }

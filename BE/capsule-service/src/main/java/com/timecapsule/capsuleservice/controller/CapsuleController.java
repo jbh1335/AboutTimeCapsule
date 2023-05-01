@@ -57,7 +57,7 @@ public class CapsuleController {
     }
 
     @GetMapping("/around")
-    public SuccessRes<AroundCapsuleRes> getAroundCapsule(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
+    public SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
         return capsuleService.getAroundCapsule(aroundCapsuleReq);
     }
 
@@ -83,4 +83,8 @@ public class CapsuleController {
         return capsuleService.registComment(commentRegistReq);
     }
 
+    @GetMapping("/group/{capsuleId}")
+    public SuccessRes<List<GroupMemberRes>> getGroupMember(@PathVariable("capsuleId") int capsuleId) {
+        return capsuleService.getGroupMember(capsuleId);
+    }
 }

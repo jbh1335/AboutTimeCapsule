@@ -15,10 +15,11 @@ public interface CapsuleService {
     SuccessRes<OpenedCapsuleListRes> getOpenCapsule(int memberId);
     CommonRes deleteCapsule(int capsuleId);
     CommonRes modifyCapsuleRange(int capsuleId, RangeType rangeType);
-    SuccessRes<AroundCapsuleRes> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq);
+    SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq);
     SuccessRes<MemoryRes> getMemory(int capsuleId, int memberId);
     CommonRes deleteMemory(int memoryId);
     CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq);
     CommonRes registComment(CommentRegistReq commentRegistReq);
+    SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId);
 
 }
