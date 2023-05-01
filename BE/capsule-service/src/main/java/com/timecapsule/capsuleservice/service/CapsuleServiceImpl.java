@@ -6,10 +6,7 @@ import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.*;
 import com.timecapsule.capsuleservice.db.repository.*;
-import com.timecapsule.capsuleservice.dto.AroundCapsuleDto;
-import com.timecapsule.capsuleservice.dto.MapInfoDto;
-import com.timecapsule.capsuleservice.dto.OpenedCapsuleDto;
-import com.timecapsule.capsuleservice.dto.UnopenedCapsuleDto;
+import com.timecapsule.capsuleservice.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +24,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final MemoryOpenMemberRepository memoryOpenMemberRepository;
     private final MemoryRepository memoryRepository;
     private final FriendRepository friendRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq) {
@@ -48,7 +46,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             capsuleMemberRepository.save(CapsuleMember.builder().member(member).capsule(newCapsule).build());
         }
 
-        return new SuccessRes<Integer>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
+        return new SuccessRes<>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
     }
 
     @Override
@@ -74,7 +72,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         int memoryId = memoryRepository.save(memory).getId();
 
-        return new SuccessRes<Integer>(true, "추억 등록을 완료했습니다.", memoryId);
+        return new SuccessRes<>(true, "추억 등록을 완료했습니다.", memoryId);
     }
 
     @Override
@@ -142,7 +140,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .mapInfoDtoList(mapInfoDtoList)
                 .build();
 
-        return new SuccessRes<CapsuleListRes>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
+        return new SuccessRes<>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
     }
 
     @Override
@@ -201,7 +199,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .openedCapsuleDtoList(openedCapsuleDtoList)
                 .mapInfoDtoList(mapInfoDtoList)
                 .build();
-        return new SuccessRes<OpenedCapsuleListRes>(true, "나의 방문 기록을 조회합니다.", openedCapsuleListRes);
+        return new SuccessRes<>(true, "나의 방문 기록을 조회합니다.", openedCapsuleListRes);
     }
 
     @Override
@@ -253,6 +251,44 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         AroundCapsuleRes aroundCapsuleRes = AroundCapsuleRes.builder().aroundCapsuleDtoList(aroundCapsuleDtoList).build();
 
-        return new SuccessRes<AroundCapsuleRes>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleRes);
+        return new SuccessRes<>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleRes);
+    }
+
+    @Override
+    public SuccessRes<MemoryRes> getMemory(int capsuleId, int memberId) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
+        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+
+        List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
+        for(Memory memory : capsule.getMemoryList()) {
+            String[] imageUrl = memory.getImage().split("#");
+            int commentCnt = commentRepository.findAllByMemoryId(memory.getId()).size();
+
+            boolean isOpen = memoryOpenMemberRepository.existsByMemoryIdAndMemberId(memory.getId(), memberId);
+            boolean isLocked = false;
+            if(LocalDate.now().isBefore(memory.getOpenDate())) isLocked = true;
+
+            memoryDetailDtoList.add(MemoryDetailDto.builder()
+                    .memoryId(memory.getId())
+                    .nickname(memory.getMember().getNickname())
+                    .memoryTitle(memory.getTitle())
+                    .profileImageUrl(memory.getMember().getProfileImageUrl())
+                    .content(memory.getContent())
+                    .imageUrl(memory.getImage().split("#"))
+                    .commentCnt(commentCnt)
+                    .createdDate(memory.getCreatedDate().toLocalDate())
+                    .isLocked(isLocked)
+                    .isOpened(isOpen)
+                    .build());
+        }
+
+        MemoryRes memoryRes = MemoryRes.builder()
+                .capsuleTitle(capsule.getTitle())
+                .isGroup(capsule.isGroup())
+                .rangeType(capsule.getRangeType())
+                .memoryDetailDtoList(memoryDetailDtoList)
+                .build();
+
+        return new SuccessRes<>(true, "해당 캡슐의 추억을 조회합니다.", memoryRes);
     }
 }

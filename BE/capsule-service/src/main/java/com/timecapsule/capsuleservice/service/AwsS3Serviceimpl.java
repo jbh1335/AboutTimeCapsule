@@ -45,15 +45,14 @@ public class AwsS3Serviceimpl implements AwsS3Service {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
             }
 
-            fileNameList.add(fileName);
+            fileNameList.add(amazonS3.getUrl(bucket, fileName).toString());
         });
 
         String totalImage = "";
         for(String img : fileNameList) {
-            totalImage += ("#" + img);
+            totalImage += (img + "#");
         }
 
-        System.out.println("totalImage: " + totalImage);
         return totalImage;
     }
 

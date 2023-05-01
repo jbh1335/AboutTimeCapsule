@@ -18,5 +18,6 @@ public interface CapsuleService {
     CommonRes deleteCapsule(int capsuleId);
     CommonRes modifyCapsuleRange(int capsuleId, RangeType rangeType);
     SuccessRes<AroundCapsuleRes> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq);
+    SuccessRes<MemoryRes> getMemory(int capsuleId, int memberId);
 
 }

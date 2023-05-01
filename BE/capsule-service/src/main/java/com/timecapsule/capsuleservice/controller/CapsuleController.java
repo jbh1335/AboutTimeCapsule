@@ -63,4 +63,10 @@ public class CapsuleController {
         return capsuleService.getAroundCapsule(aroundCapsuleReq);
     }
 
+    @GetMapping("/memory/{capsuleId}/{memberId}")
+    public SuccessRes<MemoryRes> getMemory(@PathVariable("capsuleId") int capsuleId,
+                                           @PathVariable("memberId") int memberId) {
+        return capsuleService.getMemory(capsuleId, memberId);
+    }
+
 }

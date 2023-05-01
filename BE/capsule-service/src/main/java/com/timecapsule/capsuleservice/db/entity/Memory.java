@@ -25,6 +25,7 @@ public class Memory extends BaseEntity {
     @Column(length = 128)
     private String title;
     private String content;
+    @Lob
     private String image;
     private boolean isDeleted;
     private boolean isLocked;
