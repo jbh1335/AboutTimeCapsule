@@ -3,15 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
+        android:id="@+id/testframe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.mainpage.CapsuleMapFragment">
 
-        <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="캡슐 목록 지도 " />
+
 
     </FrameLayout>
 

@@ -1,19 +1,16 @@
 package com.aboutcapsule.android.views
 
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
-
-private const val TAG_HOME = "main_page_fragment"
-private const val TAG_MAP = "map_fragment"
-private const val TAG_CHAT = "chat_fragment"
-private const val TAG_MYPAGE = "my_page_fragment"
+import com.kakao.sdk.user.UserApiClient
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +31,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNavigation() {
-        val navController = findNavController(R.id.nav_host_fragment)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
         binding.navBottom.setupWithNavController(navController)
     }
 

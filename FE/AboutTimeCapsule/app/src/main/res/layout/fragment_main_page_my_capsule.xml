@@ -26,7 +26,8 @@
                 app:tabIndicator="@drawable/tab_selector"
                 app:tabIndicatorColor="@color/btnColor"
                 app:tabTextAppearance="@style/tabTextSizeBold"
-                app:tabRippleColor="@android:color/transparent"/>
+                app:tabRippleColor="@android:color/transparent"
+                android:contentDescription="목록보기,지도보기 탭레이아웃" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager_layout"

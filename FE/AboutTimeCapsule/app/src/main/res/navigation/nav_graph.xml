@@ -33,5 +33,15 @@
         android:id="@+id/mainPageMyCapsuleFragment"
         android:name="com.aboutcapsule.android.views.mainpage.MainPageMyCapsuleFragment"
         android:label="fragment_my_page_my_capsule"
-        tools:layout="@layout/fragment_main_page_my_capsule"/>
+        tools:layout="@layout/fragment_main_page_my_capsule">
+        <action
+            android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistFragment"
+            app:destination="@id/capsuleRegistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/capsuleRegistFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleRegistFragment"
+        android:label="fragment_capsule_regist"
+        tools:layout="@layout/fragment_capsule_regist"/>
 </navigation>

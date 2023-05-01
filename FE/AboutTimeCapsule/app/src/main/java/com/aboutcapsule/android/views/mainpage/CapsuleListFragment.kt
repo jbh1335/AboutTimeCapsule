@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleListBinding
@@ -14,7 +17,7 @@ import com.aboutcapsule.android.databinding.FragmentCapsuleListBinding
 class CapsuleListFragment : Fragment() {
 
     lateinit var binding : FragmentCapsuleListBinding
-
+    lateinit var navController: NavController
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,6 +46,18 @@ class CapsuleListFragment : Fragment() {
         binding.capsuleListSection2RecyclerView.layoutManager =
             LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
 
+        setNavigation()
+
+        binding.testbtn.setOnClickListener {
+            navController.navigate(R.id.action_mainPageMyCapsuleFragment_to_capsuleRegistFragment)
+        }
+
+
+    }
+
+    private fun setNavigation(){
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
     }
 
     private fun getSection1datas(): MutableList<CapsuleListWaitingData>{
