@@ -15,7 +15,7 @@ pipeline {
         stage('Build image') {
             steps {
                 sh 'ls -al'
-                dir('BE/oauth-capsule') {
+                dir('BE/capsule-service') {
                     sh 'ls -al'
                     sh 'chmod +x ./gradlew'
                     sh './gradlew build'
