@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service("capsuleService")
@@ -348,15 +350,15 @@ public class CapsuleServiceImpl implements CapsuleService {
         for(Comment comment : memory.getCommentList()) {
             if(comment.isDeleted()) continue;
             Member member = comment.getMember();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy.MM.dd HH:mm");
 
-            System.out.println("작성일: " + comment.getCreatedDate());
             commentResList.add(CommentRes.builder()
                     .commentId(comment.getId())
                     .memberId(member.getId())
                     .nickname(member.getNickname())
                     .profileImageUrl(member.getProfileImageUrl())
                     .content(comment.getContent())
-                    .createdDate(comment.getCreatedDate())
+                    .createdDate(comment.getCreatedDate().format(dateTimeFormatter))
                     .build());
         }
 

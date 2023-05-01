@@ -12,9 +12,9 @@ public class CommentRes {
     private String nickname;
     private String profileImageUrl;
     private String content;
-    private LocalDateTime createdDate;
+    private String createdDate;
     @Builder
-    public CommentRes(int commentId, int memberId, String nickname, String profileImageUrl, String content, LocalDateTime createdDate) {
+    public CommentRes(int commentId, int memberId, String nickname, String profileImageUrl, String content, String createdDate) {
         this.commentId = commentId;
         this.memberId = memberId;
         this.nickname = nickname;
