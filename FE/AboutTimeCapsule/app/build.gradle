@@ -7,7 +7,7 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 def kakao_Native_App_Key = properties.getProperty('kakao.native.app.key')
-def kakao_redirect_uri = properties.getProperty('kakao_redirect_uri')
+def kakao_redirect_uri = properties.getProperty('kakao.redirect.uri')
 
 android {
     namespace 'com.aboutcapsule.android'
