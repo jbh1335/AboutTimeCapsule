@@ -20,8 +20,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"
             android:background="@color/white"
             android:text="지도가 올 위치" />
@@ -40,8 +40,8 @@
                  android:layout_width="70dp"
                  android:layout_height="48dp"
                  android:fontFamily="@font/onemobile"
-                 android:buttonTint="@color/btnColor"
-                 android:text="전체 공개"
+                 android:buttonTint="@color/black"
+                 android:text="전체공개"
                  android:textSize="8sp" />
 
              <androidx.appcompat.widget.AppCompatRadioButton
@@ -49,9 +49,8 @@
                  android:layout_width="70dp"
                  android:layout_height="48dp"
                  android:textSize="8sp"
-
                  android:fontFamily="@font/onemobile"
-                 android:buttonTint="@color/btnColor"
+                 android:buttonTint="@color/black"
                  android:text="친구만"/>
 
              <androidx.appcompat.widget.AppCompatRadioButton
@@ -59,7 +58,7 @@
                  android:layout_width="70dp"
                  android:layout_height="48dp"
                  android:textSize="8sp"
-                 android:buttonTint="@color/btnColor"
+                 android:buttonTint="@color/black"
                  android:fontFamily="@font/onemobile"
                  android:text="나만 보기"/>
 
@@ -68,8 +67,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:background="@drawable/bottom_rounded"
             >
 
@@ -93,15 +92,17 @@
         </FrameLayout>
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/capsule_regist_registbtn"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="140dp"
+            android:layout_marginTop="135dp"
             android:fontFamily="@font/onemobile"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:background="@drawable/btn_radius"
+            android:backgroundTint="@color/btnColor"
             android:text="캡슐 생성하기"/>
     </LinearLayout>
 
