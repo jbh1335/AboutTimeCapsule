@@ -48,11 +48,11 @@ public class UserPrincipal implements OAuth2User {
 
     @Override
     public String getName() {
-        return member.getName();
+        return member.getNickname();
     }
 
 
-    public String getUserName() {
-        return member.getEmail();
+    public String getOauthId() {
+        return member.getOauthId();
     }
 }
