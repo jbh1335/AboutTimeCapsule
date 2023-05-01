@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-    <!-- 인터넷 사용 권한 설정 -->
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.aboutcapsule.android">
+    <!--    인터넷 사용 권한 설정-->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- 카카오 지도, 사용자 위치 접근 권한 설정 -->
@@ -19,29 +20,46 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AboutTimeCapsule"
-        android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
         <activity
-            android:name=".views.login.LoginActivity"
-            android:exported="false" />
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
+                <data android:host="oauth"
+                    android:scheme="${kakao_redirect_uri}"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".views.login.LoginAcitivity"
+            android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
 
         <activity
             android:name=".views.MainActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <!-- 카카오 지도 -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="kakao${NATIVE_APP_KEY}" />
+            android:value="${kakao_redirect_uri}" />
 
     </application>
 
