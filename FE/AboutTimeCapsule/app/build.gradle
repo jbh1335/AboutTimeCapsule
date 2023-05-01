@@ -3,10 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def NATIVE_APP_KEY = properties.getProperty("NATIVE_APP_KEY")
+def kakao_Native_App_Key = properties.getProperty('kakao.native.app.key')
+def kakao_redirect_uri = properties.getProperty('kakao.redirect.uri')
 android {
     namespace 'com.aboutcapsule.android'
     compileSdk 33
@@ -17,8 +17,8 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "NATIVE_APP_KEY", NATIVE_APP_KEY
-        manifestPlaceholders = [NATIVE_APP_KEY:NATIVE_APP_KEY]
+        buildConfigField "String", "NATIVE_APP_KEY", "\"${kakao_Native_App_Key}\""
+        manifestPlaceholders = [kakao_redirect_uri: kakao_redirect_uri]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -30,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     viewBinding{
         enabled true
