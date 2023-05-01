@@ -2,6 +2,7 @@ package com.timecapsule.capsuleservice.service;
 
 import com.timecapsule.capsuleservice.api.request.AroundCapsuleReq;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
+import com.timecapsule.capsuleservice.api.request.MemoryModifyReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.*;
@@ -57,7 +58,8 @@ public class CapsuleServiceImpl implements CapsuleService {
         Optional<Member> oMember = memberRepository.findById(memoryRegistReq.getMemberId());
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
-        String image = awsS3Service.uploadFile(multipartFileList);
+        String image = "";
+        if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
 
         Memory memory = Memory.builder()
                 .capsule(capsule)
@@ -86,6 +88,8 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
+            if(capsule.isDeleted()) continue;
+
             int capsuleId = capsule.getId();
             // 캡슐에 대한 열람 기록이 있는지 확인
             boolean isExisted = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, memberId);
@@ -166,6 +170,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         for(MemoryOpenMember memoryOpenMember : member.getMemoryOpenMemberList()) {
             Capsule capsule = memoryOpenMember.getCapsule();
+            if(capsule.isDeleted()) continue;
             int capsuleId = capsule.getId();
 
             int memorySize = capsule.getMemoryList().size();
@@ -232,6 +237,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<AroundCapsuleDto> aroundCapsuleDtoList = new ArrayList<>();
         List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
         for(Capsule capsule : aroundCapsuleList) {
+            if(capsule.isDeleted()) continue;
             // 내 권한 X
             boolean isMember = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), aroundCapsuleReq.getMemberId());
             if(isMember) continue;
@@ -261,6 +267,8 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
         for(Memory memory : capsule.getMemoryList()) {
+            if(memory.isDeleted()) continue;
+
             String[] imageUrl = memory.getImage().split("#");
             int commentCnt = commentRepository.findAllByMemoryId(memory.getId()).size();
 
@@ -300,5 +308,18 @@ public class CapsuleServiceImpl implements CapsuleService {
         memoryRepository.save(Memory.of(memory, true));
 
         return new CommonRes(true, "추억 삭제를 완료했습니다.");
+    }
+
+    @Override
+    public CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq) {
+        Optional<Memory> oMemory = memoryRepository.findById(memoryModifyReq.getMemoryId());
+        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+
+        String image = memory.getImage();
+        if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
+
+
+        memoryRepository.save(Memory.of(memory, memoryModifyReq.getTitle(), memoryModifyReq.getContent(), image));
+        return new CommonRes(true, "추억 수정을 완료했습니다.");
     }
 }

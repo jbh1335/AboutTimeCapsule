@@ -2,6 +2,7 @@ package com.timecapsule.capsuleservice.controller;
 
 import com.timecapsule.capsuleservice.api.request.AroundCapsuleReq;
 import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
+import com.timecapsule.capsuleservice.api.request.MemoryModifyReq;
 import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
 import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.RangeType;
@@ -72,6 +73,12 @@ public class CapsuleController {
     @PatchMapping("/memory/delete/{memoryId}")
     public CommonRes deleteMemory(@PathVariable("memoryId") int memoryId) {
         return capsuleService.deleteMemory(memoryId);
+    }
+
+    @PatchMapping("/memory/modify")
+    public CommonRes modifyMemory(@RequestPart(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
+                                  @RequestPart MemoryModifyReq memoryModifyReq) {
+        return capsuleService.modifyMemory(multipartFileList, memoryModifyReq);
     }
 
 }

@@ -51,4 +51,11 @@ public class Memory extends BaseEntity {
         memory.setDeleted(isDeleted);
         return memory;
     }
+    public static Memory of(Memory memory, String title, String content, String image) {
+        memory.setTitle(title);
+        memory.setContent(content);
+        memory.setImage(image);
+        return memory;
+    }
+
 }
