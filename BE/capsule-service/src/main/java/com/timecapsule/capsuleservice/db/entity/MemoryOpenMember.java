@@ -1,5 +1,6 @@
 package com.timecapsule.capsuleservice.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,11 @@ public class MemoryOpenMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memory_id")
     private Memory memory;
+
+    @Builder
+    public MemoryOpenMember(Capsule capsule, Member member, Memory memory) {
+        this.capsule = capsule;
+        this.member = member;
+        this.memory = memory;
+    }
 }

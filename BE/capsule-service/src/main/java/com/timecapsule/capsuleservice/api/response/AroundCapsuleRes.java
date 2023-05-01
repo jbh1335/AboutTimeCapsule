@@ -5,12 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class AroundCapsuleRes {
-//    private List<AroundCapsuleDto> aroundCapsuleDtoList;
-//    @Builder
-//    public AroundCapsuleRes(List<AroundCapsuleDto> aroundCapsuleDtoList) {
-//        this.aroundCapsuleDtoList = aroundCapsuleDtoList;
-//    }
-
     private int capsuleId;
     private String memberName;
     private String address;

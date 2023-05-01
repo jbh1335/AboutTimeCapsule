@@ -18,6 +18,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
     private final AwsS3Service awsS3Service;
+    private final DistanceService distanceService;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
@@ -261,8 +262,8 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
-    public SuccessRes<MemoryRes> getMemory(int capsuleId, int memberId) {
-        Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
+    public SuccessRes<MemoryRes> getMemory(MemoryReq memoryReq) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(memoryReq.getCapsuleId());
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
         List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
@@ -272,9 +273,36 @@ public class CapsuleServiceImpl implements CapsuleService {
             String[] imageUrl = memory.getImage().split("#");
             int commentCnt = commentRepository.findAllByMemoryId(memory.getId()).size();
 
-            boolean isOpen = memoryOpenMemberRepository.existsByMemoryIdAndMemberId(memory.getId(), memberId);
+            // 잠김 X, 내가 오픈한 적 있는 추억은 계속 오픈O 거리상관X -> isOpened = true, isLocked = false
+            // 잠김 X, 오픈한 적 없는데 거리가 가까우면 가능 오픈O -> isOpened = true, isLocked = false + memoryOpenMember에 추가
+            // 잠김 X, 오픈한 적 없는데 거리도 멀면 불가능 오픈X -> isOpened = false, isLocked = false
+            // 잠김 O, 그냥 불가능 isOpened = false, isLocked = true
+
+            boolean isOpened = memoryOpenMemberRepository.existsByMemoryIdAndMemberId(memory.getId(), memoryReq.getMemberId());
+            boolean isNowOpened = false;
             boolean isLocked = false;
             if(LocalDate.now().isBefore(memory.getOpenDate())) isLocked = true;
+            else {
+                if(isOpened) {
+                    isNowOpened = true;
+                } else {
+                    // 거리 계산
+                    double distance = distanceService.distance(memoryReq.getLatitude(), memoryReq.getLongitude(),
+                            capsule.getLatitude(), capsule.getLongitude(), "meter");
+                    if(distance <= 100) {
+                        isNowOpened = true;
+
+                        Optional<Member> oMember = memberRepository.findById(memoryReq.getMemberId());
+                        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+                        memoryOpenMemberRepository.save(MemoryOpenMember.builder()
+                                .capsule(capsule)
+                                .member(member)
+                                .memory(memory)
+                                .build());
+                    }
+                }
+            }
 
             memoryDetailDtoList.add(MemoryDetailDto.builder()
                     .memoryId(memory.getId())
@@ -286,7 +314,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .commentCnt(commentCnt)
                     .createdDate(memory.getCreatedDate().toLocalDate())
                     .isLocked(isLocked)
-                    .isOpened(isOpen)
+                    .isOpened(isNowOpened)
                     .build());
         }
 

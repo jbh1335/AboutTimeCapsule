@@ -61,10 +61,9 @@ public class CapsuleController {
         return capsuleService.getAroundCapsule(aroundCapsuleReq);
     }
 
-    @GetMapping("/memory/{capsuleId}/{memberId}")
-    public SuccessRes<MemoryRes> getMemory(@PathVariable("capsuleId") int capsuleId,
-                                           @PathVariable("memberId") int memberId) {
-        return capsuleService.getMemory(capsuleId, memberId);
+    @GetMapping("/memory")
+    public SuccessRes<MemoryRes> getMemory(@RequestBody MemoryReq memoryReq) {
+        return capsuleService.getMemory(memoryReq);
     }
 
     @PatchMapping("/memory/delete/{memoryId}")
@@ -92,4 +91,7 @@ public class CapsuleController {
     public SuccessRes<List<GroupMemberRes>> getGroupMember(@PathVariable("capsuleId") int capsuleId) {
         return capsuleService.getGroupMember(capsuleId);
     }
+
+//    @GetMapping("/capsuleDetail/{capsuleId}")
+//    public SuccessRes<CapsuleDetailRes> getCapsuleDetail()
 }
