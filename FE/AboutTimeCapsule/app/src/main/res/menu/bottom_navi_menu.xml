@@ -2,20 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/mainPageFragment"
+        android:id="@+id/mainPageMainFragment"
         android:title="@string/bottom_menu_home"
         android:icon="@drawable/homeimg"/>
     <item
-        android:id="@+id/mapFragment"
+        android:id="@+id/mapMainFragment"
         android:title="@string/bottom_menu_map"
         android:icon="@drawable/mapimg"/>
     <item
-        android:id="@+id/chatFragment"
+        android:id="@+id/chatMainFragment"
         android:title="@string/bottom_menu_chat"
         android:icon="@drawable/chatimg"
         />
     <item
-        android:id="@+id/myPageFragment"
+        android:id="@+id/myPageMainFragment"
         android:title="@string/bottom_menu_mypage"
         android:icon="@drawable/mypageimg"/>
 

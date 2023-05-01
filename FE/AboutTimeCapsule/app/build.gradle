@@ -5,8 +5,10 @@ plugins {
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 def kakao_Native_App_Key = properties.getProperty('kakao.native.app.key')
-def kakao_redirect_uri = properties.getProperty('kakao.redirect.uri')
+def kakao_redirect_uri = properties.getProperty('kakao_redirect_uri')
+
 android {
     namespace 'com.aboutcapsule.android'
     compileSdk 33
@@ -29,16 +31,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '11'
     }
-    viewBinding{
-        enabled true
+
+    dataBinding {
+        enabled = true
     }
+
 }
 
 dependencies {
@@ -50,6 +56,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
     // 카카오 로그인 모듈
     implementation "com.kakao.sdk:v2-user:2.13.0"
 
@@ -57,7 +64,17 @@ dependencies {
     def retrofitVersion ='2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+
     //    이미지 로드 편리하게 사용하기
     implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+    //    카카오 지도 세팅
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('libs/libDaumMapAndroid.jar')
+
+    // jetpack navigation
+    def nav_version="2.5.3"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
 }
