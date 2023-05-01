@@ -17,7 +17,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "NATIVE_APP_KEY", "\"${kakao_Native_App_Key}\""
+        buildConfigField "String", "kakao_Native_App_Key", "\"${kakao_Native_App_Key}\""
         manifestPlaceholders = [kakao_redirect_uri: kakao_redirect_uri]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -36,8 +36,8 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
-    viewBinding{
-        enabled true
+    dataBinding{
+        enabled = true
     }
 }
 
