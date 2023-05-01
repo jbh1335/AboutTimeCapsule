@@ -69,4 +69,9 @@ public class CapsuleController {
         return capsuleService.getMemory(capsuleId, memberId);
     }
 
+    @PatchMapping("/memory/delete/{memoryId}")
+    public CommonRes deleteMemory(@PathVariable("memoryId") int memoryId) {
+        return capsuleService.deleteMemory(memoryId);
+    }
+
 }

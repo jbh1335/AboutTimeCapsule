@@ -291,4 +291,14 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         return new SuccessRes<>(true, "해당 캡슐의 추억을 조회합니다.", memoryRes);
     }
+
+    @Override
+    public CommonRes deleteMemory(int memoryId) {
+        Optional<Memory> oMemory = memoryRepository.findById(memoryId);
+        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+
+        memoryRepository.save(Memory.of(memory, true));
+
+        return new CommonRes(true, "추억 삭제를 완료했습니다.");
+    }
 }
