@@ -22,5 +22,6 @@ public interface CapsuleService {
     CommonRes registComment(CommentRegistReq commentRegistReq);
     SuccessRes<List<CommentRes>> getComment(int memoryId);
     SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId);
+    SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq);
 
 }

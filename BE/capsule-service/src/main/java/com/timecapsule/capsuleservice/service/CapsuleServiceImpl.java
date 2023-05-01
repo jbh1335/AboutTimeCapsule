@@ -411,4 +411,38 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         return new SuccessRes<>(true, "그룹에 해당되는 멤버 목록을 조회합니다.", groupMemberResList);
     }
+
+    @Override
+    public SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleDetailReq.getCapsuleId());
+        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+
+        Optional<Member> oMember = memberRepository.findById(capsuleDetailReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+
+        int memorySize = capsule.getMemoryList().size();
+        LocalDate openDate = null;
+        boolean isLocked = false;
+        int distance = 0;
+
+        if(memorySize > 0) {
+            openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
+            if(LocalDate.now().isBefore(openDate)) isLocked = true;
+            distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
+                    capsule.getLatitude(), capsule.getLongitude(), "meter");
+        }
+
+        // 남은 시간 구하기
+        CapsuleDetailRes capsuleDetailRes = CapsuleDetailRes.builder()
+                .nickname(member.getNickname())
+                .distance(distance)
+//                .leftTime()
+                .isLocked(isLocked)
+                .latitude(capsule.getLatitude())
+                .longitude(capsule.getLongitude())
+                .address(capsule.getAddress())
+                .build();
+        return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보 조회합니다.", capsuleDetailRes);
+    }
 }

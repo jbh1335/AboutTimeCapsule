@@ -92,6 +92,8 @@ public class CapsuleController {
         return capsuleService.getGroupMember(capsuleId);
     }
 
-//    @GetMapping("/capsuleDetail/{capsuleId}")
-//    public SuccessRes<CapsuleDetailRes> getCapsuleDetail()
+    @GetMapping("/capsuleDetail")
+    public SuccessRes<CapsuleDetailRes> getCapsuleDetail(@RequestBody CapsuleDetailReq capsuleDetailReq) {
+        return capsuleService.getCapsuleDetail(capsuleDetailReq);
+    }
 }
