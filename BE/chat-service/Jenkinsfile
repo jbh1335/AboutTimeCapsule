@@ -39,7 +39,7 @@ pipeline {
         }
         stage('Run New image') {
             steps {
-                sh 'docker run --name timecapsule-oauth -d -p 9003:9003 rink645/timecapsule-chat'
+                sh 'docker run --name timecapsule-chat -d -p 9004:9004 rink645/timecapsule-chat'
                 echo 'Run New member image'
             }
         }
