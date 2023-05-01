@@ -1,4 +1,4 @@
-package com.example.oauthservice.security.jwt;
+package com.example.oauthservice.security;
 
 import com.example.oauthservice.security.UserPrincipal;
 import io.jsonwebtoken.Claims;
@@ -12,10 +12,14 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
+// JWT 토큰을 생성, 파싱, 유효성 검사를 위한 클래스
 public class TokenProvider {
-
+    /* [토큰의 형태]
+    {
+	    Authorization : Bearer +토큰
+    }
+    * */
     public static final String TOKEN_TYPE = "Bearer ";
-
     private final String secretKey;
     private final long accessTokenExpirationTime;
     private final long refreshTokenExpirationTime;
@@ -44,7 +48,7 @@ public class TokenProvider {
         Date expiryDate = new Date(now.getTime() + accessTokenExpirationTimeInMilliSeconds);
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getEmail())
+                .setSubject(userPrincipal.getUserName())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -68,7 +72,7 @@ public class TokenProvider {
                 .getBody();
     }
 
-
+    // 유효한 토큰인지 확인
     public boolean validateToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);

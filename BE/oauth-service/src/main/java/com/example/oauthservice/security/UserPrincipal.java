@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.Map;
 
 @Getter
-//  Security 에서 인증 객체로 사용할 클래스
+// 인증된 유저를 저장
+// Security 에서 인증 객체로 사용할 클래스
+// OAuth2.0 으로 로그인 할 시 OAuth2User에서 해당 유저의 정보들을 획득
 public class UserPrincipal implements OAuth2User {
     private Member member;
 
@@ -39,6 +41,7 @@ public class UserPrincipal implements OAuth2User {
 
 
     @Override
+    // 서버에서 access token 을 얻은 다음 이 token 으로 Provider한테 사용자 정보를 요청하면 attributes로 응답됨
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(RoleType.ADMIM.toString()));
     }
@@ -49,7 +52,7 @@ public class UserPrincipal implements OAuth2User {
     }
 
 
-    public String getEmail() {
+    public String getUserName() {
         return member.getEmail();
     }
 }

@@ -41,14 +41,14 @@ spring:
         globally_quoted_identifiers: true
         format_sql: true
         check_nullability: true
+  profiles:
+    include: oauth
 
 logging.level:
   org.hibernate.SQL: debug
 
 jwt:
-  secret: ENC(A8+SVnn87vjKG/4udGeW0wpGZaYPay993ScsasGAMtK/M9HezBDAPWA5aQOL2pCoYFomu96hGsaFaZMUHKKeI94aJgfZw3kboui4OvS+2Bckcxt7eaDotjoG9OzQ0LKH0pl+b+sbCFHGcND49/KEXg==)
-  refresh-token-validity-in-seconds: 1209600 # 14일
-  access-token-validity-in-seconds: 43200 # 12시간
+  secret-key: ENC(A8+SVnn87vjKG/4udGeW0wpGZaYPay993ScsasGAMtK/M9HezBDAPWA5aQOL2pCoYFomu96hGsaFaZMUHKKeI94aJgfZw3kboui4OvS+2Bckcxt7eaDotjoG9OzQ0LKH0pl+b+sbCFHGcND49/KEXg==)
+  refresh-expiration-time: 1209600 # 14일
+  access-expiration-time: 43200 # 12시간
 
-profiles:
-  include: oauth
