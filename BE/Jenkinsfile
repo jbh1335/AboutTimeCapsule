@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER = 'sudo docker'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                checkout scm
+                echo 'Checkout Scm'
+            }
+        }
+
+        stage('Build image') {
+            stage('build-member') {
+                    steps {
+                        sh 'ls -al'
+                        dir('BE/member-service') {
+                            sh 'ls -al'
+                            sh 'chmod +x ./gradlew'
+                            sh './gradlew build'
+                            sh 'docker build -t rink645/timecapsule-member .'
+                        }
+                        echo 'Build timecapsule-member image...'
+                    }
+            }
+        }
+
+        stage('Remove Previous image') {
+            stage('remove-member') {
+                    steps {
+                        script {
+                            try {
+                            sh 'docker stop timecapsule-member'
+                            sh 'docker rm timecapsule-member'
+                            } catch (e) {
+                            echo 'fail to stop and remove container'
+                            }
+                        }
+                    }
+            }
+        }
+        stage('Run New image') {
+            stage('run-member') {
+                    steps {
+                        sh 'docker run --name timecapsule-member -d -p 9001:9001 rink645/timecapsule-member'
+                        echo 'Run New member image'
+                    }
+            }
+        }
+    }
+}
