@@ -213,8 +213,13 @@ public class CapsuleServiceImpl implements CapsuleService {
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
         for(Memory memory : capsule.getMemoryList()) {
+//            for(Comment comment : memory.getCommentList()) {
+//                commentRepository.save(Comment.of(comment, true));
+//            }
+            memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
             memoryRepository.save(Memory.of(memory, true));
         }
+
         capsuleRepository.save(Capsule.of(capsule, true));
 
         return new CommonRes(true, "캡슐 삭제를 완료했습니다.");
@@ -305,6 +310,10 @@ public class CapsuleServiceImpl implements CapsuleService {
         Optional<Memory> oMemory = memoryRepository.findById(memoryId);
         Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
 
+        memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
+//        for(Comment comment : memory.getCommentList()) {
+//            commentRepository.save(Comment.of(comment, true));
+//        }
         memoryRepository.save(Memory.of(memory, true));
 
         return new CommonRes(true, "추억 삭제를 완료했습니다.");

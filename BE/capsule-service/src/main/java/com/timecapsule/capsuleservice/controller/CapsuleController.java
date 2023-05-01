@@ -81,4 +81,6 @@ public class CapsuleController {
         return capsuleService.modifyMemory(multipartFileList, memoryModifyReq);
     }
 
+
+
 }
