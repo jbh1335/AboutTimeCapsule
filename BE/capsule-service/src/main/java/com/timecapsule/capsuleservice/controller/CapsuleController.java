@@ -1,9 +1,6 @@
 package com.timecapsule.capsuleservice.controller;
 
-import com.timecapsule.capsuleservice.api.request.AroundCapsuleReq;
-import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
-import com.timecapsule.capsuleservice.api.request.MemoryModifyReq;
-import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
+import com.timecapsule.capsuleservice.api.request.*;
 import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.RangeType;
 import com.timecapsule.capsuleservice.service.CapsuleService;
@@ -81,6 +78,9 @@ public class CapsuleController {
         return capsuleService.modifyMemory(multipartFileList, memoryModifyReq);
     }
 
-
+    @PostMapping("/memory/comment")
+    public CommonRes registComment(@RequestBody CommentRegistReq commentRegistReq) {
+        return capsuleService.registComment(commentRegistReq);
+    }
 
 }

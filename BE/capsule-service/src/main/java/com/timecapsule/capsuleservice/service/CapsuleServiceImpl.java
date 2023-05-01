@@ -1,9 +1,6 @@
 package com.timecapsule.capsuleservice.service;
 
-import com.timecapsule.capsuleservice.api.request.AroundCapsuleReq;
-import com.timecapsule.capsuleservice.api.request.CapsuleRegistReq;
-import com.timecapsule.capsuleservice.api.request.MemoryModifyReq;
-import com.timecapsule.capsuleservice.api.request.MemoryRegistReq;
+import com.timecapsule.capsuleservice.api.request.*;
 import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.*;
 import com.timecapsule.capsuleservice.db.repository.*;
@@ -213,9 +210,6 @@ public class CapsuleServiceImpl implements CapsuleService {
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
         for(Memory memory : capsule.getMemoryList()) {
-//            for(Comment comment : memory.getCommentList()) {
-//                commentRepository.save(Comment.of(comment, true));
-//            }
             memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
             memoryRepository.save(Memory.of(memory, true));
         }
@@ -311,9 +305,6 @@ public class CapsuleServiceImpl implements CapsuleService {
         Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
 
         memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
-//        for(Comment comment : memory.getCommentList()) {
-//            commentRepository.save(Comment.of(comment, true));
-//        }
         memoryRepository.save(Memory.of(memory, true));
 
         return new CommonRes(true, "추억 삭제를 완료했습니다.");
@@ -327,8 +318,25 @@ public class CapsuleServiceImpl implements CapsuleService {
         String image = memory.getImage();
         if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
 
-
         memoryRepository.save(Memory.of(memory, memoryModifyReq.getTitle(), memoryModifyReq.getContent(), image));
         return new CommonRes(true, "추억 수정을 완료했습니다.");
+    }
+
+    @Override
+    public CommonRes registComment(CommentRegistReq commentRegistReq) {
+        Optional<Member> oMember = memberRepository.findById(commentRegistReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        Optional<Memory> oMemory = memoryRepository.findById(commentRegistReq.getMemoryId());
+        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+
+        commentRepository.save(Comment.builder()
+                .member(member)
+                .memory(memory)
+                .content(commentRegistReq.getContent())
+                .isDeleted(false)
+                .build());
+
+        return new CommonRes(true, "댓글 등록을 완료했습니다.");
     }
 }
