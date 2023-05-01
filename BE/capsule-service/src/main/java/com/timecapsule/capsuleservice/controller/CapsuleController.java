@@ -83,6 +83,11 @@ public class CapsuleController {
         return capsuleService.registComment(commentRegistReq);
     }
 
+    @GetMapping("/memory/comment/{memoryId}")
+    public SuccessRes<List<CommentRes>> getComment(@PathVariable("memoryId") int memoryId) {
+        return capsuleService.getComment(memoryId);
+    }
+
     @GetMapping("/group/{capsuleId}")
     public SuccessRes<List<GroupMemberRes>> getGroupMember(@PathVariable("capsuleId") int capsuleId) {
         return capsuleService.getGroupMember(capsuleId);

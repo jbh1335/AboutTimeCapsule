@@ -20,6 +20,7 @@ public interface CapsuleService {
     CommonRes deleteMemory(int memoryId);
     CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq);
     CommonRes registComment(CommentRegistReq commentRegistReq);
+    SuccessRes<List<CommentRes>> getComment(int memoryId);
     SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId);
 
 }

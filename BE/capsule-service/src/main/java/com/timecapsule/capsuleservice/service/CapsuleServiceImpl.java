@@ -340,6 +340,30 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
+    public SuccessRes<List<CommentRes>> getComment(int memoryId) {
+        Optional<Memory> oMemory = memoryRepository.findById(memoryId);
+        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+
+        List<CommentRes> commentResList = new ArrayList<>();
+        for(Comment comment : memory.getCommentList()) {
+            if(comment.isDeleted()) continue;
+            Member member = comment.getMember();
+
+            System.out.println("작성일: " + comment.getCreatedDate());
+            commentResList.add(CommentRes.builder()
+                    .commentId(comment.getId())
+                    .memberId(member.getId())
+                    .nickname(member.getNickname())
+                    .profileImageUrl(member.getProfileImageUrl())
+                    .content(comment.getContent())
+                    .createdDate(comment.getCreatedDate())
+                    .build());
+        }
+
+        return new SuccessRes<>(true, "댓글 목록을 조회합니다.", commentResList);
+    }
+
+    @Override
     public SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
