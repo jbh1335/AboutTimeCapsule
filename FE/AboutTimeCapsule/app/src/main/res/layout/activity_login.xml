@@ -13,7 +13,7 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             app:srcCompat="@drawable/login_image" />
 
         <RelativeLayout
@@ -25,34 +25,34 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="350px"
+                android:layout_marginTop="140dp"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="15px"
+                    android:layout_marginRight="8dp"
                     android:fontFamily="@font/gugi_regular"
                     android:text="어바웃"
                     android:textColor="#E6494B"
-                    android:textSize="128px" />
+                    android:textSize="48dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/gugi_regular"
                     android:text="타임캡슐"
-                    android:textSize="128px" />
+                    android:textSize="48dp" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/googleLoginBtn"
+                android:id="@+id/naverLoginBtn"
                 android:layout_width="870px"
                 android:layout_height="180px"
                 android:layout_above="@+id/kakaoLoginBtnLayout"
                 android:layout_marginBottom="20dp"
-                android:background="@color/white"
+                android:background="#00C73C"
                 android:elevation="10dp"
                 android:gravity="center_horizontal"
                 android:outlineAmbientShadowColor="@color/black"
@@ -61,20 +61,21 @@
                 android:paddingRight="150px">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="90px"
+                    android:layout_height="90px"
                     android:layout_gravity="center"
                     android:layout_marginLeft="25dp"
                     android:layout_weight="1"
-                    android:src="@drawable/google_login_symbol" />
+                    android:src="@drawable/naver_logo" />
 
                 <TextView
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="10px"
+                    android:layout_marginTop="17px"
                     android:layout_weight="4"
                     android:fontFamily="@font/noto_sans_kr_medium"
-                    android:text="Google 로그인"
+                    android:text="네이버 로그인"
                     android:textSize="20dp"
                     android:textStyle="bold" />
             </LinearLayout>
