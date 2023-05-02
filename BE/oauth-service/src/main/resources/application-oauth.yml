@@ -8,14 +8,14 @@ spring:
             clientSecret: ENC(0k+CXahE0UeIMpilk9feCzkzmczvVvfeu1YxLAHxPocOoZ909y/pKRHDDW+OveIWFgRXNyHPuSA=)
             clientAuthenticationMethod: post
             authorizationGrantType: authorization_code
-            redirectUri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: "http://localhost:8080/login/oauth2/code/naver"
             scope:
               - email
               - profile_image
             clientName: naver
           kakao:
             client-id: ENC(1mu2EhYt4Uz895B00Wq1GrHjzx95xXBiu4BJx8A9IABaLD5b+bcZl8zQG9K7WdMB)
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope:

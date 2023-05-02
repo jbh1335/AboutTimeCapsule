@@ -1,4 +1,4 @@
-package com.timecapsule.oauthservice.service;
+package com.timecapsule.oauthservice.security;
 
 import com.timecapsule.oauthservice.db.entity.Member;
 import com.timecapsule.oauthservice.db.repository.MemberRepository;

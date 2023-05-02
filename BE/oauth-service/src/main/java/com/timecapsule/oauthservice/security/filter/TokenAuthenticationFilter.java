@@ -38,11 +38,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            String jwt = getJwtFromRequest(request);
+            String jwt = getJwtFromRequest(request); // Request Header 에서 토큰 정보 추출
 
-            if (isValidToken(jwt)) {
-                String email = tokenProvider.getUserEmailFromToken(jwt);
-                Member user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+            if (isValidToken(jwt)) { // 토큰이 유효할 경우
+                String oauthId = tokenProvider.getOauthIdFromToken(jwt);
+                Member user = userRepository.findByOauthId(oauthId).orElseThrow(() -> new UserNotFoundException());
                 UserPrincipal userPrincipal = UserPrincipal.from(user);
 
                 UsernamePasswordAuthenticationToken authentication =
@@ -50,10 +50,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication); // Authentication 객체를 가지고 와서 SecurityContext 에 저장
             }
         } catch (RedisConnectionFailureException e) {
-            throw new RedisConnectionFailureException("redis 커넥션에 실패했습니다.");
+            throw new RedisConnectionFailureException("Redis 커넥션 실패");
         } catch(Exception e){
             throw new TokenAuthenticationFilterException();
         }
@@ -62,7 +62,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     }
 
-    private boolean isValidToken(String jwt) {
+    private boolean isValidToken(String jwt) { // validateToken 으로 토큰 유효성 검사 & 로그아웃 여부 검사
         return StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)
                 && !tokenRepository.existsLogoutAccessTokenById(jwt) && !tokenRepository.existsLogoutRefreshTokenById(jwt);
 
