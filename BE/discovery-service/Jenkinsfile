@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER = 'sudo docker'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                checkout scm
+                echo 'Checkout Scm'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'ls -al'
+                dir('BE/discovery-service') {
+                    sh 'ls -al'
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew build'
+                    sh 'docker build -t rink645/timecapsule-discovery .'
+                }
+                echo 'Build timecapsule-discovery image...'
+            }
+        }
+
+        stage('Remove Previous image') {
+            steps {
+                script {
+                    try {
+                        sh 'docker stop timecapsule-discovery'
+                        sh 'docker rm timecapsule-discovery'
+                    } catch (e) {
+                        echo 'fail to stop and remove container'
+                    }
+                }
+            }
+        }
+        stage('Run New image') {
+            steps {
+                sh 'docker run --name timecapsule-chat -d -p 9004:9004 rink645/timecapsule-discovery'
+                echo 'Run New member image'
+            }
+        }
+    }
+}
