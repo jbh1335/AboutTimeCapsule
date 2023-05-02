@@ -1,17 +1,14 @@
 package com.timecapsule.capsuleservice.api.request;
 
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 @Getter
 public class MemoryRegistReq {
     private int memberId;
     private int capsuleId;
     private String title;
-    private List<MultipartFile> imageList;
     private String content;
-    private Date openDate;
+    private LocalDate openDate;
 }
