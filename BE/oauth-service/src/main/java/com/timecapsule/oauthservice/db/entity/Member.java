@@ -12,8 +12,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member extends BaseEntity{
-    @Column(length = 64)
-    private String name;
     @Column(length = 64, unique = true)
     private String nickname;
     @Column(length = 64)
@@ -21,7 +19,8 @@ public class Member extends BaseEntity{
     @Column(length = 255)
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
+    private ProviderType providerType; // 요청이 들어온 서드 파티 앱
+    private String oauthId; // 서드 파티 앱의 PK
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
     @OneToMany(mappedBy = "fromMember")

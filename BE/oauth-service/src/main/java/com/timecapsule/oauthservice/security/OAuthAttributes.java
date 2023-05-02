@@ -3,6 +3,7 @@ package com.timecapsule.oauthservice.security;
 import com.timecapsule.oauthservice.db.entity.Member;
 import com.timecapsule.oauthservice.db.entity.ProviderType;
 import com.timecapsule.oauthservice.db.entity.RoleType;
+import com.timecapsule.oauthservice.exception.NotSupportRegistrationIdException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class OAuthAttributes {
 
     private Map<String,Object> attributes;
     private String nameAttributeKey;
-    private String name;
+    private String oauthId;
     private String email;
     private String profileImageUrl;
     private RoleType roleType;
@@ -29,12 +30,11 @@ public class OAuthAttributes {
 
         switch (registrationId){
             case "naver":
-                return ofNaver("id",attributes);
+                return ofNaver(userNameAttributeName,attributes);
             case "kakao":
-                return ofKakao("id",attributes);
+                return ofKakao(userNameAttributeName,attributes);
             default:
-                return null;
-//                throw new NotSupportRegistrationIdException();
+                throw new NotSupportRegistrationIdException();
         }
     }
 
@@ -47,6 +47,8 @@ public class OAuthAttributes {
                 .attributes(response)
                 .nameAttributeKey(userNameAttributeName)
                 .providerType(ProviderType.NAVER)
+                .roleType(RoleType.USER)
+                .oauthId((String) response.get(userNameAttributeName))
                 .build();
     }
 
@@ -60,15 +62,17 @@ public class OAuthAttributes {
                 .attributes(account)
                 .nameAttributeKey(userNameAttributeName)
                 .providerType(ProviderType.KAKAO)
+                .roleType(RoleType.USER)
+                .oauthId((String) account.get(userNameAttributeName))
                 .build();
     }
 
     public Member toMemberEntity(){
         return Member.builder()
-                .name(name)
                 .email(email)
+                .oauthId(oauthId)
                 .profileImageUrl(profileImageUrl)
-                .roleType(roleType)
+                .roleType(roleType.USER)
                 .providerType(providerType)
                 .build();
     }

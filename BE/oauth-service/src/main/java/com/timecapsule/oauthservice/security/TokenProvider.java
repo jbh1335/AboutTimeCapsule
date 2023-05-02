@@ -40,35 +40,35 @@ public class TokenProvider {
         return createToken(authentication, refreshTokenExpirationTime);
     }
 
-    private String createToken(Authentication authentication, long accessTokenExpirationTimeInMilliSeconds) {
+    private String createToken(Authentication authentication, long tokenExpirationTime) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + accessTokenExpirationTimeInMilliSeconds);
+        Date expiryDate = new Date(now.getTime() + tokenExpirationTime);
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUserName())
+                .setSubject(userPrincipal.getOauthId())
                 .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .setExpiration(expiryDate) // 토큰의 유효 기간 설정
+                .signWith(SignatureAlgorithm.HS256, secretKey) // signWith(암호화 알고리즘, signature)을 통하여 암호화 방식 설정
                 .compact();
     }
 
-    public String getUserEmailFromToken(String token) {
+    public String getOauthIdFromToken(String token) {
         Claims claims = getClaims(token);
         return claims.getSubject();
     }
 
-    public long getRemainingMilliSecondsFromToken(String token){
+    public long getRemainingTimeFromToken(String token){
         Date expiration = getClaims(token).getExpiration();
         return expiration.getTime() - (new Date()).getTime();
     }
 
-    private Claims getClaims(String token) {
+    private Claims getClaims(String token) { // JWT 토큰을 복호화하여 Token에 담긴 Claim을 반환
         return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
-                .getBody();
+                .getBody(); // 복호화 후의 디코딩한 payload에 접근
     }
 
     // 유효한 토큰인지 확인

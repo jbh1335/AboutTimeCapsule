@@ -5,7 +5,7 @@ import com.timecapsule.oauthservice.security.filter.TokenAuthenticationFilter;
 import com.timecapsule.oauthservice.security.handler.LoginSuccessHandler;
 import com.timecapsule.oauthservice.security.handler.RestAccessDeniedHandler;
 import com.timecapsule.oauthservice.security.handler.RestAuthenticationEntryPoint;
-import com.timecapsule.oauthservice.service.CustomOauth2Service;
+import com.timecapsule.oauthservice.security.CustomOauth2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -63,7 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // '/oauth2/authorization/소셜명'인 url 기본값 변경
                 // oauth 요청 url -> '/api/oauth2/authorization/소셜명'
-                .and().authorizationEndpoint().baseUri("/api/oauth2/authorization");
+                .and().authorizationEndpoint().baseUri("/oauth2/authorization") // 소셜 로그인 Url
+                .and().redirectionEndpoint().baseUri("/oauth2/callback/*"); // 소셜 인증 후 Redirect Url
 
         // 지정된 필터 앞에 커스텀 필터를 추가
         // UsernamePasswordAuthenticationFilter보다 앞에 token 인증 관련된 로직을 적용시켜서, 인증 완료후 해당 객체에 권한을 부여해야 함

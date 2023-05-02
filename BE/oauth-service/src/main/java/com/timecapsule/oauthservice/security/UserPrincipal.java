@@ -43,16 +43,16 @@ public class UserPrincipal implements OAuth2User {
     @Override
     // 서버에서 access token 을 얻은 다음 이 token 으로 Provider한테 사용자 정보를 요청하면 attributes로 응답됨
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(RoleType.ADMIM.toString()));
+        return Collections.singletonList(new SimpleGrantedAuthority(RoleType.USER.toString()));
     }
 
     @Override
     public String getName() {
-        return member.getName();
+        return member.getNickname();
     }
 
 
-    public String getUserName() {
-        return member.getEmail();
+    public String getOauthId() {
+        return member.getOauthId();
     }
 }
