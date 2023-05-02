@@ -1,13 +1,9 @@
 server:
-  port: 8080
+  port: 9002
   servlet:
     encoding:
       charset: UTF-8
       force: true
-
-jasypt:
-  encryptor:
-    bean: jasyptStringEncryptor
 
 eureka:
   client:
@@ -16,7 +12,7 @@ eureka:
 #    register-with-eureka: false
 #    fetch-registry: false
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://k8b302.p.ssafy.io/eureka
 
 spring:
   application:
@@ -25,10 +21,10 @@ spring:
     host: localhost
     port: 6379
   datasource:
-    url: ENC(BU50CvNPYgyshPj6V3T/OqFjmez5EFNgqtblYzk137wx6DDymoYuvSNq1pNzVKZkvH52rpD/9UVfSofRvARWZAejF+nwvp4ftn5RwbjnkBt74V7y679lVfg/rpkW2xRord3UnH3N8bsGko3KolvMOWAZXMhWOCLjV/4Zr6rkZ70dSR5J5cL9ukKJzEKL1u8PWlFmts0UlCddAWuZ9+LBWX09+W6j373NfUY8z3KqZfeOs8nW2JeK+jrXxgQlX0JJ)
-    username: ENC(chHVD8hW6newr5waY+NEMw==)
+    url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-    password: ENC(9tKKLlMBfV+M5N+GtogoPxaPo9yinje+)
+    password: b302capsule
   jpa:
     open-in-view: false
     generate-ddl: true
@@ -48,7 +44,7 @@ logging.level:
   org.hibernate.SQL: debug
 
 jwt:
-  secret-key: ENC(A8+SVnn87vjKG/4udGeW0wpGZaYPay993ScsasGAMtK/M9HezBDAPWA5aQOL2pCoYFomu96hGsaFaZMUHKKeI94aJgfZw3kboui4OvS+2Bckcxt7eaDotjoG9OzQ0LKH0pl+b+sbCFHGcND49/KEXg==)
+  secret-key: YWJvdXQtdGltZS1jYXBzdWxlLWFib3V0LXRpbWUtY2Fwc3VsZS1hYm91dC10aW1lLWNhcHN1bGUtYWJvdXQtdGltZS1jYXBzdWxl
   refresh-expiration-time: 1209600 # 14일
   access-expiration-time: 43200 # 12시간
 

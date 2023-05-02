@@ -4,24 +4,24 @@ spring:
       client:
         registration:
           naver:
-            clientId: ENC(+sTIHmL7gkN4qC0UoAzylD9AGewWlHD6nXeU3iWWD9Y=)
-            clientSecret: ENC(0k+CXahE0UeIMpilk9feCzkzmczvVvfeu1YxLAHxPocOoZ909y/pKRHDDW+OveIWFgRXNyHPuSA=)
+            clientId: _m8nkPSevg4N3fGEiDgq
+            clientSecret: CacOwjb4ma
             clientAuthenticationMethod: post
             authorizationGrantType: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/naver"
+            redirect-uri: "http://k8b302.p.ssafy.io/login/oauth2/code/naver"
             scope:
               - email
               - profile_image
             clientName: naver
           kakao:
-            client-id: ENC(1mu2EhYt4Uz895B00Wq1GrHjzx95xXBiu4BJx8A9IABaLD5b+bcZl8zQG9K7WdMB)
-            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+            client-id: 344aa8ae1b69c829e695e47c8a7beb1e
+            redirect-uri: "http://k8b302.p.ssafy.io/login/oauth2/code/kakao"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope:
               - profile_image
               - account_email
-            client-secret : ENC(GEVZcIdptJ4Sf1QEx0RQ7gwKGRg/ydVSLF1hZbQ7FqNIwlTsN0IG59yV3Ohe9RsD)
+            client-secret : EnB1DzXuZuP5WrcraVKtpbtixBaxXj0w
             client_name: kakao
         # Spring security에서 제공하는 oauth2-client 라이브러리에는 유명한 google, facebook, twitter 등 웹사이트에 대한 Provider들은 제공을 한다.
         # 하지만 우리나라에서만 한정적으로 사용하는 네이버나, 카카오 같은 서비스에 대한 정보들을 제공해주지 못한다.
