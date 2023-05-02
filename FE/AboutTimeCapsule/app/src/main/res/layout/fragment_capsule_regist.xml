@@ -20,42 +20,45 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"
             android:background="@color/white"
             android:text="지도가 올 위치" />
 
          <RadioGroup
              android:id="@+id/radiogruop_3type"
-             android:layout_marginTop="60dp"
+             android:layout_marginTop="30dp"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_marginLeft="180dp"
              android:orientation="horizontal"
              android:gravity="right">
 
-             <RadioButton
+             <androidx.appcompat.widget.AppCompatRadioButton
                  android:id="@+id/radio_3type_all"
                  android:layout_width="70dp"
-                 android:layout_height="wrap_content"
-                 android:textSize="8sp"
+                 android:layout_height="48dp"
                  android:fontFamily="@font/onemobile"
-                 android:text="전체 공개"/>
+                 android:buttonTint="@color/black"
+                 android:text="전체공개"
+                 android:textSize="8sp" />
 
-             <RadioButton
+             <androidx.appcompat.widget.AppCompatRadioButton
                  android:id="@+id/radio_3type_friend"
                  android:layout_width="70dp"
-                 android:layout_height="wrap_content"
+                 android:layout_height="48dp"
                  android:textSize="8sp"
                  android:fontFamily="@font/onemobile"
+                 android:buttonTint="@color/black"
                  android:text="친구만"/>
 
-             <RadioButton
+             <androidx.appcompat.widget.AppCompatRadioButton
                  android:id="@+id/radio_3type_mine"
                  android:layout_width="70dp"
-                 android:layout_height="wrap_content"
+                 android:layout_height="48dp"
                  android:textSize="8sp"
+                 android:buttonTint="@color/black"
                  android:fontFamily="@font/onemobile"
                  android:text="나만 보기"/>
 
@@ -64,8 +67,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:background="@drawable/bottom_rounded"
             >
 
@@ -75,25 +78,31 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="18dp"
                 android:text="제목" />
+
         <EditText
             android:id="@+id/capsule_regist_title"
-            android:layout_width="wrap_content"
+            android:layout_width="290dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="80dp"
             android:fontFamily="@font/onemobile"
             android:textSize="13sp"
             android:hint="제목을 작성해주세요"
+            android:background="@android:color/transparent"
             tools:text="제목올 공간"/>
         </FrameLayout>
-        
-        <Button
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/capsule_regist_registbtn"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="120dp"
-            android:backgroundTint="@color/btnColor"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="135dp"
             android:fontFamily="@font/onemobile"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:background="@drawable/btn_radius"
+            android:backgroundTint="@color/btnColor"
             android:text="캡슐 생성하기"/>
     </LinearLayout>
 
