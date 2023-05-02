@@ -1,6 +1,5 @@
 package com.timecapsule.capsuleservice.db.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,8 +28,10 @@ public class Member extends BaseEntity{
     @OneToMany(mappedBy = "member")
     private List<CapsuleMember> capsuleMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "member")
-    private List<CapsuleOpenMember> capsuleOpenMemberList = new ArrayList<>();
+    private List<MemoryOpenMember> memoryOpenMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "member")
     private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Memory> memoryList = new ArrayList<>();
 
 }

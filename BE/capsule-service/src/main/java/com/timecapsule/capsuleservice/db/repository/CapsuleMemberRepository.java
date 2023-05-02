@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CapsuleMemberRepository extends JpaRepository<CapsuleMember, Integer> {
+    boolean existsByCapsuleIdAndMemberId(int capsuleId, int memberId);
 }
