@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/defaultBackColor"
+        android:orientation="vertical"
+        tools:context=".views.capsule.ArticleRegistFragment">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:text="추억 생성"
+            android:textSize="23sp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/bottom_rounded">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="18dp"
+                android:text="제목" />
+
+            <TextView
+                android:id="@+id/article_regist_title"
+                android:layout_width="290dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="80dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/onemobile"
+                android:gravity="center_vertical"
+                tools:text="캡슐에서 작성한 제목 가져와서 넣기"
+                android:textSize="13sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="7dp"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_radius_skyblue" />
+
+                <ImageView
+                    android:id="@+id/galleryBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="45dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/gallery" />
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/selectedPhoto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_radius_skyblue" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/article_content"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/bottom_rounded"
+            android:fontFamily="@font/onemobile"
+            android:gravity="top"
+            android:hint="내용을 작성하세요"
+            android:padding="10dp"
+            android:textSize="12sp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/bottom_rounded"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/open_avail_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="90dp"
+                android:gravity="center"
+                android:text="2023년 6월 21일"
+                android:textColor="@color/btnColor"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text=" 부터 오픈 가능"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/article_regist_registbtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/btn_radius"
+            android:backgroundTint="@color/btnColor"
+            android:fontFamily="@font/onemobile"
+            android:text="추억 생성하기"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+</layout>

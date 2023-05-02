@@ -8,6 +8,7 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 
 def kakao_Native_App_Key = properties.getProperty('kakao.native.app.key')
 def kakao_redirect_uri = properties.getProperty('kakao.redirect.uri')
+
 def naver_client_id = properties.getProperty('naver.client.id')
 def naver_client_secret = properties.getProperty('naver.client.secret')
 
@@ -83,5 +84,8 @@ dependencies {
     def nav_version="2.5.3"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    // permission 편리하게 관리해주는 라이브러리
+    implementation "io.github.ParkSangGwon:tedpermission-normal:3.3.0"
 
 }
