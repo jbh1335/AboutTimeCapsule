@@ -23,5 +23,6 @@ public interface CapsuleService {
     SuccessRes<List<CommentRes>> getComment(int memoryId);
     SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId);
     SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq);
+    SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq);
 
 }

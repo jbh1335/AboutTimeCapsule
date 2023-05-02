@@ -454,6 +454,12 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .longitude(capsule.getLongitude())
                 .address(capsule.getAddress())
                 .build();
-        return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보 조회합니다.", capsuleDetailRes);
+        return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보를 조회합니다.", capsuleDetailRes);
+    }
+
+    @Override
+    public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
+
+        return null;
     }
 }
