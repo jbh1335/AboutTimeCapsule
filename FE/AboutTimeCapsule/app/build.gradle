@@ -7,7 +7,9 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 def kakao_Native_App_Key = properties.getProperty('kakao.native.app.key')
-def kakao_redirect_uri = properties.getProperty('kakao_redirect_uri')
+def kakao_redirect_uri = properties.getProperty('kakao.redirect.uri')
+def naver_client_id = properties.getProperty('naver.client.id')
+def naver_client_secret = properties.getProperty('naver.client.secret')
 
 android {
     namespace 'com.aboutcapsule.android'
@@ -19,7 +21,9 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "kakao_Native_App_Key", "\"${kakao_Native_App_Key}\""
+        buildConfigField "String", "KAKAO_APP_KEY", "\"${kakao_Native_App_Key}\""
+        buildConfigField "String", "NAVER_CLIENT_ID", "\"${naver_client_id}\""
+        buildConfigField "String", "NAVER_CLIENT_SECRET", "\"${naver_client_secret}\""
         manifestPlaceholders = [kakao_redirect_uri: kakao_redirect_uri]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -59,6 +63,9 @@ dependencies {
 
     // 카카오 로그인 모듈
     implementation "com.kakao.sdk:v2-user:2.13.0"
+
+    // 네이버 로그인 모듈
+    implementation 'com.navercorp.nid:oauth:5.5.0'
 
     //    레트로핏 사용
     def retrofitVersion ='2.9.0'
