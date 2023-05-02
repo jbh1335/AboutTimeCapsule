@@ -6,4 +6,5 @@
     <color name="circleBackColor">#CFE5FF</color>
     <color name="btnColor">#3B5BDB</color>
     <color name="skyblueBtnColor">#CFE5FF</color>
+    <color name="falseColor">#CC0000</color>
 </resources>
