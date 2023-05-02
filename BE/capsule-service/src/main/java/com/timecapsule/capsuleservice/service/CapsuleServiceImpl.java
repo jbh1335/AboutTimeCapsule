@@ -251,13 +251,13 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             if(!capsule.getRangeType().equals("ALL")) continue;
 
-            String memberName = capsule.getCapsuleMemberList().get(0).getMember().getName();
+            String memberNickname = capsule.getCapsuleMemberList().get(0).getMember().getNickname();
             int memberSize = capsule.getCapsuleMemberList().size() - 1;
-            if(memberSize > 1) memberName += (" 외 " + memberSize + "명");
+            if(memberSize >= 1) memberNickname += (" 외 " + memberSize + "명");
 
             aroundCapsuleResList.add(AroundCapsuleRes.builder()
                     .capsuleId(capsule.getId())
-                    .memberName(memberName)
+                    .memberNickname(memberNickname)
                     .address(capsule.getAddress())
                     .build());
         }
@@ -265,6 +265,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         return new SuccessRes<>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleResList);
     }
 
+    // 작성 및 수정 권한 추가하기
     @Override
     public SuccessRes<MemoryRes> getMemory(MemoryReq memoryReq) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(memoryReq.getCapsuleId());
@@ -418,15 +419,29 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
+        CapsuleDetailRes capsuleDetailRes = (CapsuleDetailRes) getDetail(capsuleDetailReq, "getCapsuleDetail");
+        return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보를 조회합니다.", capsuleDetailRes);
+    }
+
+    @Override
+    public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
+        MapCapsuleDetailRes mapCapsuleDetailRes = (MapCapsuleDetailRes) getDetail(capsuleDetailReq, "getMapCapsuleDetail");
+        return new SuccessRes<>(true, "지도에서 마커 클릭 시 캡슐의 상세 정보를 조회합니다.", mapCapsuleDetailRes);
+    }
+
+    private Object getDetail(CapsuleDetailReq capsuleDetailReq, String what) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleDetailReq.getCapsuleId());
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
-        Optional<Member> oMember = memberRepository.findById(capsuleDetailReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
         String leftTime = "";
-        boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), member.getId());
+        String memberNickname = capsule.getCapsuleMemberList().get(0).getMember().getNickname();
+        int memberSize = capsule.getCapsuleMemberList().size() - 1;
+        if(memberSize >= 1) memberNickname += (" 외 " + memberSize + "명");
+
         boolean isLocked = false;
+        boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
+        boolean isGroup = capsule.getCapsuleMemberList().size() > 0;
+
         int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
                 capsule.getLatitude(), capsule.getLongitude(), "meter");
 
@@ -445,21 +460,24 @@ public class CapsuleServiceImpl implements CapsuleService {
             }
         }
 
-        CapsuleDetailRes capsuleDetailRes = CapsuleDetailRes.builder()
-                .nickname(member.getNickname())
-                .distance(distance)
+        if(what.equals("getCapsuleDetail")) {
+            return CapsuleDetailRes.builder()
+                    .memberNickname(memberNickname)
+                    .distance(distance)
+                    .leftTime(leftTime)
+                    .isLocked(isLocked)
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
+                    .address(capsule.getAddress())
+                    .build();
+        }
+        return MapCapsuleDetailRes.builder()
+                .capsuleId(capsule.getId())
+                .memberNickname(memberNickname)
                 .leftTime(leftTime)
                 .isLocked(isLocked)
-                .latitude(capsule.getLatitude())
-                .longitude(capsule.getLongitude())
-                .address(capsule.getAddress())
+                .isGroup(isGroup)
+                .openDate(openDate)
                 .build();
-        return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보를 조회합니다.", capsuleDetailRes);
-    }
-
-    @Override
-    public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
-
-        return null;
     }
 }

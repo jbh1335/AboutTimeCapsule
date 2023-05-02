@@ -20,9 +20,9 @@ spring:
   datasource:
     # local
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
-#    username: ENC(mMTUeGQ08LXkmU5ehBclUQ==)
-#    password: ENC(wH6WFbwV0ZovBbUMJgt78A==)
+    #    url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    #    username: ENC(mMTUeGQ08LXkmU5ehBclUQ==)
+    #    password: ENC(wH6WFbwV0ZovBbUMJgt78A==)
 
     # server
     url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
