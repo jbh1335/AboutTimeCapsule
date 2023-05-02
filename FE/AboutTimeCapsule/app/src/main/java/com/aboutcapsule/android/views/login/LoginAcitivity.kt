@@ -1,10 +1,12 @@
 package com.aboutcapsule.android.views.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aboutcapsule.android.databinding.ActivityLoginBinding
+import com.aboutcapsule.android.views.MainActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -25,6 +27,11 @@ class LoginAcitivity : AppCompatActivity() {
             override fun onSuccess() {
                 val accesstoken = NaverIdLoginSDK.getAccessToken()
                 Log.i(successTag, "네이버로 로그인 성공 ${accesstoken}")
+                // 최초 로그인인지 최초로그인이 아닌지 판별해야함.
+                // 메인 액티비티로 전환
+                val intent = Intent(this@LoginAcitivity, MainActivity::class.java)
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                this@LoginAcitivity.finish()
             }
             override fun onFailure(httpStatus: Int, message: String) {
                 val errorCode = NaverIdLoginSDK.getLastErrorCode().code
@@ -47,9 +54,12 @@ class LoginAcitivity : AppCompatActivity() {
             } else if (token != null) {
                 UserApiClient.instance.me { user, error ->
 
+                    val intent = Intent(this@LoginAcitivity, MainActivity::class.java)
+                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                     Log.i(successTag, "카카오계정으로 로그인 성공 \n\n " +
                             "token: ${token.accessToken} \n\n " +
                             "me: ${user}")
+                    this@LoginAcitivity.finish()
 
                 }
             }
@@ -86,7 +96,8 @@ class LoginAcitivity : AppCompatActivity() {
         binding.naverLoginBtn.setOnClickListener {
             naverLogin()
         }
-
     }
+
+
 
 }

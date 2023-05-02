@@ -18,7 +18,6 @@ class NicknameSettingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_nickname_setting, container, false)
-
         return binding.root
     }
 
