@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9003
   servlet:
     encoding:
       charset: UTF-8
@@ -11,7 +11,7 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://k8b302.p.ssafy.io:8761/eureka
 
 spring:
   application:
@@ -20,16 +20,21 @@ spring:
   datasource:
     # local
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(V2sobPqMk9cphQxxnwrsZQrN8HOJrW6muaOXOCUUhMi32xwi/3ZOnhdyG3eDJC5WFnsRWE8Eg3lHZeVj2IY5hkTpolWSRo72Bq6enPin+eGE9V7dM4RIcP/kyXwngI4bIYtCDGxq9NCwkG6HnPU2MlecG8y7ptaB8STYStmXuDiJxJv+mCv2jJ4jIa9csNsxE3FQFH+GQ0feo9dCc2yiCKWKyDS0AmsPU2l+L+FmxddMJ0gYSLlujw==)
-    username: ENC(mMTUeGQ08LXkmU5ehBclUQ==)
-    password: ENC(wH6WFbwV0ZovBbUMJgt78A==)
+#    url: ENC(V2sobPqMk9cphQxxnwrsZQrN8HOJrW6muaOXOCUUhMi32xwi/3ZOnhdyG3eDJC5WFnsRWE8Eg3lHZeVj2IY5hkTpolWSRo72Bq6enPin+eGE9V7dM4RIcP/kyXwngI4bIYtCDGxq9NCwkG6HnPU2MlecG8y7ptaB8STYStmXuDiJxJv+mCv2jJ4jIa9csNsxE3FQFH+GQ0feo9dCc2yiCKWKyDS0AmsPU2l+L+FmxddMJ0gYSLlujw==)
+#    username: ENC(mMTUeGQ08LXkmU5ehBclUQ==)
+#    password: ENC(wH6WFbwV0ZovBbUMJgt78A==)
+
+    # server
+    url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    username: root
+    password: b302capsule
 
   jpa:
     open-in-view: false
     generate-ddl: true
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         enable_lazy_load_no_trans: true
@@ -49,3 +54,22 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA4FLIYWIS5EWVHTV5
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: abouttimecapsule
+    stack:
+      auto: false
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
