@@ -101,4 +101,9 @@ public class CapsuleController {
     public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(@RequestBody CapsuleDetailReq capsuleDetailReq) {
         return capsuleService.getMapCapsuleDetail(capsuleDetailReq);
     }
+
+    @GetMapping("/map")
+    public SuccessRes<List<MapRes>> getMapCapsule(@RequestBody CapsuleDetailReq capsuleDetailReq) {
+        return capsuleService.getMapCapsule(capsuleDetailReq);
+    }
 }

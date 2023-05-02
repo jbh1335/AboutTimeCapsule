@@ -24,5 +24,6 @@ public interface CapsuleService {
     SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId);
     SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq);
     SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq);
+    SuccessRes<List<MapRes>> getMapCapsule(CapsuleDetailReq capsuleDetailReq);
 
 }

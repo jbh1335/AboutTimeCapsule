@@ -292,7 +292,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                     isNowOpened = true;
                 } else {
                     // 거리 계산
-                    double distance = distanceService.distance(memoryReq.getLatitude(), memoryReq.getLongitude(),
+                    int distance = (int) distanceService.distance(memoryReq.getLatitude(), memoryReq.getLongitude(),
                             capsule.getLatitude(), capsule.getLongitude(), "meter");
                     if(distance <= 100) {
                         isNowOpened = true;
@@ -427,6 +427,43 @@ public class CapsuleServiceImpl implements CapsuleService {
     public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
         MapCapsuleDetailRes mapCapsuleDetailRes = (MapCapsuleDetailRes) getDetail(capsuleDetailReq, "getMapCapsuleDetail");
         return new SuccessRes<>(true, "지도에서 마커 클릭 시 캡슐의 상세 정보를 조회합니다.", mapCapsuleDetailRes);
+    }
+
+    @Override
+    public SuccessRes<List<MapRes>> getMapCapsule(CapsuleDetailReq capsuleDetailReq) {
+        List<MapRes> mapResList = new ArrayList<>();
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude());
+
+        for(Capsule capsule : aroundCapsuleList) {
+            if(capsule.isDeleted()) continue;
+
+            boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
+            if(!isMine && capsule.getRangeType().equals("PRIVATE")) continue;
+            
+            // 친구 공개 구현하기
+            boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
+            boolean isLocked = false;
+
+            int memorySize = capsule.getMemoryList().size();
+            LocalDate openDate = null;
+            if(memorySize > 0) {
+                openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
+                if(!isOpened && LocalDate.now().isBefore(openDate)) isLocked = true;
+            }
+
+
+            int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
+                    capsule.getLatitude(), capsule.getLongitude(), "meter");
+            boolean isAllowedDistance = (distance <= 100);
+
+            mapResList.add(MapRes.builder()
+                    .capsuleId(capsule.getId())
+                    .isLocked(isLocked)
+                    .isMine(isMine)
+                    .isAllowedDistance(isAllowedDistance)
+                    .build());
+        }
+        return new SuccessRes<>(true, "1km 이내에 있는 캡슐을 조회합니다.", mapResList);
     }
 
     private Object getDetail(CapsuleDetailReq capsuleDetailReq, String what) {
