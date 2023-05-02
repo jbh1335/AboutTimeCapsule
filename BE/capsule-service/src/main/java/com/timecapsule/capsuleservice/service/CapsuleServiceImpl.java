@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -61,6 +62,9 @@ public class CapsuleServiceImpl implements CapsuleService {
         String image = "";
         if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
 
+        boolean isLocked = true;
+        if(capsule.isGroup()) isLocked = false;
+
         Memory memory = Memory.builder()
                 .capsule(capsule)
                 .member(member)
@@ -68,7 +72,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .content(memoryRegistReq.getContent())
                 .image(image)
                 .isDeleted(false)
-                .isLocked(true)
+                .isLocked(isLocked)
                 .openDate(memoryRegistReq.getOpenDate())
                 .build();
 
@@ -92,15 +96,15 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             int capsuleId = capsule.getId();
             // 캡슐에 대한 열람 기록이 있는지 확인
-            boolean isExisted = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, memberId);
+            boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, memberId);
             boolean isLocked = false;
 
             int memorySize = capsule.getMemoryList().size();
             LocalDate openDate = null;
-            if(memorySize != 0) openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
+            if(memorySize > 0) openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
 
             // 미열람
-            if(!isExisted) {
+            if(!isOpened) {
                 // 잠김 O
                 if(memorySize > 0 && LocalDate.now().isBefore(openDate)) isLocked = true;
 
@@ -128,7 +132,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .capsuleId(capsuleId)
                     .latitude(capsule.getLatitude())
                     .longitude(capsule.getLongitude())
-                    .isOpened(isExisted)
+                    .isOpened(isOpened)
                     .isLocked(isLocked)
                     .build());
         }
@@ -175,7 +179,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             int memorySize = capsule.getMemoryList().size();
             LocalDate openDate = null;
-            if(memorySize != 0) openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
+            if(memorySize > 0) openDate = capsule.getMemoryList().get(0).getOpenDate();
 
             int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, memberId);
             boolean isAdded = false;
@@ -420,24 +424,31 @@ public class CapsuleServiceImpl implements CapsuleService {
         Optional<Member> oMember = memberRepository.findById(capsuleDetailReq.getMemberId());
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
+        String leftTime = "";
+        boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), member.getId());
+        boolean isLocked = false;
+        int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
+                capsule.getLatitude(), capsule.getLongitude(), "meter");
 
         int memorySize = capsule.getMemoryList().size();
         LocalDate openDate = null;
-        boolean isLocked = false;
-        int distance = 0;
 
         if(memorySize > 0) {
-            openDate = capsule.getMemoryList().get(memorySize-1).getOpenDate();
-            if(LocalDate.now().isBefore(openDate)) isLocked = true;
-            distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
-                    capsule.getLatitude(), capsule.getLongitude(), "meter");
+            openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
+            if(LocalDate.now().isBefore(openDate)) {
+                isLocked = true;
+                // 남은 시간 구하기
+                LocalDateTime openDateTime = openDate.atStartOfDay();
+                Duration duration = Duration.between(LocalDateTime.now(), openDateTime);
+
+                leftTime += duration.toDays() + "일 " + (duration.toHours() % 24) + "시간 " + (duration.toMinutes() % 60) + "분 남음";
+            }
         }
 
-        // 남은 시간 구하기
         CapsuleDetailRes capsuleDetailRes = CapsuleDetailRes.builder()
                 .nickname(member.getNickname())
                 .distance(distance)
-//                .leftTime()
+                .leftTime(leftTime)
                 .isLocked(isLocked)
                 .latitude(capsule.getLatitude())
                 .longitude(capsule.getLongitude())
