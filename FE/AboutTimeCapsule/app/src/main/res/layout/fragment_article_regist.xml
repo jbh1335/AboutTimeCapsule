@@ -32,26 +32,54 @@
                 android:layout_marginTop="18dp"
                 android:text="제목" />
 
-            <EditText
+            <TextView
                 android:id="@+id/article_regist_title"
                 android:layout_width="290dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="80dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/onemobile"
-                android:hint="제목을 작성해주세요"
+                android:gravity="center_vertical"
+                tools:text="캡슐에서 작성한 제목 가져와서 넣기"
                 android:textSize="13sp" />
         </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="120dp"
+            android:layout_marginTop="7dp"
             android:orientation="horizontal">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:background="@color/black"/>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_radius_skyblue" />
+
+                <ImageView
+                    android:id="@+id/galleryBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="45dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/gallery" />
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/selectedPhoto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_radius_skyblue" />
+
         </LinearLayout>
+
         <EditText
             android:id="@+id/article_content"
             android:layout_width="match_parent"
@@ -62,9 +90,9 @@
             android:background="@drawable/bottom_rounded"
             android:fontFamily="@font/onemobile"
             android:gravity="top"
-            android:textSize="12sp"
             android:hint="내용을 작성하세요"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:textSize="12sp" />
 
 
         <LinearLayout
@@ -80,33 +108,34 @@
                 android:id="@+id/open_avail_date"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="15sp"
                 android:layout_marginLeft="90dp"
+                android:gravity="center"
+                android:text="2023년 6월 21일"
                 android:textColor="@color/btnColor"
-                android:text="2023년 6월 21일" />
+                android:textSize="15sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textSize="15sp"
                 android:gravity="center_vertical"
-                android:text=" 부터 오픈 가능" />
+                android:text=" 부터 오픈 가능"
+                android:textSize="15sp" />
 
         </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/article_regist_registbtn"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
             android:layout_marginTop="20dp"
-            android:fontFamily="@font/onemobile"
-            android:textColor="@color/white"
-            android:textSize="18sp"
+            android:layout_marginRight="15dp"
             android:background="@drawable/btn_radius"
             android:backgroundTint="@color/btnColor"
-            android:text="추억 생성하기"/>
+            android:fontFamily="@font/onemobile"
+            android:text="추억 생성하기"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
     </LinearLayout>
 </layout>

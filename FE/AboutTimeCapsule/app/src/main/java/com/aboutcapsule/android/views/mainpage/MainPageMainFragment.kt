@@ -49,7 +49,7 @@ class MainPageMainFragment : Fragment() {
         binding.section2RecyclerView.adapter = section2adapter
         binding.section2RecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
+        
         //      TODO: 내 주변의 타임캡슐 요소 하나 클릭시 이동 필요한 데이터 가지고 넘어가기 ( 위,경도 시간,유저이름,거리,댓글수?  )
         //            val intent = Intent(this.context,이동할 장소 )
         section2adapter.setOnItemClickListner(object : Section2Adapter.OnItemClickListner {
