@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistFragment"
             app:destination="@id/capsuleRegistFragment" />
+        <action
+            android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistGroupFragment"
+            app:destination="@id/capsuleRegistGroupFragment" />
     </fragment>
 
     <fragment
@@ -44,4 +47,30 @@
         android:name="com.aboutcapsule.android.views.capsule.CapsuleRegistFragment"
         android:label="fragment_capsule_regist"
         tools:layout="@layout/fragment_capsule_regist"/>
+
+    <fragment
+        android:id="@+id/capsuleRegistGroupFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleRegistGroupFragment"
+        android:label="fragment_capsule_regist_group"
+        tools:layout="@layout/fragment_capsule_regist_group">
+        <action
+            android:id="@+id/action_capsuleRegistGroupFragment_to_capsuleFindFriendFragment"
+            app:destination="@id/capsuleFindFriendFragment" />
+        <action
+            android:id="@+id/action_capsuleRegistGroupFragment_to_articleRegistFragment"
+            app:destination="@id/articleRegistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/capsuleFindFriendFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleFindFriendFragment"
+        android:label="fragment_capsule_find_friend"
+        tools:layout="@layout/fragment_capsule_find_friend"/>
+
+    <fragment
+        android:id="@+id/articleRegistFragment"
+        android:name="com.aboutcapsule.android.views.capsule.ArticleRegistFragment"
+        android:label="fragment_article_regist"
+        tools:layout="@layout/fragment_article_regist"/>
+
 </navigation>
