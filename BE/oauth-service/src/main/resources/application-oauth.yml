@@ -8,14 +8,14 @@ spring:
             clientSecret: CacOwjb4ma
             clientAuthenticationMethod: post
             authorizationGrantType: authorization_code
-            redirect-uri: "http://k8b302.p.ssafy.io/login/oauth2/code/naver"
+            redirect-uri: "http://localhost:9002/login/oauth2/code/naver"
             scope:
               - email
               - profile_image
             clientName: naver
           kakao:
             client-id: 344aa8ae1b69c829e695e47c8a7beb1e
-            redirect-uri: "http://k8b302.p.ssafy.io/login/oauth2/code/kakao"
+            redirect-uri: "http://localhost:9002/login/oauth2/code/kakao"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope:
