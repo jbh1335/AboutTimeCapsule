@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        h 'docker stop timecapsule-capsule'
+                        sh 'docker stop timecapsule-capsule'
                         sh 'docker rm timecapsule-capsule'
                     } catch (e) {
                         echo 'fail to stop and remove container'
