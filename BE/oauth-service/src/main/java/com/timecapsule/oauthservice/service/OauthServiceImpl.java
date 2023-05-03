@@ -18,10 +18,10 @@ public class OauthServiceImpl implements OauthService{
     private final TokenProvider tokenProvider;
     private final TokenRepository tokenRepository;
 
+
     @Override
     // 로그아웃 요청된 Access Token과 Refresh Token을 블랙리스트로 저장
     // 이때 블랙리스트로 등록하는 Access Token과 Refresh Token의 유효시간을 요청시 받은 토큰의 남은 유효시간만큼 부여
-
     public void logout(String accessToken, String refreshToken) {
         saveLogoutAccessToken(accessToken);
         saveLogoutRefreshToken(refreshToken);

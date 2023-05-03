@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @Entity
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity{
     @Column(length = 64, unique = true)
     private String nickname;

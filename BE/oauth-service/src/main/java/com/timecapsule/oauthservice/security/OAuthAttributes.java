@@ -4,14 +4,13 @@ import com.timecapsule.oauthservice.db.entity.Member;
 import com.timecapsule.oauthservice.db.entity.ProviderType;
 import com.timecapsule.oauthservice.db.entity.RoleType;
 import com.timecapsule.oauthservice.exception.NotSupportRegistrationIdException;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.Map;
 
 @Getter
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class OAuthAttributes {
 

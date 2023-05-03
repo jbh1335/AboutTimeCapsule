@@ -2,6 +2,7 @@ package com.timecapsule.oauthservice.config;
 
 import com.timecapsule.oauthservice.security.filter.TokenAuthenticationErrorFilter;
 import com.timecapsule.oauthservice.security.filter.TokenAuthenticationFilter;
+import com.timecapsule.oauthservice.security.handler.LoginFailureHandler;
 import com.timecapsule.oauthservice.security.handler.LoginSuccessHandler;
 import com.timecapsule.oauthservice.security.handler.RestAccessDeniedHandler;
 import com.timecapsule.oauthservice.security.handler.RestAuthenticationEntryPoint;
@@ -21,6 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
     private final CustomOauth2Service customOauth2Service;
     private final TokenAuthenticationErrorFilter tokenAuthenticationErrorFilter;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
@@ -54,17 +56,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 소셜로그인 설정 사용
                 .and().oauth2Login()
 
-                // oauth2 로그인 성공시 호출할 handler 지정
-                .successHandler(loginSuccessHandler)
-
                 // oauth2 로그인 성공 후의 설정, Provider로부터 획득한 유저정보를 다룰 service class를 지정
                 // userInfoEndpoint().userService()가 먼저 실행되고, 그 이후에 successHandler()가 실행됨
                 .userInfoEndpoint().userService(customOauth2Service)
 
+                // oauth2 로그인 성공시 호출할 handler 지정
+                .and().successHandler(loginSuccessHandler)
+                .failureHandler(loginFailureHandler)
+
+
                 // '/oauth2/authorization/소셜명'인 url 기본값 변경
                 // oauth 요청 url -> '/api/oauth2/authorization/소셜명'
-                .and().authorizationEndpoint().baseUri("/oauth2/authorization") // 소셜 로그인 Url
-                .and().redirectionEndpoint().baseUri("/oauth2/callback/*"); // 소셜 인증 후 Redirect Url
+                .authorizationEndpoint().baseUri("/api/oauth2/authorization") // 소셜 로그인 Url
+                .and().redirectionEndpoint().baseUri("/api/oauth2/callback*"); // 소셜 인증 후 Redirect Url
 
         // 지정된 필터 앞에 커스텀 필터를 추가
         // UsernamePasswordAuthenticationFilter보다 앞에 token 인증 관련된 로직을 적용시켜서, 인증 완료후 해당 객체에 권한을 부여해야 함
