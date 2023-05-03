@@ -105,17 +105,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         // 친구 만들고 다시 테스트하기
         System.out.println("친구를 구하러 간다");
 
-        // 친구 목록
-        List<Member> friendList = new ArrayList<>();
-        member.getFromMemberList().forEach(friend -> {
-            if(friend.isAccepted()) friendList.add(friend.getToMember());
-        });
-
-        member.getToMemberList().forEach(friend -> {
-            if(friend.isAccepted()) friendList.add(friend.getFromMember());
-        });
-
-        for(Member myFriend : friendList) {
+        for(Member myFriend : friendList(member)) {
             System.out.println("내친구: " + myFriend.getId() + " 닉네임: " + myFriend.getNickname());
             CapsuleListRes newCapsuleList = getCapsuleList(memberId, myFriend, "friend", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
 
@@ -467,13 +457,13 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
-        CapsuleDetailRes capsuleDetailRes = (CapsuleDetailRes) getDetail(capsuleDetailReq, "getCapsuleDetail");
+        CapsuleDetailRes capsuleDetailRes = (CapsuleDetailRes) capsuleDetail(capsuleDetailReq, "getCapsuleDetail");
         return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보를 조회합니다.", capsuleDetailRes);
     }
 
     @Override
     public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
-        MapCapsuleDetailRes mapCapsuleDetailRes = (MapCapsuleDetailRes) getDetail(capsuleDetailReq, "getMapCapsuleDetail");
+        MapCapsuleDetailRes mapCapsuleDetailRes = (MapCapsuleDetailRes) capsuleDetail(capsuleDetailReq, "getMapCapsuleDetail");
         return new SuccessRes<>(true, "지도에서 마커 클릭 시 캡슐의 상세 정보를 조회합니다.", mapCapsuleDetailRes);
     }
 
@@ -530,7 +520,22 @@ public class CapsuleServiceImpl implements CapsuleService {
         return new SuccessRes<>(true, "나의 캡슐, 친구의 캡슐, 나의 방문 기록의 개수를 조회합니다.", capsuleCountRes);
     }
 
-    private Object getDetail(CapsuleDetailReq capsuleDetailReq, String what) {
+    @Override
+    public SuccessRes<List<FriendRes>> getFriendList(int memberId) {
+        Optional<Member> oMember = memberRepository.findById(memberId);
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        List<FriendRes> friendResList = new ArrayList<>();
+        friendList(member).forEach(friend -> friendResList.add(FriendRes.builder()
+                .memberId(friend.getId())
+                .nickname(friend.getNickname())
+                .profileImageUrl(friend.getProfileImageUrl())
+                .build()));
+
+        return new SuccessRes<>(true, "나의 친구 목록을 조회합니다.", friendResList);
+    }
+
+    private Object capsuleDetail(CapsuleDetailReq capsuleDetailReq, String what) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleDetailReq.getCapsuleId());
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
@@ -581,6 +586,19 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .isGroup(isGroup)
                 .openDate(openDate)
                 .build();
+    }
+
+    private List<Member> friendList(Member member) {
+        List<Member> friendList = new ArrayList<>();
+        member.getFromMemberList().forEach(friend -> {
+            if(friend.isAccepted()) friendList.add(friend.getToMember());
+        });
+
+        member.getToMemberList().forEach(friend -> {
+            if(friend.isAccepted()) friendList.add(friend.getFromMember());
+        });
+
+        return friendList;
     }
 
 }

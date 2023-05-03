@@ -26,4 +26,5 @@ public interface CapsuleService {
     SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq);
     SuccessRes<List<MapRes>> getMapCapsule(CapsuleDetailReq capsuleDetailReq);
     SuccessRes<CapsuleCountRes> getCapsuleCount(int memberId);
+    SuccessRes<List<FriendRes>> getFriendList(int memberId);
 }

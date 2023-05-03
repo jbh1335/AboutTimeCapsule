@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.ws.rs.Path;
 import java.util.List;
 
 //@Api(value = "캡슐 API", tags = {"Capsule"})
@@ -109,6 +110,11 @@ public class CapsuleController {
 
     @GetMapping("/main/{memberId}")
     public SuccessRes<CapsuleCountRes> getCapsuleCount(@PathVariable("memberId") int memberId) {
-        return  capsuleService.getCapsuleCount(memberId);
+        return capsuleService.getCapsuleCount(memberId);
+    }
+
+    @GetMapping("/friend/{memberId}")
+    public SuccessRes<List<FriendRes>> getFriendList(@PathVariable("memberId") int memberId) {
+        return capsuleService.getFriendList(memberId);
     }
 }
