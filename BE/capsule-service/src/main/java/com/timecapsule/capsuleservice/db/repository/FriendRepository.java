@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Integer> {
     boolean existsByIsAcceptedAndFromMemberIdAndToMemberId(boolean isAccepted, int fromMemberId, int toMemberId);
-    List<Friend> findAllByFromMemberIdOrToMemberIdAndIsAcceptedTrue(int memberId1, int memberId2);
+    List<Friend> findAllByIsAcceptedTrueAndFromMemberIdOrToMemberId(int memberId1, int memberId2);
 }
