@@ -118,6 +118,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         for(Member myFriend : friendList) {
             System.out.println("내친구: " + myFriend.getId() + " 닉네임: " + myFriend.getNickname());
             CapsuleListRes newCapsuleList = getCapsuleList(memberId, myFriend, "friend", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
+
             unopenedCapsuleDtoList = newCapsuleList.getUnopenedCapsuleDtoList();
             openedCapsuleDtoList = newCapsuleList.getOpenedCapsuleDtoList();
             mapInfoDtoList = newCapsuleList.getMapInfoDtoList();
@@ -516,8 +517,17 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<CapsuleCountRes> getCapsuleCount(int memberId) {
+        SuccessRes<CapsuleListRes> myCapsule = getMyCapsule(memberId);
+        SuccessRes<CapsuleListRes> friendCapsule = getFriendCapsule(memberId);
+        SuccessRes<OpenedCapsuleListRes> openCapsule = getOpenCapsule(memberId);
 
-        return null;
+        CapsuleCountRes capsuleCountRes = CapsuleCountRes.builder()
+                .myCapsuleCnt(myCapsule.getData().getMapInfoDtoList().size())
+                .friendCapsuleCnt(friendCapsule.getData().getMapInfoDtoList().size())
+                .openCapsuleCnt(openCapsule.getData().getMapInfoDtoList().size())
+                .build();
+
+        return new SuccessRes<>(true, "나의 캡슐, 친구의 캡슐, 나의 방문 기록의 개수를 조회합니다.", capsuleCountRes);
     }
 
     private Object getDetail(CapsuleDetailReq capsuleDetailReq, String what) {
@@ -572,4 +582,5 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .openDate(openDate)
                 .build();
     }
+
 }

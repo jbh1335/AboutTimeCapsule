@@ -9,4 +9,10 @@ public class CapsuleCountRes {
     private int friendCapsuleCnt;
     private int openCapsuleCnt;
 
+    @Builder
+    public CapsuleCountRes(int myCapsuleCnt, int friendCapsuleCnt, int openCapsuleCnt) {
+        this.myCapsuleCnt = myCapsuleCnt;
+        this.friendCapsuleCnt = friendCapsuleCnt;
+        this.openCapsuleCnt = openCapsuleCnt;
+    }
 }
