@@ -62,8 +62,8 @@ public class CapsuleServiceImpl implements CapsuleService {
         String image = "";
         if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
 
-        boolean isLocked = true;
-        if(capsule.isGroup()) isLocked = false;
+        boolean isLocked = false;
+        if(LocalDate.now().isBefore(memoryRegistReq.getOpenDate())) isLocked = true;
 
         Memory memory = Memory.builder()
                 .capsule(capsule)
@@ -103,6 +103,9 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
 
+        // 친구 만들고 다시 테스트하기
+        System.out.println("친구를 구하러 간다");
+
         // 친구 목록
         List<Member> friendList = new ArrayList<>();
         member.getFromMemberList().forEach(friend -> {
@@ -114,11 +117,17 @@ public class CapsuleServiceImpl implements CapsuleService {
         });
 
         for(Member myFriend : friendList) {
+            System.out.println("내친구: " + myFriend.getId() + " 닉네임: " + myFriend.getNickname());
             CapsuleListRes newCapsuleList = getCapsuleList(memberId, myFriend, "friend", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
             unopenedCapsuleDtoList = newCapsuleList.getUnopenedCapsuleDtoList();
             openedCapsuleDtoList = newCapsuleList.getOpenedCapsuleDtoList();
             mapInfoDtoList = newCapsuleList.getMapInfoDtoList();
+
+            System.out.println("unopen 크기: " + unopenedCapsuleDtoList.size());
+            System.out.println("open 크기: " + openedCapsuleDtoList.size());
+            System.out.println("map 크기: " + mapInfoDtoList.size());
         }
+
 
         CapsuleListRes capsuleListRes = CapsuleListRes.builder()
                 .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
@@ -145,11 +154,11 @@ public class CapsuleServiceImpl implements CapsuleService {
             boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, myId);
             boolean isLocked = false;
 
-            int memorySize = capsule.getMemoryList().size();
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
+            int memorySize = memoryList.size();
             LocalDate openDate = null;
             // 그냥 가져오지 말고 삭제되었으면 그 전꺼나 후꺼 가져와야함
-
-            if(memorySize > 0) openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
+            if(memorySize > 0) openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
 
             // 미열람
             if(!isOpened) {
@@ -185,8 +194,6 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .build());
         }
 
-//        Collections.sort(unopenedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
-//        Collections.sort(openedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
         Collections.sort(unopenedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
         Collections.sort(openedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
 
@@ -210,9 +217,10 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(capsule.isDeleted()) continue;
             int capsuleId = capsule.getId();
 
-            int memorySize = capsule.getMemoryList().size();
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
+            int memorySize = memoryList.size();
             LocalDate openDate = null;
-            if(memorySize > 0) openDate = capsule.getMemoryList().get(0).getOpenDate();
+            if(memorySize > 0) openDate = memoryList.get(0).getOpenDate();
 
             int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, memberId);
             boolean isAdded = false;
@@ -320,6 +328,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             boolean isNowOpened = false;
             boolean isLocked = false;
             if(LocalDate.now().isBefore(memory.getOpenDate())) isLocked = true;
+
             else {
                 if(isOpened) {
                     isNowOpened = true;
@@ -327,6 +336,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                     // 거리 계산
                     int distance = (int) distanceService.distance(memoryReq.getLatitude(), memoryReq.getLongitude(),
                             capsule.getLatitude(), capsule.getLongitude(), "meter");
+
                     if(distance <= 100) {
                         isNowOpened = true;
 
@@ -477,13 +487,14 @@ public class CapsuleServiceImpl implements CapsuleService {
             boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
             boolean isLocked = false;
 
-            int memorySize = capsule.getMemoryList().size();
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsule.getId());
+            int memorySize = memoryList.size();
             LocalDate openDate = null;
+
             if(memorySize > 0) {
-                openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
+                openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
                 if(!isOpened && LocalDate.now().isBefore(openDate)) isLocked = true;
             }
-
 
             int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
                     capsule.getLatitude(), capsule.getLongitude(), "meter");
@@ -515,11 +526,12 @@ public class CapsuleServiceImpl implements CapsuleService {
         int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
                 capsule.getLatitude(), capsule.getLongitude(), "meter");
 
-        int memorySize = capsule.getMemoryList().size();
+        List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleDetailReq.getCapsuleId());
+        int memorySize = memoryList.size();
         LocalDate openDate = null;
 
         if(memorySize > 0) {
-            openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
+            openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
             if(LocalDate.now().isBefore(openDate)) {
                 isLocked = true;
                 // 남은 시간 구하기
