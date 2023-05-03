@@ -21,7 +21,7 @@ spring:
         - id: outh-service
           uri: lb://OUTH
           predicates:
-            - Path=/api/outh/**
+            - Path=/api/aouth/**
         - id: capsule-service
           uri: lb://CAPSULE
           predicates:
