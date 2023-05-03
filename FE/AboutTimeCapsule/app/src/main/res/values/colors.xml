@@ -7,4 +7,5 @@
     <color name="btnColor">#3B5BDB</color>
     <color name="skyblueBtnColor">#CFE5FF</color>
     <color name="falseColor">#CC0000</color>
+    <color name="cloudyColor">#9A9A9A</color>
 </resources>

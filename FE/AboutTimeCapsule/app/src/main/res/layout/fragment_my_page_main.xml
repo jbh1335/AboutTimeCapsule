@@ -1,18 +1,309 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".views.mypage.MyPageMainFragment">
+        tools:context=".views.mypage.MyPageMainFragment"
+        android:background="#EDF2FF"
+        android:orientation="vertical">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="340dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_radius"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:paddingVertical="20dp">
 
-        <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/onemobile"
-            android:text="마이페이지 프래그먼트입니다" />
+            <ImageView
+                android:id="@+id/myPageProfilePicture"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src=""
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.2" />
 
-    </FrameLayout>
+            <TextView
+                android:id="@+id/myPageUserName"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/onemobiletitle"
+                android:text=""
+                android:textSize="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.104"
+                app:layout_constraintStart_toEndOf="@+id/myPageProfilePicture"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.22" />
+
+            <TextView
+                android:id="@+id/myPageUserMail"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#7C7C7C"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.411"
+                app:layout_constraintStart_toEndOf="@+id/myPageProfilePicture"
+                app:layout_constraintTop_toBottomOf="@+id/myPageUserName"
+                app:layout_constraintVertical_bias="0.077" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:src="@drawable/vector"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.963"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="130dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/btn_radius_color"
+                android:fontFamily="@font/onemobiletitle"
+                android:text="친구 요청"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.123"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/myPageProfilePicture"
+                app:layout_constraintVertical_bias="0.2" />
+
+            <androidx.appcompat.widget.AppCompatButton
+
+                android:layout_width="130dp"
+                android:layout_height="25dp"
+                android:background="@drawable/btn_radius_color"
+                android:fontFamily="@font/onemobiletitle"
+                android:text="대화 하기"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.866"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/myPageUserMail"
+                app:layout_constraintVertical_bias="1.0" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="340dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_radius"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="친구"
+                    android:textSize="25dp"
+                    android:fontFamily="@font/onemobiletitle"
+                    />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="25dp"
+                    android:src="@drawable/friend_plus"
+                    android:layout_marginLeft="235dp"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="15dp"
+                android:text="친구 명"
+                android:textSize="14dp"
+                android:textColor="@color/cloudyColor"/>
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="3">
+                <LinearLayout
+                    android:id="@+id/friendThumbnailItem1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src=""
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/cloudyColor"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="10dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/friendThumbnailItem2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src=""
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/cloudyColor"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="10dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/friendThumbnailItem3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src=""
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/cloudyColor"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="10dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/friendThumbnailItem4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src=""
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/cloudyColor"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="10dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/friendThumbnailItem5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src=""
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/cloudyColor"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="10dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/friendThumbnailItem6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp">
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src=""
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/cloudyColor"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="10dp"/>
+
+                </LinearLayout>
+            </GridLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="310dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/btn_radius_skyblue"
+                android:text="모든 친구 보기"
+                android:layout_marginTop="10dp"
+                android:textColor="#364FC7"
+                android:layout_marginBottom="20dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp">
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="친구 요청"
+                    android:textColor="@color/cloudyColor"/>
+                <TextView
+                    android:gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/red_oval_style"
+                    android:text=""
+                    android:textColor="#C73636"
+                    android:textSize="12dp"
+                    android:fontFamily="@font/onemobiletitle"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
