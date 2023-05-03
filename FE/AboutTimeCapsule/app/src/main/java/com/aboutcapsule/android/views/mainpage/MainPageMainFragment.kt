@@ -45,14 +45,6 @@ class MainPageMainFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-
-//        val toolbars = binding.toolbar
-
-//        val toolbar:Toolbar ?= null
-//        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-//        val ab = (activity as AppCompatActivity).supportActionBar!!
-//        ab.setDisplayShowTitleEnabled(false)
-
         val section2DataList = getSection2datas()
         val section2adapter = Section2Adapter()
         //       어댑터에 api로 받아온 데이터 넘겨주기
@@ -83,19 +75,6 @@ class MainPageMainFragment : Fragment() {
 
         // 버튼 클릭시 페이지 전환
         redirectPages()
-
-        val toolbar: Toolbar? = activity?.findViewById<Toolbar>(R.id.toolbar)
-
-        toolbar?.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.toolbar_bell-> {
-                    navController.navigate(R.id.action_mainPageMainFragment_to_notificationMainFragment);
-
-                    true
-                }
-                else -> false
-        }
-    }
 
     }
 
