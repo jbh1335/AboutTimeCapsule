@@ -25,7 +25,6 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final CapsuleMemberRepository capsuleMemberRepository;
     private final MemoryOpenMemberRepository memoryOpenMemberRepository;
     private final MemoryRepository memoryRepository;
-    private final FriendRepository friendRepository;
     private final CommentRepository commentRepository;
 
     @Override
@@ -63,7 +62,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
 
         boolean isLocked = false;
-        if(LocalDate.now().isBefore(memoryRegistReq.getOpenDate())) isLocked = true;
+        if(memoryRegistReq.getOpenDate() != null && LocalDate.now().isBefore(memoryRegistReq.getOpenDate())) isLocked = true;
 
         Memory memory = Memory.builder()
                 .capsule(capsule)
@@ -157,7 +156,6 @@ public class CapsuleServiceImpl implements CapsuleService {
             List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
             int memorySize = memoryList.size();
             LocalDate openDate = null;
-            // 그냥 가져오지 말고 삭제되었으면 그 전꺼나 후꺼 가져와야함
             if(memorySize > 0) openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
 
             // 미열람
@@ -306,15 +304,18 @@ public class CapsuleServiceImpl implements CapsuleService {
         return new SuccessRes<>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleResList);
     }
 
-    // 작성 및 수정 권한 추가하기
     @Override
     public SuccessRes<MemoryRes> getMemory(MemoryReq memoryReq) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(memoryReq.getCapsuleId());
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
+        boolean isFirstGroup = true;
+        boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(memoryReq.getCapsuleId(), memoryReq.getMemberId());
+
         List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
         for(Memory memory : capsule.getMemoryList()) {
             if(memory.isDeleted()) continue;
+            if(capsule.isGroup() && memory.getOpenDate() != null) isFirstGroup = false;
 
             String[] imageUrl = memory.getImage().split("#");
             int commentCnt = commentRepository.findAllByMemoryId(memory.getId()).size();
@@ -327,7 +328,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             boolean isOpened = memoryOpenMemberRepository.existsByMemoryIdAndMemberId(memory.getId(), memoryReq.getMemberId());
             boolean isNowOpened = false;
             boolean isLocked = false;
-            if(LocalDate.now().isBefore(memory.getOpenDate())) isLocked = true;
+            if(memory.getOpenDate() != null && LocalDate.now().isBefore(memory.getOpenDate())) isLocked = true;
 
             else {
                 if(isOpened) {
@@ -370,6 +371,9 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .capsuleTitle(capsule.getTitle())
                 .isGroup(capsule.isGroup())
                 .rangeType(capsule.getRangeType())
+                .address(capsule.getAddress())
+                .isFirstGroup(isFirstGroup)
+                .isMine(isMine)
                 .memoryDetailDtoList(memoryDetailDtoList)
                 .build();
 
@@ -493,7 +497,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             if(memorySize > 0) {
                 openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
-                if(!isOpened && LocalDate.now().isBefore(openDate)) isLocked = true;
+                if(!isOpened && openDate!= null && LocalDate.now().isBefore(openDate)) isLocked = true;
             }
 
             int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
@@ -508,6 +512,12 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .build());
         }
         return new SuccessRes<>(true, "1km 이내에 있는 캡슐을 조회합니다.", mapResList);
+    }
+
+    @Override
+    public SuccessRes<CapsuleCountRes> getCapsuleCount(int memberId) {
+
+        return null;
     }
 
     private Object getDetail(CapsuleDetailReq capsuleDetailReq, String what) {
@@ -532,7 +542,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         if(memorySize > 0) {
             openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
-            if(LocalDate.now().isBefore(openDate)) {
+            if(openDate!= null && LocalDate.now().isBefore(openDate)) {
                 isLocked = true;
                 // 남은 시간 구하기
                 LocalDateTime openDateTime = openDate.atStartOfDay();

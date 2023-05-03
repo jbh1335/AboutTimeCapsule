@@ -106,4 +106,9 @@ public class CapsuleController {
     public SuccessRes<List<MapRes>> getMapCapsule(@RequestBody CapsuleDetailReq capsuleDetailReq) {
         return capsuleService.getMapCapsule(capsuleDetailReq);
     }
+
+    @GetMapping("/main/{memberId}")
+    public SuccessRes<CapsuleCountRes> getCapsuleCount(@PathVariable("memberId") int memberId) {
+        return  capsuleService.getCapsuleCount(memberId);
+    }
 }
