@@ -11,6 +11,9 @@
         android:orientation="vertical"
         tools:context=".views.mainpage.MainPageMainFragment">
 
+<!--        <include layout="@layout/toolbar"-->
+<!--            android:id="@+id/toolbar"/>-->
+
         <!-- TODO: 메인페이지-메인 / 프래그먼트입니다 -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
