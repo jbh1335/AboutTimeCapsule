@@ -44,6 +44,8 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.1'
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// configuration processor
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 }
 
 dependencyManagement {

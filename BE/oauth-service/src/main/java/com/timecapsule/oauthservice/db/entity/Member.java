@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity{
-    @Column(length = 64, unique = true)
+    @Column(length = 64)
     private String nickname;
     @Column(length = 64)
     private String email;
