@@ -13,17 +13,30 @@
         <action
             android:id="@+id/action_mainPageMainFragment_to_mainPageMyCapsuleFragment"
             app:destination="@id/mainPageMyCapsuleFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/mapMainFragment"
         android:name="com.aboutcapsule.android.views.map.MapMainFragment"
         android:label="fragment_map_main"
-        tools:layout="@layout/fragment_map_main" />
+        tools:layout="@layout/fragment_map_main" >
+        <action
+            android:id="@+id/action_mapMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/chatMainFragment"
         android:name="com.aboutcapsule.android.views.chat.ChatMainFragment"
         android:label="fragment_chat_main"
-        tools:layout="@layout/fragment_chat_main" />
+        tools:layout="@layout/fragment_chat_main" >
+        <action
+            android:id="@+id/action_chatMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/myPageMainFragment"
         android:name="com.aboutcapsule.android.views.mypage.MyPageMainFragment"
@@ -72,5 +85,20 @@
         android:name="com.aboutcapsule.android.views.capsule.ArticleRegistFragment"
         android:label="fragment_article_regist"
         tools:layout="@layout/fragment_article_regist"/>
+    <fragment
+        android:id="@+id/notificationMainFragment"
+        android:name="com.aboutcapsule.android.views.notification.NotificationMainFragment"
+        android:label="fragment_notification_main"
+        tools:layout="@layout/fragment_notification_main">
+        <action
+            android:id="@+id/action_notificationMainFragment_to_mainPageMainFragment"
+            app:destination="@id/mainPageMainFragment" />
+        <action
+            android:id="@+id/action_notificationMainFragment_to_mapMainFragment"
+            app:destination="@id/mapMainFragment" />
+        <action
+            android:id="@+id/action_notificationMainFragment_to_chatMainFragment"
+            app:destination="@id/chatMainFragment" />
+    </fragment>
 
 </navigation>
