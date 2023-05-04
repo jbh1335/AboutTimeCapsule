@@ -27,4 +27,5 @@ public interface CapsuleService {
     SuccessRes<List<MapRes>> getMapCapsule(CapsuleDetailReq capsuleDetailReq);
     SuccessRes<CapsuleCountRes> getCapsuleCount(int memberId);
     SuccessRes<List<FriendRes>> getFriendList(int memberId);
+    CommonRes setGroupFirstOpenDate(GroupOpenDateReq groupOpenDateReq);
 }

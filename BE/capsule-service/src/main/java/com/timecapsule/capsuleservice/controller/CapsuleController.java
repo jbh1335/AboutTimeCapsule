@@ -117,4 +117,9 @@ public class CapsuleController {
     public SuccessRes<List<FriendRes>> getFriendList(@PathVariable("memberId") int memberId) {
         return capsuleService.getFriendList(memberId);
     }
+
+    @PatchMapping("/memory/openDate")
+    public CommonRes setGroupFirstOpenDate(@RequestBody GroupOpenDateReq groupOpenDateReq) {
+        return capsuleService.setGroupFirstOpenDate(groupOpenDateReq);
+    }
 }

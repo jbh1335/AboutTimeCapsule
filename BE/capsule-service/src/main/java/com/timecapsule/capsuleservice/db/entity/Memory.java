@@ -58,4 +58,9 @@ public class Memory extends BaseEntity {
         return memory;
     }
 
+    public static Memory of(Memory memory, LocalDate openDate, boolean isLocked) {
+        memory.setOpenDate(openDate);
+        memory.setLocked(isLocked);
+        return memory;
+    }
 }

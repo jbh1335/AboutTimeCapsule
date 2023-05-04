@@ -300,7 +300,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         Optional<Capsule> oCapsule = capsuleRepository.findById(memoryReq.getCapsuleId());
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
-        boolean isFirstGroup = true;
+        boolean isFirstGroup = capsule.isGroup();
         boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(memoryReq.getCapsuleId(), memoryReq.getMemberId());
 
         List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
@@ -533,6 +533,17 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build()));
 
         return new SuccessRes<>(true, "나의 친구 목록을 조회합니다.", friendResList);
+    }
+
+    @Override
+    public CommonRes setGroupFirstOpenDate(GroupOpenDateReq groupOpenDateReq) {
+        Optional<Capsule> oCapsule = capsuleRepository.findById(groupOpenDateReq.getCapsuleId());
+        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+
+        boolean isLocked = (groupOpenDateReq.getOpenDate() != null && LocalDate.now().isBefore(groupOpenDateReq.getOpenDate()));
+        capsule.getMemoryList().forEach(memory -> memoryRepository.save(Memory.of(memory, groupOpenDateReq.getOpenDate(), isLocked)));
+
+        return new CommonRes(true, "그룹 캡슐의 최초 오픈 날짜 설정을 완료했습니다.");
     }
 
     private Object capsuleDetail(CapsuleDetailReq capsuleDetailReq, String what) {
