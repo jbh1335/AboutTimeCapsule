@@ -2,16 +2,21 @@ package com.aboutcapsule.android.views.capsule
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.DatePicker
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColor
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.aboutcapsule.android.R
@@ -19,12 +24,17 @@ import com.aboutcapsule.android.databinding.FragmentArticleRegistBinding
 import com.bumptech.glide.Glide
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
     private lateinit var binding : FragmentArticleRegistBinding
     private var picture_flag = 0
     private var fileAbsolutePath: String? = null
+
+    private var flag = false
 
     // 갤러리에서 데이터(사진) 가져올 때 사용
     lateinit var resultLauncher: ActivityResultLauncher<Intent>
@@ -37,12 +47,75 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
         binding.galleryBtn.setOnClickListener(this)
 
-        getData()
+        getGalleryData()
+
+        getCalendarDate()
 
         return binding.root
     }
 
-    fun getData(){
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCalendarDate(){
+
+        binding.dateCommentlayout.setOnClickListener {
+            flag = true
+
+            if(!flag){
+                binding.dateCommentlayout.visibility=View.VISIBLE
+                binding.datepickedlayout.visibility=View.GONE
+            }else{
+                binding.dateCommentlayout.visibility = View.GONE
+                binding.datepickedlayout.visibility=View.VISIBLE
+            }
+
+
+
+
+            val cal = Calendar.getInstance()
+
+            val data = DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                binding.openAvailDate.text = "${year}년 ${month+1}월 ${day}일"
+            }
+
+            val textColor= ContextCompat.getColor(requireContext(),R.color.datePickerColor)
+
+            val datePickerDialog = DatePickerDialog(requireContext(),R.style.MyDatePicker ,data, cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH))
+
+            datePickerDialog.show()
+
+            val posBtn =datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+            val negBtn =datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+            posBtn.setText("확인")
+            negBtn.setText("취소")
+            posBtn.setTextColor(textColor)
+            negBtn.setTextColor(textColor)
+        }
+
+        binding.datepickedlayout.setOnClickListener {
+            flag = true
+            val cal = Calendar.getInstance()
+
+            val data = DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                binding.openAvailDate.text = "${year}년 ${month+1}월 ${day}일"
+            }
+
+            val textColor= ContextCompat.getColor(requireContext(),R.color.datePickerColor)
+
+            val datePickerDialog = DatePickerDialog(requireContext(),R.style.MyDatePicker ,data, cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH))
+
+            datePickerDialog.show()
+
+            val posBtn =datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+            val negBtn =datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+            posBtn.setText("확인")
+            negBtn.setText("취소")
+            posBtn.setTextColor(textColor)
+            negBtn.setTextColor(textColor)
+        }
+
+    }
+
+    fun getGalleryData(){
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         {
             if(it.resultCode == RESULT_OK){

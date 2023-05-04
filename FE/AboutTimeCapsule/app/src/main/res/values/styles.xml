@@ -6,4 +6,16 @@
         <item name="fontFamily">@font/onemobile</item>
     </style>
 
+<!--    datePicker calendar 속성 -->
+    <style name="MyDatePicker" parent="Theme.AppCompat.Light.Dialog">
+        <!-- 상단 색상 변경 -->
+        <item name="colorAccent">@color/datePickerColor</item>
+        <!-- 선택한 날짜를 표시할 색상 -->
+        <item name="colorControlActivated">@color/datePickerColor</item>
+        <item name="colorControlHighlight">@color/datePickerColor</item>
+        <!-- 취소/확인 버튼 글꼴 -->
+        <item name="android:fontFamily">@font/onemobile</item>
+
+    </style>
+
 </resources>

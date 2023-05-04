@@ -1,19 +1,21 @@
 package com.aboutcapsule.android.views.mainpage
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
+import com.aboutcapsule.android.views.notification.NotificationMainFragment
 
 class MainPageMainFragment : Fragment() {
 
@@ -32,6 +34,8 @@ class MainPageMainFragment : Fragment() {
 //        물음표 버튼 토글버틀
         bannerToggle()
 
+
+
         return binding.root
     }
 
@@ -41,7 +45,6 @@ class MainPageMainFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-
         val section2DataList = getSection2datas()
         val section2adapter = Section2Adapter()
         //       어댑터에 api로 받아온 데이터 넘겨주기
@@ -49,7 +52,7 @@ class MainPageMainFragment : Fragment() {
         binding.section2RecyclerView.adapter = section2adapter
         binding.section2RecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        
+
         //      TODO: 내 주변의 타임캡슐 요소 하나 클릭시 이동 필요한 데이터 가지고 넘어가기 ( 위,경도 시간,유저이름,거리,댓글수?  )
         //            val intent = Intent(this.context,이동할 장소 )
         section2adapter.setOnItemClickListner(object : Section2Adapter.OnItemClickListner {
@@ -94,7 +97,15 @@ class MainPageMainFragment : Fragment() {
         binding.mainSection1Capsule1img.setOnClickListener {
             navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment)
         }
+
+        val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
+        notiBtn?.setOnClickListener{
+            navController.navigate(R.id.action_mainPageMainFragment_to_notificationMainFragment)
+        }
+
     }
+
+
 
 
     //   TODO: retrofit으로 내 주변의 타임캡슐 데이터 가져오기
