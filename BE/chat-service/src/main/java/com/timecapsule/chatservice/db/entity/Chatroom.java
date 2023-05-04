@@ -13,8 +13,7 @@ import java.io.Serializable;
 @Builder
 public class Chatroom implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String id;
     @ManyToOne
     @JoinColumn(name = "from_member_id", insertable=false, updatable=false)
     private Member fromMember;
