@@ -1,14 +1,12 @@
 package com.timecapsule.memberservice.controller;
 
+import com.timecapsule.memberservice.api.response.CommonRes;
 import com.timecapsule.memberservice.api.response.FriendRes;
 import com.timecapsule.memberservice.api.response.MypageRes;
 import com.timecapsule.memberservice.api.response.SuccessRes;
 import com.timecapsule.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +23,11 @@ public class MemberController {
     @GetMapping("/friend/{memberId}")
     public SuccessRes<List<FriendRes>> getFriend(@PathVariable("memberId") int memberId) {
         return memberService.getFriendList(memberId);
+    }
+
+    @PostMapping("/friend/request/{fromMemberId}/{toMemberId}")
+    public CommonRes requestFriend(@PathVariable("fromMemberId") int fromMemberId,
+                                   @PathVariable("toMemberId") int toMemberId) {
+        return memberService.requestFriend(fromMemberId, toMemberId);
     }
 }
