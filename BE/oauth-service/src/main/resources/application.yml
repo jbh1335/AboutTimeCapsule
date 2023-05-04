@@ -7,10 +7,10 @@ server:
 
 eureka:
   client:
-#    register-with-eureka: true
-#    fetch-registry: true
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
+#    register-with-eureka: false
+#    fetch-registry: false
     service-url:
       defaultZone: http://k8b302.p.ssafy.io:8761/eureka
 
@@ -21,10 +21,14 @@ spring:
     host: localhost
     port: 6379
   datasource:
-    url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
-    username: root
+#    url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+#    username: root
+#    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-    password: root
+    url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    username: root
+    password: b302capsule
+
   jpa:
     open-in-view: false
     generate-ddl: true
