@@ -1,5 +1,6 @@
 package com.timecapsule.memberservice.service;
 
+import com.timecapsule.memberservice.api.response.FriendRes;
 import com.timecapsule.memberservice.api.response.MypageRes;
 import com.timecapsule.memberservice.api.response.SuccessRes;
 import com.timecapsule.memberservice.db.entity.Member;
@@ -28,15 +29,12 @@ public class MemberServiceImpl implements MemberService{
         int friendCnt = myFriendList.size();
         int count = 0;
 
-        for(Member friend : myFriendList) {
-            count++;
-            friendList.add(FriendDto.builder()
-                    .memberId(friend.getId())
-                    .nickname(friend.getNickname())
-                    .profileImageUrl(friend.getProfileImageUrl())
-                    .build());
-            if(count == 6) break;
-        }
+        if(friendCnt > 6) myFriendList.subList(0, 6).clear();
+        myFriendList.forEach(friend -> friendList.add(FriendDto.builder()
+                .memberId(friend.getId())
+                .nickname(friend.getNickname())
+                .profileImageUrl(friend.getProfileImageUrl())
+                .build()));
 
         member.getToMemberList().forEach(friend -> {
             if(!friend.isAccepted()) friendRequestList.add(FriendDto.builder()
@@ -59,6 +57,21 @@ public class MemberServiceImpl implements MemberService{
         return new SuccessRes<>(true, "나의 마이페이지 정보를 조회합니다.", mypageRes);
     }
 
+    @Override
+    public SuccessRes<List<FriendRes>> getFriendList(int memberId) {
+        Optional<Member> oMember = memberRepository.findById(memberId);
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        List<FriendRes> friendResList = new ArrayList<>();
+        friendList(member).forEach(friend -> friendResList.add(FriendRes.builder()
+                .memberId(friend.getId())
+                .nickname(friend.getNickname())
+                .profileImageUrl(friend.getProfileImageUrl())
+                .build()));
+
+        return new SuccessRes<>(true, "나의 친구 목록을 조회합니다.", friendResList);
+    }
+
     private List<Member> friendList(Member member) {
         List<Member> friendList = new ArrayList<>();
         member.getFromMemberList().forEach(friend -> {
@@ -71,6 +84,4 @@ public class MemberServiceImpl implements MemberService{
 
         return friendList;
     }
-
-
 }
