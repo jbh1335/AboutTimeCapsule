@@ -8,4 +8,9 @@
     <color name="skyblueBtnColor">#CFE5FF</color>
     <color name="falseColor">#CC0000</color>
     <color name="datePickerColor">#42638A</color>
+    <color name="mypageTextColor">#9A9A9A</color>
+    <color name="mypageBtnColor">#CBD6FF</color>
+    <color name="mypageBtnTextColor">#364FC7</color>
+    <color name="chatContentTextColor">#A7A7A7</color>
+    <color name="chatNicknameTextColor">#6C6C6C</color>
 </resources>
