@@ -11,7 +11,7 @@
             android:viewportHeight="8.0">
             <path
                 android:pathData="M 0,4 8,8 8,0z"
-                android:fillColor="#9a9a9a"/>
+                android:fillColor="@color/cloudyColor"/>
         </vector>
     </item>
 </layer-list>
