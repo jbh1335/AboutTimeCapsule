@@ -1,6 +1,7 @@
-package com.timecapsule.oauthservice.db.entity;
+package com.timecapsule.memberservice.db.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,27 +10,28 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member extends BaseEntity{
     @Column(length = 64)
     private String name;
     @Column(length = 64, unique = true)
     private String nickname;
-    @Column(length = 64)
+    @Column(length = 64, unique = true)
     private String email;
     @Column(length = 255)
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
     private List<Friend> toMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<CapsuleMember> capsuleMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<MemoryOpenMember> memoryOpenMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Memory> memoryList = new ArrayList<>();
 
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
 }

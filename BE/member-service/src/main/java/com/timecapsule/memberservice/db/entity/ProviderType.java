@@ -1,6 +1,6 @@
-package com.timecapsule.oauthservice.db.entity;
+package com.timecapsule.memberservice.db.entity;
 
 public enum ProviderType {
-    NAVER,
+    GOOGLE,
     KAKAO
 }

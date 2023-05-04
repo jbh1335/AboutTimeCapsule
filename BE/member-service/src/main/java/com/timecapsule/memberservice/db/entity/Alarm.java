@@ -1,5 +1,4 @@
-package com.timecapsule.oauthservice.db.entity;
-
+package com.timecapsule.memberservice.db.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
