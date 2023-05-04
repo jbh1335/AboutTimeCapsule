@@ -11,6 +11,8 @@ class MyFirebaseMessagingService :FirebaseMessagingService(){
         super.onNewToken(token)
     }
 
+
+
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
     }
