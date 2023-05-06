@@ -1,7 +1,7 @@
-package com.timecapsule.chatservice.service;
+package com.timecapsule.chatservice.service.pubsub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.timecapsule.chatservice.db.entity.ChatroomMessage;
+import com.timecapsule.chatservice.db.entity.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -29,7 +29,7 @@ public class RedisSubscriber implements MessageListener {
             // redis에서 발행된 데이터를 받아 deserialize
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
             // ChatMessage 객체로 매핑
-            ChatroomMessage roomMessage = objectMapper.readValue(publishMessage, ChatroomMessage.class);
+            ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
             // WebSocket 구독자에게 채팅 메세지 Send
             messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getChatroom().getId(), roomMessage);
         } catch (Exception e){
