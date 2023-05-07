@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 public class OtherProfileRes {
     private int friendId;
+    private int memberId;
     private String state;
     private String nickname;
     private String email;
@@ -17,8 +18,9 @@ public class OtherProfileRes {
     private List<FriendDto> friendDtoList;
 
     @Builder
-    public OtherProfileRes(int friendId, String state, String nickname, String email, String profileImageUrl, int friendCnt, List<FriendDto> friendDtoList) {
+    public OtherProfileRes(int friendId, int memberId, String state, String nickname, String email, String profileImageUrl, int friendCnt, List<FriendDto> friendDtoList) {
         this.friendId = friendId;
+        this.memberId = memberId;
         this.state = state;
         this.nickname = nickname;
         this.email = email;

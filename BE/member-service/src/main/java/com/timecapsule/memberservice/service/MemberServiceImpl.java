@@ -187,6 +187,7 @@ public class MemberServiceImpl implements MemberService{
 
         OtherProfileRes otherProfileRes = OtherProfileRes.builder()
                 .friendId(friendId)
+                .memberId(otherMemberId)
                 .state(state)
                 .nickname(member.getNickname())
                 .email(member.getEmail())
@@ -196,6 +197,51 @@ public class MemberServiceImpl implements MemberService{
                 .build();
 
         return new SuccessRes<>(true, "다른 사람의 프로필을 조회합니다.", otherProfileRes);
+    }
+
+    @Override
+    public SuccessRes<List<SearchMemberRes>> searchMember(int memberId, String nickname) {
+        List<SearchMemberRes> searchMemberResList = new ArrayList<>();
+        List<Member> nicknameList = memberRepository.findByNicknameContaining(nickname);
+
+        for(Member member : nicknameList) {
+            if(member.getId() == memberId) continue;
+            Optional<Friend> oFriend = friendRepository.findByMemberIds(memberId, member.getId());
+            int friendId = 0;
+            String state = "요청";
+
+            if(oFriend.isPresent()) {
+                boolean isFriend = true;
+                Optional<Friend> oFriend1 = friendRepository.findByIsAcceptedFalseAndFromMemberIdAndToMemberId(memberId, member.getId());
+                if(oFriend1.isPresent()) {
+                    state = "요청 취소";
+                    friendId = oFriend1.get().getId();
+                    isFriend = false;
+                }
+
+                Optional<Friend> oFriend2 = friendRepository.findByIsAcceptedFalseAndFromMemberIdAndToMemberId(member.getId(), memberId);
+                if(oFriend2.isPresent()) {
+                    state = "승인/거절";
+                    friendId = oFriend2.get().getId();
+                    isFriend = false;
+                }
+
+                if(isFriend) {
+                    friendId = oFriend.get().getId();
+                    state = "";
+                }
+            }
+
+            searchMemberResList.add(SearchMemberRes.builder()
+                    .friendId(friendId)
+                    .memberId(member.getId())
+                    .state(state)
+                    .nickname(member.getNickname())
+                    .profileImageUrl(member.getProfileImageUrl())
+                    .build());
+        }
+
+        return new SuccessRes<>(true, "검색한 닉네임과 일치하는 멤버 목록입니다.", searchMemberResList);
     }
 
     private List<Member> friendList(Member member) {

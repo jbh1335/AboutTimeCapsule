@@ -53,4 +53,10 @@ public class MemberController {
                                                        @PathVariable("otherMemberId") int otherMemberId) {
         return memberService.getOtherProfile(memberId, otherMemberId);
     }
+
+    @GetMapping("/search/{memberId}/{nickname}")
+    public SuccessRes<List<SearchMemberRes>> searchMember(@PathVariable("memberId") int memberId,
+                                                    @PathVariable("nickname") String nickname) {
+        return memberService.searchMember(memberId, nickname);
+    }
 }
