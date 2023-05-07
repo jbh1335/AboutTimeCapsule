@@ -10,5 +10,6 @@ import java.util.List;
 public interface MemberService {
     SuccessRes<MypageRes> getMypage(int memberId);
     SuccessRes<List<FriendRes>> getFriendList(int memberId);
-    CommonRes requestFriend(int fromMemberId, int toMemberId);
+    SuccessRes<Integer> requestFriend(int fromMemberId, int toMemberId);
+    CommonRes cancelRequest(int friendId);
 }

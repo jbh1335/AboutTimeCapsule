@@ -8,6 +8,7 @@ import com.timecapsule.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.Path;
 import java.util.List;
 
 @RestController
@@ -26,8 +27,13 @@ public class MemberController {
     }
 
     @PostMapping("/friend/request/{fromMemberId}/{toMemberId}")
-    public CommonRes requestFriend(@PathVariable("fromMemberId") int fromMemberId,
+    public SuccessRes<Integer> requestFriend(@PathVariable("fromMemberId") int fromMemberId,
                                    @PathVariable("toMemberId") int toMemberId) {
         return memberService.requestFriend(fromMemberId, toMemberId);
+    }
+
+    @DeleteMapping("/friend/request/cancel/{friendId}")
+    public CommonRes cancelRequest(@PathVariable("friendId") int friendId) {
+        return memberService.cancelRequest(friendId);
     }
 }
