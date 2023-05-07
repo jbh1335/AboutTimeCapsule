@@ -18,7 +18,6 @@ import java.util.*;
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
-    private final AwsS3Service awsS3Service;
     private final DistanceService distanceService;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
@@ -48,36 +47,6 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         return new SuccessRes<>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
-    }
-
-    @Override
-    public SuccessRes<Integer> registMemory(List<MultipartFile> multipartFileList, MemoryRegistReq memoryRegistReq) {
-        Optional<Capsule> oCapsule = capsuleRepository.findById(memoryRegistReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
-
-        Optional<Member> oMember = memberRepository.findById(memoryRegistReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
-        String image = "";
-        if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
-
-        boolean isLocked = false;
-        if(memoryRegistReq.getOpenDate() != null && LocalDate.now().isBefore(memoryRegistReq.getOpenDate())) isLocked = true;
-
-        Memory memory = Memory.builder()
-                .capsule(capsule)
-                .member(member)
-                .title(memoryRegistReq.getTitle())
-                .content(memoryRegistReq.getContent())
-                .image(image)
-                .isDeleted(false)
-                .isLocked(isLocked)
-                .openDate(memoryRegistReq.getOpenDate())
-                .build();
-
-        int memoryId = memoryRepository.save(memory).getId();
-
-        return new SuccessRes<>(true, "추억 등록을 완료했습니다.", memoryId);
     }
 
     @Override
@@ -296,147 +265,6 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
-    public SuccessRes<MemoryRes> getMemory(MemoryReq memoryReq) {
-        Optional<Capsule> oCapsule = capsuleRepository.findById(memoryReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
-
-        boolean isFirstGroup = capsule.isGroup();
-        boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(memoryReq.getCapsuleId(), memoryReq.getMemberId());
-
-        List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
-        for(Memory memory : capsule.getMemoryList()) {
-            if(memory.isDeleted()) continue;
-            if(capsule.isGroup() && memory.getOpenDate() != null) isFirstGroup = false;
-
-            String[] imageUrl = memory.getImage().split("#");
-            int commentCnt = commentRepository.findAllByMemoryId(memory.getId()).size();
-
-            // 잠김 X, 내가 오픈한 적 있는 추억은 계속 오픈O 거리상관X -> isOpened = true, isLocked = false
-            // 잠김 X, 오픈한 적 없는데 거리가 가까우면 가능 오픈O -> isOpened = true, isLocked = false + memoryOpenMember에 추가
-            // 잠김 X, 오픈한 적 없는데 거리도 멀면 불가능 오픈X -> isOpened = false, isLocked = false
-            // 잠김 O, 그냥 불가능 isOpened = false, isLocked = true
-
-            boolean isOpened = memoryOpenMemberRepository.existsByMemoryIdAndMemberId(memory.getId(), memoryReq.getMemberId());
-            boolean isNowOpened = false;
-            boolean isLocked = false;
-            if(memory.getOpenDate() != null && LocalDate.now().isBefore(memory.getOpenDate())) isLocked = true;
-
-            else {
-                if(isOpened) {
-                    isNowOpened = true;
-                } else {
-                    // 거리 계산
-                    int distance = (int) distanceService.distance(memoryReq.getLatitude(), memoryReq.getLongitude(),
-                            capsule.getLatitude(), capsule.getLongitude(), "meter");
-
-                    if(distance <= 100) {
-                        isNowOpened = true;
-
-                        Optional<Member> oMember = memberRepository.findById(memoryReq.getMemberId());
-                        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
-                        memoryOpenMemberRepository.save(MemoryOpenMember.builder()
-                                .capsule(capsule)
-                                .member(member)
-                                .memory(memory)
-                                .build());
-                    }
-                }
-            }
-
-            memoryDetailDtoList.add(MemoryDetailDto.builder()
-                    .memoryId(memory.getId())
-                    .nickname(memory.getMember().getNickname())
-                    .memoryTitle(memory.getTitle())
-                    .profileImageUrl(memory.getMember().getProfileImageUrl())
-                    .content(memory.getContent())
-                    .imageUrl(memory.getImage().split("#"))
-                    .commentCnt(commentCnt)
-                    .createdDate(memory.getCreatedDate().toLocalDate())
-                    .isLocked(isLocked)
-                    .isOpened(isNowOpened)
-                    .build());
-        }
-
-        MemoryRes memoryRes = MemoryRes.builder()
-                .capsuleTitle(capsule.getTitle())
-                .isGroup(capsule.isGroup())
-                .rangeType(capsule.getRangeType())
-                .address(capsule.getAddress())
-                .isFirstGroup(isFirstGroup)
-                .isMine(isMine)
-                .memoryDetailDtoList(memoryDetailDtoList)
-                .build();
-
-        return new SuccessRes<>(true, "해당 캡슐의 추억을 조회합니다.", memoryRes);
-    }
-
-    @Override
-    public CommonRes deleteMemory(int memoryId) {
-        Optional<Memory> oMemory = memoryRepository.findById(memoryId);
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
-        memoryRepository.save(Memory.of(memory, true));
-
-        return new CommonRes(true, "추억 삭제를 완료했습니다.");
-    }
-
-    @Override
-    public CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq) {
-        Optional<Memory> oMemory = memoryRepository.findById(memoryModifyReq.getMemoryId());
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        String image = memory.getImage();
-        if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
-
-        memoryRepository.save(Memory.of(memory, memoryModifyReq.getTitle(), memoryModifyReq.getContent(), image));
-        return new CommonRes(true, "추억 수정을 완료했습니다.");
-    }
-
-    @Override
-    public CommonRes registComment(CommentRegistReq commentRegistReq) {
-        Optional<Member> oMember = memberRepository.findById(commentRegistReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
-        Optional<Memory> oMemory = memoryRepository.findById(commentRegistReq.getMemoryId());
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        commentRepository.save(Comment.builder()
-                .member(member)
-                .memory(memory)
-                .content(commentRegistReq.getContent())
-                .isDeleted(false)
-                .build());
-
-        return new CommonRes(true, "댓글 등록을 완료했습니다.");
-    }
-
-    @Override
-    public SuccessRes<List<CommentRes>> getComment(int memoryId) {
-        Optional<Memory> oMemory = memoryRepository.findById(memoryId);
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        List<CommentRes> commentResList = new ArrayList<>();
-        for(Comment comment : memory.getCommentList()) {
-            if(comment.isDeleted()) continue;
-            Member member = comment.getMember();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy.MM.dd HH:mm");
-
-            commentResList.add(CommentRes.builder()
-                    .commentId(comment.getId())
-                    .memberId(member.getId())
-                    .nickname(member.getNickname())
-                    .profileImageUrl(member.getProfileImageUrl())
-                    .content(comment.getContent())
-                    .createdDate(comment.getCreatedDate().format(dateTimeFormatter))
-                    .build());
-        }
-
-        return new SuccessRes<>(true, "댓글 목록을 조회합니다.", commentResList);
-    }
-
-    @Override
     public SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
@@ -533,17 +361,6 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build()));
 
         return new SuccessRes<>(true, "나의 친구 목록을 조회합니다.", friendResList);
-    }
-
-    @Override
-    public CommonRes setGroupFirstOpenDate(GroupOpenDateReq groupOpenDateReq) {
-        Optional<Capsule> oCapsule = capsuleRepository.findById(groupOpenDateReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
-
-        boolean isLocked = (groupOpenDateReq.getOpenDate() != null && LocalDate.now().isBefore(groupOpenDateReq.getOpenDate()));
-        capsule.getMemoryList().forEach(memory -> memoryRepository.save(Memory.of(memory, groupOpenDateReq.getOpenDate(), isLocked)));
-
-        return new CommonRes(true, "그룹 캡슐의 최초 오픈 날짜 설정을 완료했습니다.");
     }
 
     private Object capsuleDetail(CapsuleDetailReq capsuleDetailReq, String what) {
