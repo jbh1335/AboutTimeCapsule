@@ -6,10 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentChatMainBinding
@@ -34,6 +38,8 @@ class ChatMainFragment : Fragment() {
         navController = Navigation.findNavController(view)
 
         setChatingView()
+
+        setToolbar()
 
         redirectPage()
     }
@@ -76,4 +82,21 @@ class ChatMainFragment : Fragment() {
         navController = navHostFragment.navController
     }
 
+    private fun setToolbar() {
+        // 액티비티에서 툴바 가져오기
+        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+
+        // Navigation Component와 툴바 연결
+        val navController = findNavController()
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
+
+        // 프래그먼트 전환 이벤트 감지 및 툴바 업데이트
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            toolbar.title = ""
+            toolbar.setNavigationOnClickListener {
+                navController.navigateUp()
+            }
+        }
+    }
 }

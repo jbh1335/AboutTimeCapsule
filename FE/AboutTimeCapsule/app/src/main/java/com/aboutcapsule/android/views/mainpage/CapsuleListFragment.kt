@@ -40,7 +40,7 @@ class CapsuleListFragment : Fragment() {
 
         // 리다이렉트 체크용 나중에 제거하기
         binding.testbtn.setOnClickListener {
-            navController.navigate(R.id.action_mainPageMyCapsuleFragment_to_capsuleRegistFragment)
+            navController.navigate(R.id.action_mainPageMyCapsuleFragment_to_capsuleRegistGroupFragment)
         }
 
     }

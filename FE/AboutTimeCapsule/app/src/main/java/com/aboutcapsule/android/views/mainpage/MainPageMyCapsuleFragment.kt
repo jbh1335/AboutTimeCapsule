@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
@@ -16,15 +17,19 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMyCapsuleBinding
+import com.aboutcapsule.android.views.capsule.CapsuleRegistFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 
 class MainPageMyCapsuleFragment : Fragment() {
+    companion object{
+        lateinit var binding : FragmentMainPageMyCapsuleBinding
+        private lateinit var  viewPager : ViewPager2
+        private lateinit var  tabLayout : TabLayout
+    }
 
-    lateinit var binding : FragmentMainPageMyCapsuleBinding
-    private lateinit var  viewPager : ViewPager2
-    private lateinit var  tabLayout : TabLayout
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +53,7 @@ class MainPageMyCapsuleFragment : Fragment() {
         setToolbar()
 
     }
+
 
     // TODO : 내캡슐 or 친구의 캡슐 api 불러오기 ( 분기처리 완료 )
     private fun callingApi(){
