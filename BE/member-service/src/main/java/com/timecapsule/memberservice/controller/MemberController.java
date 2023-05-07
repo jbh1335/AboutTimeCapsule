@@ -1,9 +1,6 @@
 package com.timecapsule.memberservice.controller;
 
-import com.timecapsule.memberservice.api.response.CommonRes;
-import com.timecapsule.memberservice.api.response.FriendRes;
-import com.timecapsule.memberservice.api.response.MypageRes;
-import com.timecapsule.memberservice.api.response.SuccessRes;
+import com.timecapsule.memberservice.api.response.*;
 import com.timecapsule.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +42,10 @@ public class MemberController {
     @PatchMapping("/request/accept/{friendId}")
     public CommonRes acceptRequest(@PathVariable("friendId") int friendId) {
         return memberService.acceptRequest(friendId);
+    }
+
+    @GetMapping("/request/list/{memberId}")
+    public SuccessRes<List<RequestRes>> getRequestList(@PathVariable("memberId") int memberId) {
+        return memberService.getRequestList(memberId);
     }
 }

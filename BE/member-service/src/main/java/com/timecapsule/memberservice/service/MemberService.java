@@ -1,9 +1,6 @@
 package com.timecapsule.memberservice.service;
 
-import com.timecapsule.memberservice.api.response.CommonRes;
-import com.timecapsule.memberservice.api.response.FriendRes;
-import com.timecapsule.memberservice.api.response.MypageRes;
-import com.timecapsule.memberservice.api.response.SuccessRes;
+import com.timecapsule.memberservice.api.response.*;
 
 import java.util.List;
 
@@ -14,4 +11,5 @@ public interface MemberService {
     CommonRes cancelRequest(int friendId);
     CommonRes refuseRequest(int friendId);
     CommonRes acceptRequest(int friendId);
+    SuccessRes<List<RequestRes>> getRequestList(int memberId);
 }

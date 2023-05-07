@@ -1,9 +1,6 @@
 package com.timecapsule.memberservice.service;
 
-import com.timecapsule.memberservice.api.response.CommonRes;
-import com.timecapsule.memberservice.api.response.FriendRes;
-import com.timecapsule.memberservice.api.response.MypageRes;
-import com.timecapsule.memberservice.api.response.SuccessRes;
+import com.timecapsule.memberservice.api.response.*;
 import com.timecapsule.memberservice.db.entity.Friend;
 import com.timecapsule.memberservice.db.entity.Member;
 import com.timecapsule.memberservice.db.repository.FriendRepository;
@@ -116,6 +113,24 @@ public class MemberServiceImpl implements MemberService{
 
         friendRepository.save(Friend.of(friend, true));
         return new CommonRes(true, "친구 요청을 수락했습니다.");
+    }
+
+    @Override
+    public SuccessRes<List<RequestRes>> getRequestList(int memberId) {
+        Optional<Member> oMember = memberRepository.findById(memberId);
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        List<RequestRes> requestResList = new ArrayList<>();
+        member.getToMemberList().forEach(friend -> {
+            if(!friend.isAccepted()) requestResList.add(RequestRes.builder()
+                    .friendId(friend.getId())
+                    .memberId(friend.getFromMember().getId())
+                    .nickname(friend.getFromMember().getNickname())
+                    .profileImageUrl(friend.getFromMember().getProfileImageUrl())
+                    .build());
+        });
+
+        return new SuccessRes<>(true, "제가 받은 친구 요청을 조회합니다.", requestResList);
     }
 
     private List<Member> friendList(Member member) {
