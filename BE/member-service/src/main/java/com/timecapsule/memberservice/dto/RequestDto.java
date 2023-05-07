@@ -6,14 +6,14 @@ import lombok.Getter;
 @Getter
 public class RequestDto {
     private int friendId;
-    private int memberId;
+    private int friendMemberId;
     private String nickname;
     private String profileImageUrl;
 
     @Builder
-    public RequestDto(int friendId, int memberId, String nickname, String profileImageUrl) {
+    public RequestDto(int friendId, int friendMemberId, String nickname, String profileImageUrl) {
         this.friendId = friendId;
-        this.memberId = memberId;
+        this.friendMemberId = friendMemberId;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
     }

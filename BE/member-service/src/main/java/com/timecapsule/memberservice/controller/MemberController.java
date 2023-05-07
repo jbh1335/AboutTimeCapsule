@@ -5,7 +5,6 @@ import com.timecapsule.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.Path;
 import java.util.List;
 
 @RestController
@@ -14,7 +13,7 @@ import java.util.List;
 public class MemberController {
     private final MemberService memberService;
     @GetMapping("/mypage/{memberId}")
-    public SuccessRes<MypageRes> getMyCapsule(@PathVariable("memberId") int memberId) {
+    public SuccessRes<MypageRes> getMypage(@PathVariable("memberId") int memberId) {
         return memberService.getMypage(memberId);
     }
 
@@ -47,5 +46,11 @@ public class MemberController {
     @DeleteMapping("/friend/delete/{friendId}")
     public CommonRes deleteFriend(@PathVariable("friendId") int friendId) {
         return memberService.deleteFriend(friendId);
+    }
+
+    @GetMapping("/other/profile/{memberId}/{otherMemberId}")
+    public SuccessRes<OtherProfileRes> getOtherProfile(@PathVariable("memberId") int memberId,
+                                                       @PathVariable("otherMemberId") int otherMemberId) {
+        return memberService.getOtherProfile(memberId, otherMemberId);
     }
 }

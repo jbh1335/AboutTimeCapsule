@@ -5,13 +5,13 @@ import lombok.Getter;
 
 @Getter
 public class FriendDto {
-    private int memberId;
+    private int friendMemberId;
     private String nickname;
     private String profileImageUrl;
 
     @Builder
-    public FriendDto(int memberId, String nickname, String profileImageUrl) {
-        this.memberId = memberId;
+    public FriendDto(int friendMemberId, String nickname, String profileImageUrl) {
+        this.friendMemberId = friendMemberId;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
     }
