@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import com.aboutcapsule.android.databinding.FragmentCustomDialogMainpageBinding
+import net.daum.mf.map.api.MapView
 
 
 class CustomDialogMainpage : DialogFragment() {
@@ -29,7 +30,13 @@ class CustomDialogMainpage : DialogFragment() {
             dismiss()
         }
 
+//        val mapView = MapView(requireActivity())
+//        val mapViewContainer = binding!!.mapView
+//        mapViewContainer.addView(mapView)
+
         return view
+
+
     }
 
     override fun onDestroyView() {

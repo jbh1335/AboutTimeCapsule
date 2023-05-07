@@ -1,6 +1,6 @@
 package com.aboutcapsule.android.views.mainpage
 
-data class CapsuleListWaitingData(
+data class CapsuleListData(
     var img : Int,
     var time : String,
     var place : String,

@@ -16,7 +16,9 @@ class CapsuleRegistGroupFragment : Fragment() {
 
    lateinit var binding : FragmentCapsuleRegistGroupBinding
    lateinit var navController : NavController
-
+   companion object{
+       var radioBtn: String =""
+   }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -24,7 +26,7 @@ class CapsuleRegistGroupFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_regist_group,container,false)
 
-        radiobtnListner()
+        radioBtnListner()
 
         return binding.root
     }
@@ -44,23 +46,23 @@ class CapsuleRegistGroupFragment : Fragment() {
         navController = navHostFragment.navController
     }
 
-    fun redirectFindFriend(){
+    private fun redirectFindFriend(){
         binding.addMemberBtn.setOnClickListener {
             navController.navigate(R.id.action_capsuleRegistGroupFragment_to_capsuleFindFriendFragment)
         }
     }
-    fun redirectTest(){
+    private fun redirectTest(){
         binding.addMemberView.setOnClickListener{
             navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
         }
     }
 
 
-    fun radiobtnListner(){
-        binding.radiogruop2type.setOnCheckedChangeListener{ group , checkedId ->
+    private fun radioBtnListner(){
+        binding.radiogruop2type.setOnCheckedChangeListener{ _ , checkedId ->
             when(checkedId){
-                R.id.radio_2type_all -> "api에 번호로 넘겨주려나 ? "
-                R.id.radio_2type_group -> Log.d("라디오2type버튼", "체크 확인 !" )
+                R.id.radio_2type_all ->  radioBtn="ALL"
+                R.id.radio_2type_group -> radioBtn="GROUP"
             }
         }
     }

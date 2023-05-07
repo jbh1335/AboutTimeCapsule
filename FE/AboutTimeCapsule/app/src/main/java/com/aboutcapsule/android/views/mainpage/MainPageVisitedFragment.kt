@@ -1,32 +1,32 @@
 package com.aboutcapsule.android.views.mainpage
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleObserver
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.viewpager2.widget.ViewPager2
 import com.aboutcapsule.android.R
-import com.aboutcapsule.android.databinding.FragmentMainPageMyCapsuleBinding
+import com.aboutcapsule.android.databinding.FragmentMainPageVisitedBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
+class MainPageVisitedFragment : Fragment() {
 
-class MainPageMyCapsuleFragment : Fragment() {
-
-    lateinit var binding : FragmentMainPageMyCapsuleBinding
+    lateinit var binding : FragmentMainPageVisitedBinding
+    lateinit var navController: NavController
     private lateinit var  viewPager : ViewPager2
     private lateinit var  tabLayout : TabLayout
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_my_capsule,container,false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_visited,container,false)
 
         viewPager = binding.viewPagerLayout
         tabLayout = binding.tabLayout
@@ -38,31 +38,21 @@ class MainPageMyCapsuleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setViewPager()
-        callingApi()
-
+        setNavigation()
     }
 
-    // TODO : 내캡슐 or 친구의 캡슐 api 불러오기 ( 분기처리 완료 )
-    private fun callingApi(){
-
-        var calledApi = requireArguments().getString("apiName").toString()
-
-        when(calledApi){
-            "myCapsuleApi" -> {
-                Log.d("api", " 내 캡슐  ")
-            }
-            "friendApi" -> {
-                Log.d("api", " 친구 캡슐  ")
-            }
-        }
+    // 네비게이션 세팅
+    private fun setNavigation(){
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
     }
 
-
+    // 뷰페이저 세팅
     private fun setViewPager(){
         //       뷰페이저 ( 목록보기, 지도보기 )
         val pagerAdapter = PagerFragmentStateAdapter(requireActivity())
 
-        pagerAdapter.addFragment(CapsuleListFragment())
+        pagerAdapter.addFragment(CapsuleVistiedFragment())
         pagerAdapter.addFragment(CapsuleMapFragment())
 
         viewPager.adapter = pagerAdapter
