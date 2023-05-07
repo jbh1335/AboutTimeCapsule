@@ -42,7 +42,8 @@
                 android:textColor="@color/btnColor"
                 android:textSize="18sp" />
 
-<!--            <net.daum.mf.map.api.MapView-->
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/map_view"-->
 <!--                android:layout_width="300dp"-->
 <!--                android:layout_height="400dp" />-->
 

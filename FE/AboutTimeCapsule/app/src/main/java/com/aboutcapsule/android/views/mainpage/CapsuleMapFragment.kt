@@ -32,7 +32,6 @@ class CapsuleMapFragment : Fragment() {
 
         setNavigation()
 
-
     }
 
     private fun setNavigation(){

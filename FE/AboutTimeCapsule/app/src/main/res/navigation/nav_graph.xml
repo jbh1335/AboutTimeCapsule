@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_mainPageMainFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_to_mainPageVisitedFragment"
+            app:destination="@id/mainPageVisitedFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_self"
+            app:destination="@id/mainPageMainFragment" />
 
     </fragment>
     <fragment
@@ -41,7 +47,11 @@
         android:id="@+id/myPageMainFragment"
         android:name="com.aboutcapsule.android.views.mypage.MyPageMainFragment"
         android:label="fragment_my_page_main"
-        tools:layout="@layout/fragment_my_page_main" />
+        tools:layout="@layout/fragment_my_page_main" >
+        <action
+            android:id="@+id/action_myPageMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mainPageMyCapsuleFragment"
         android:name="com.aboutcapsule.android.views.mainpage.MainPageMyCapsuleFragment"
@@ -53,6 +63,9 @@
         <action
             android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistGroupFragment"
             app:destination="@id/capsuleRegistGroupFragment" />
+        <action
+            android:id="@+id/action_mainPageMyCapsuleFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
     </fragment>
 
     <fragment
@@ -90,15 +103,15 @@
         android:name="com.aboutcapsule.android.views.notification.NotificationMainFragment"
         android:label="fragment_notification_main"
         tools:layout="@layout/fragment_notification_main">
+       </fragment>
+    <fragment
+        android:id="@+id/mainPageVisitedFragment"
+        android:name="com.aboutcapsule.android.views.mainpage.MainPageVisitedFragment"
+        android:label="fragment_main_page_visited"
+        tools:layout="@layout/fragment_main_page_visited">
         <action
-            android:id="@+id/action_notificationMainFragment_to_mainPageMainFragment"
-            app:destination="@id/mainPageMainFragment" />
-        <action
-            android:id="@+id/action_notificationMainFragment_to_mapMainFragment"
-            app:destination="@id/mapMainFragment" />
-        <action
-            android:id="@+id/action_notificationMainFragment_to_chatMainFragment"
-            app:destination="@id/chatMainFragment" />
+            android:id="@+id/action_mainPageVisitedFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
     </fragment>
 
 </navigation>
