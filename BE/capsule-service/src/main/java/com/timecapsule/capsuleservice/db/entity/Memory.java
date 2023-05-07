@@ -51,6 +51,7 @@ public class Memory extends BaseEntity {
         memory.setDeleted(isDeleted);
         return memory;
     }
+
     public static Memory of(Memory memory, String title, String content, String image) {
         memory.setTitle(title);
         memory.setContent(content);
@@ -60,6 +61,11 @@ public class Memory extends BaseEntity {
 
     public static Memory of(Memory memory, LocalDate openDate, boolean isLocked) {
         memory.setOpenDate(openDate);
+        memory.setLocked(isLocked);
+        return memory;
+    }
+
+    public static Memory unLockMemory(Memory memory, boolean isLocked) {
         memory.setLocked(isLocked);
         return memory;
     }

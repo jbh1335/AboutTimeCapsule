@@ -609,6 +609,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(friend.isAccepted()) friendList.add(friend.getFromMember());
         });
 
+        friendList.sort(Comparator.comparing(Member::getNickname));
         return friendList;
     }
 

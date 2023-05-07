@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface MemoryRepository extends JpaRepository<Memory, Integer> {
     Optional<Memory> findById(int id);
     List<Memory> findAllByCapsuleIdAndIsDeletedFalse(int capsuleId);
+    List<Memory> findAllByIsDeletedFalseAndIsLockedTrue();
 }
