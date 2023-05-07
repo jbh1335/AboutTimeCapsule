@@ -36,6 +36,8 @@ class CapsuleRegistFragment : Fragment() {
         // 전체, 친구공개, 나만보기 라디오 버튼
         radioBtnListner()
 
+
+
         return binding.root
     }
     override fun onDestroy() {

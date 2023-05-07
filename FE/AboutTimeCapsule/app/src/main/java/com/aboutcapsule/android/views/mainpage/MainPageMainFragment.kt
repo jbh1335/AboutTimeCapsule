@@ -13,6 +13,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
@@ -57,6 +60,7 @@ class MainPageMainFragment : Fragment() {
 
         // 버튼 클릭시 페이지 전환
         redirectPages()
+
 
     }
 
@@ -156,6 +160,5 @@ class MainPageMainFragment : Fragment() {
         }
         return itemList
     }
-
 
 }

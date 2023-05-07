@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_mainPageMainFragment_to_mainPageVisitedFragment"
             app:destination="@id/mainPageVisitedFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_self"
+            app:destination="@id/mainPageMainFragment" />
 
     </fragment>
     <fragment
@@ -60,6 +63,9 @@
         <action
             android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistGroupFragment"
             app:destination="@id/capsuleRegistGroupFragment" />
+        <action
+            android:id="@+id/action_mainPageMyCapsuleFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
     </fragment>
 
     <fragment
@@ -102,6 +108,10 @@
         android:id="@+id/mainPageVisitedFragment"
         android:name="com.aboutcapsule.android.views.mainpage.MainPageVisitedFragment"
         android:label="fragment_main_page_visited"
-        tools:layout="@layout/fragment_main_page_visited"/>
+        tools:layout="@layout/fragment_main_page_visited">
+        <action
+            android:id="@+id/action_mainPageVisitedFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
 
 </navigation>

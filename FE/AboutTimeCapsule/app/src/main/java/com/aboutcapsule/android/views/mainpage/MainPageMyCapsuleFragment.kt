@@ -7,8 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMyCapsuleBinding
@@ -39,6 +43,9 @@ class MainPageMyCapsuleFragment : Fragment() {
 
         setViewPager()
         callingApi()
+
+        // 툴바 뒤로가기 버튼 세팅
+        setToolbar()
 
     }
 
@@ -80,6 +87,24 @@ class MainPageMyCapsuleFragment : Fragment() {
                 1 -> tab.text = "지도 보기"
             }
         }.attach()
+    }
+
+    private fun setToolbar() {
+        // 액티비티에서 툴바 가져오기
+        val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+
+        // Navigation Component와 툴바 연결
+        val navController = findNavController()
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
+
+        // 프래그먼트 전환 이벤트 감지 및 툴바 업데이트
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            toolbar.title = ""
+            toolbar.setNavigationOnClickListener {
+                navController.navigateUp()
+            }
+        }
     }
 
 }

@@ -41,8 +41,6 @@
                 android:src="@drawable/toolbarbell" />
 
         </androidx.appcompat.widget.Toolbar>
-<!--        <include layout="@layout/toolbar"-->
-<!--            android:id="@+id/toolbar"/>-->
 
         <FrameLayout
             android:id="@+id/mainFrameLayout"

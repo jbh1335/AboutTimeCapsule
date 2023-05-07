@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -39,6 +40,8 @@ class MainPageVisitedFragment : Fragment() {
 
         setViewPager()
         setNavigation()
+
+        redirectPage()
     }
 
     // 네비게이션 세팅
@@ -71,5 +74,15 @@ class MainPageVisitedFragment : Fragment() {
             }
         }.attach()
     }
+
+    private fun redirectPage(){
+
+        // 상단 툴바 알림페이지로 리다이렉트
+        val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
+        notiBtn?.setOnClickListener{
+            navController.navigate(R.id.action_mainPageVisitedFragment_to_notificationMainFragment)
+        }
+    }
+
 
 }

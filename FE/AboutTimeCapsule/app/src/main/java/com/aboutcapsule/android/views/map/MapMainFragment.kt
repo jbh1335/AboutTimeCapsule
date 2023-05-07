@@ -33,6 +33,8 @@ class MapMainFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
+        setNavigation()
+
         redirectNotification()
     }
 
@@ -42,6 +44,12 @@ class MapMainFragment : Fragment() {
         notiBtn?.setOnClickListener{
             navController.navigate(R.id.action_mapMainFragment_to_notificationMainFragment)
         }
+    }
+
+    // 네비게이션 세팅
+    private fun setNavigation(){
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
     }
 
 }

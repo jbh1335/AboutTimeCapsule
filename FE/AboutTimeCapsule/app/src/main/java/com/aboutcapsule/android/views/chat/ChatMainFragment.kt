@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentChatMainBinding
@@ -17,6 +18,7 @@ class ChatMainFragment : Fragment() {
 
     lateinit var navController: NavController
     lateinit var binding : FragmentChatMainBinding
+    lateinit var chatMainAdapter : ChatMainAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,24 +32,21 @@ class ChatMainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-        redirectNotification()
 
+        setChatingView()
+
+        redirectPage()
+    }
+
+
+    private fun setChatingView(){
         val chatMainDataList= getChatMaindatas()
-        val chatMainAdapter = ChatMainAdapter()
+        chatMainAdapter = ChatMainAdapter()
         chatMainAdapter.itemList = chatMainDataList
         binding.chatMainRecyclerView.adapter = chatMainAdapter
-        binding.chatMainRecyclerView.layoutManager =
-            LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
-
     }
 
-    fun redirectNotification(){
-        val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
-        notiBtn?.setOnClickListener{
-            navController.navigate(R.id.action_chatMainFragment_to_notificationMainFragment)
-        }
-    }
-
+    // 채팅 ( data )
     private fun getChatMaindatas(): MutableList<ChatMainData>{
         var itemList = mutableListOf<ChatMainData>()
 
@@ -60,6 +59,21 @@ class ChatMainFragment : Fragment() {
             itemList.add(tmp)
         }
         return itemList
+    }
+
+    private fun redirectPage(){
+
+        // 상단 툴바 알림페이지로 리다이렉트
+        val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
+        notiBtn?.setOnClickListener{
+            navController.navigate(R.id.action_chatMainFragment_to_notificationMainFragment)
+        }
+    }
+
+    // 네비게이션 세팅
+    private fun setNavigation(){
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
     }
 
 }
