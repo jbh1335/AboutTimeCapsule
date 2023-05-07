@@ -93,14 +93,29 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public CommonRes cancelRequest(int friendId) {
-        friendRepository.deleteById(friendId);
+        Optional<Friend> oFriend = friendRepository.findById(friendId);
+        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+
+        friendRepository.deleteById(friend.getId());
         return new CommonRes(true, "친구 요청을 취소했습니다.");
     }
 
     @Override
     public CommonRes refuseRequest(int friendId) {
-        friendRepository.deleteById(friendId);
+        Optional<Friend> oFriend = friendRepository.findById(friendId);
+        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+
+        friendRepository.deleteById(friend.getId());
         return new CommonRes(true, "친구 요청을 거절했습니다.");
+    }
+
+    @Override
+    public CommonRes acceptRequest(int friendId) {
+        Optional<Friend> oFriend = friendRepository.findById(friendId);
+        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+
+        friendRepository.save(Friend.of(friend, true));
+        return new CommonRes(true, "친구 요청을 수락했습니다.");
     }
 
     private List<Member> friendList(Member member) {

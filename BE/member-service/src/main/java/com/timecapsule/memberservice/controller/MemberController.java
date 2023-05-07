@@ -41,4 +41,9 @@ public class MemberController {
     public CommonRes refuseRequest(@PathVariable("friendId") int friendId) {
         return memberService.refuseRequest(friendId);
     }
+
+    @PatchMapping("/request/accept/{friendId}")
+    public CommonRes acceptRequest(@PathVariable("friendId") int friendId) {
+        return memberService.acceptRequest(friendId);
+    }
 }

@@ -13,4 +13,5 @@ public interface MemberService {
     SuccessRes<Integer> requestFriend(int fromMemberId, int toMemberId);
     CommonRes cancelRequest(int friendId);
     CommonRes refuseRequest(int friendId);
+    CommonRes acceptRequest(int friendId);
 }
