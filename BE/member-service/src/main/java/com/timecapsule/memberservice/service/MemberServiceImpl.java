@@ -6,6 +6,7 @@ import com.timecapsule.memberservice.db.entity.Member;
 import com.timecapsule.memberservice.db.repository.FriendRepository;
 import com.timecapsule.memberservice.db.repository.MemberRepository;
 import com.timecapsule.memberservice.dto.FriendDto;
+import com.timecapsule.memberservice.dto.RequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,21 +24,22 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> oMember = memberRepository.findById(memberId);
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
-        List<FriendDto> friendList = new ArrayList<>();
-        List<FriendDto> friendRequestList = new ArrayList<>();
+        List<FriendDto> friendDtoList = new ArrayList<>();
+        List<RequestDto> requestDtoList = new ArrayList<>();
         List<Member> myFriendList = friendList(member);
         int friendCnt = myFriendList.size();
         int count = 0;
 
         if(friendCnt > 6) myFriendList.subList(0, 6).clear();
-        myFriendList.forEach(friend -> friendList.add(FriendDto.builder()
+        myFriendList.forEach(friend -> friendDtoList.add(FriendDto.builder()
                 .memberId(friend.getId())
                 .nickname(friend.getNickname())
                 .profileImageUrl(friend.getProfileImageUrl())
                 .build()));
 
         member.getToMemberList().forEach(friend -> {
-            if(!friend.isAccepted()) friendRequestList.add(FriendDto.builder()
+            if(!friend.isAccepted()) requestDtoList.add(RequestDto.builder()
+                    .friendId(friend.getId())
                     .memberId(friend.getFromMember().getId())
                     .nickname(friend.getFromMember().getNickname())
                     .profileImageUrl(friend.getFromMember().getProfileImageUrl())
@@ -49,9 +51,9 @@ public class MemberServiceImpl implements MemberService{
                 .email(member.getEmail())
                 .profileImageUrl(member.getProfileImageUrl())
                 .friendCnt(friendCnt)
-                .friendRequestCnt(friendRequestList.size())
-                .friendList(friendList)
-                .friendRequestList(friendRequestList)
+                .friendRequestCnt(requestDtoList.size())
+                .friendDtoList(friendDtoList)
+                .requestDtoList(requestDtoList)
                 .build();
 
         return new SuccessRes<>(true, "나의 마이페이지 정보를 조회합니다.", mypageRes);
@@ -116,22 +118,14 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public SuccessRes<List<RequestRes>> getRequestList(int memberId) {
-        Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+    public CommonRes deleteFriend(int friendId) {
+        Optional<Friend> oFriend = friendRepository.findById(friendId);
+        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
 
-        List<RequestRes> requestResList = new ArrayList<>();
-        member.getToMemberList().forEach(friend -> {
-            if(!friend.isAccepted()) requestResList.add(RequestRes.builder()
-                    .friendId(friend.getId())
-                    .memberId(friend.getFromMember().getId())
-                    .nickname(friend.getFromMember().getNickname())
-                    .profileImageUrl(friend.getFromMember().getProfileImageUrl())
-                    .build());
-        });
-
-        return new SuccessRes<>(true, "제가 받은 친구 요청을 조회합니다.", requestResList);
+        friendRepository.deleteById(friend.getId());
+        return new CommonRes(true, "친구 관계를 삭제했습니다.");
     }
+
 
     private List<Member> friendList(Member member) {
         List<Member> friendList = new ArrayList<>();

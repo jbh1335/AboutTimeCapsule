@@ -1,17 +1,17 @@
-package com.timecapsule.memberservice.api.response;
+package com.timecapsule.memberservice.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class RequestRes {
+public class RequestDto {
     private int friendId;
     private int memberId;
     private String nickname;
     private String profileImageUrl;
 
     @Builder
-    public RequestRes(int friendId, int memberId, String nickname, String profileImageUrl) {
+    public RequestDto(int friendId, int memberId, String nickname, String profileImageUrl) {
         this.friendId = friendId;
         this.memberId = memberId;
         this.nickname = nickname;

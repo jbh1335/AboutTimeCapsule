@@ -44,8 +44,8 @@ public class MemberController {
         return memberService.acceptRequest(friendId);
     }
 
-    @GetMapping("/request/list/{memberId}")
-    public SuccessRes<List<RequestRes>> getRequestList(@PathVariable("memberId") int memberId) {
-        return memberService.getRequestList(memberId);
+    @DeleteMapping("/friend/delete/{friendId}")
+    public CommonRes deleteFriend(@PathVariable("friendId") int friendId) {
+        return memberService.deleteFriend(friendId);
     }
 }
