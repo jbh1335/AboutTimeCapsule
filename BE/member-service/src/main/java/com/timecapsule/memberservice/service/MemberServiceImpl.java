@@ -97,6 +97,12 @@ public class MemberServiceImpl implements MemberService{
         return new CommonRes(true, "친구 요청을 취소했습니다.");
     }
 
+    @Override
+    public CommonRes refuseRequest(int friendId) {
+        friendRepository.deleteById(friendId);
+        return new CommonRes(true, "친구 요청을 거절했습니다.");
+    }
+
     private List<Member> friendList(Member member) {
         List<Member> friendList = new ArrayList<>();
         member.getFromMemberList().forEach(friend -> {

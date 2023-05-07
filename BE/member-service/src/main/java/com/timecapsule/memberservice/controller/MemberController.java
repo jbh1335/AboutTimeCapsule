@@ -26,14 +26,19 @@ public class MemberController {
         return memberService.getFriendList(memberId);
     }
 
-    @PostMapping("/friend/request/{fromMemberId}/{toMemberId}")
+    @PostMapping("/request/{fromMemberId}/{toMemberId}")
     public SuccessRes<Integer> requestFriend(@PathVariable("fromMemberId") int fromMemberId,
                                    @PathVariable("toMemberId") int toMemberId) {
         return memberService.requestFriend(fromMemberId, toMemberId);
     }
 
-    @DeleteMapping("/friend/request/cancel/{friendId}")
+    @DeleteMapping("/request/cancel/{friendId}")
     public CommonRes cancelRequest(@PathVariable("friendId") int friendId) {
         return memberService.cancelRequest(friendId);
+    }
+
+    @DeleteMapping("/request/refuse/{friendId}")
+    public CommonRes refuseRequest(@PathVariable("friendId") int friendId) {
+        return memberService.refuseRequest(friendId);
     }
 }

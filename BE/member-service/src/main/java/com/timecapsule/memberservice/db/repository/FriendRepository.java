@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Integer> {
     Optional<Friend> findById(int id);
-    
+    void deleteById(int id);
 }
