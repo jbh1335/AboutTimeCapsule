@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleRegistGroupBinding
+import com.aboutcapsule.android.views.MainActivity
 
 class CapsuleRegistGroupFragment : Fragment() {
 
@@ -18,7 +19,16 @@ class CapsuleRegistGroupFragment : Fragment() {
    lateinit var navController : NavController
    companion object{
        var radioBtn: String =""
+       var bottomNavFlag : Boolean = false
    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // 바텀 네비 숨기기
+        bottomNavToggle()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +47,13 @@ class CapsuleRegistGroupFragment : Fragment() {
         setNavigation()
         redirectFindFriend()
         redirectTest()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // 바텀 네비 다시 살리기
+        bottomNavToggle()
     }
 
 
@@ -66,4 +83,11 @@ class CapsuleRegistGroupFragment : Fragment() {
             }
         }
     }
+
+    // 바텀 네비 숨기기 토글
+    private fun bottomNavToggle(){
+        val mainActivity = activity as MainActivity
+        mainActivity.hideBottomNavi(!CapsuleRegistFragment.bottomNavFlag)
+    }
+
 }
