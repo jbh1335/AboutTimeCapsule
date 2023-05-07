@@ -1,6 +1,0 @@
-jwt:
-  secret-key: YWJvdXQtdGltZS1jYXBzdWxlLWFib3V0LXRpbWUtY2Fwc3VsZS1hYm91dC10aW1lLWNhcHN1bGUtYWJvdXQtdGltZS1jYXBzdWxl
-  expiration-time: 43200
-  logout-token-expiration-time: 43200
-#  refresh-expiration-time: 1209600 # 14일
-#  access-expiration-time: 43200 # 12시간
