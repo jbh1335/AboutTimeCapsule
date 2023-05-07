@@ -12,6 +12,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class Chatroom implements Serializable {
+    private static final long serialVersionUID = -7401006532253358108L;
+
     @Id
     private String id;
     @ManyToOne
