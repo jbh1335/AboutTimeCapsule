@@ -1,4 +1,4 @@
-package com.timecapsule.chatservice.service.pubsub;
+package com.timecapsule.chatservice.service;
 
 import com.timecapsule.chatservice.db.entity.ChatMessage;
 

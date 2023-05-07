@@ -1,8 +1,9 @@
-package com.timecapsule.chatservice.service.pubsub;
+package com.timecapsule.chatservice.service;
 
 import com.timecapsule.chatservice.db.entity.ChatMessage;
 import com.timecapsule.chatservice.db.repository.jpa.ChatMessageJpaRepository;
 import com.timecapsule.chatservice.db.repository.redis.ChatroomRedisRepository;
+import com.timecapsule.chatservice.service.pubsub.RedisPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
