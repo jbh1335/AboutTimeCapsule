@@ -17,9 +17,9 @@ public class Chatroom implements Serializable {
     @Id
     private String id;
     @ManyToOne
-    @JoinColumn(name = "from_member_id", insertable=false, updatable=false)
+    @JoinColumn(name = "from_member_id")
     private Member fromMember;
     @ManyToOne
-    @JoinColumn(name = "to_member_id", insertable=false, updatable=false)
+    @JoinColumn(name = "to_member_id")
     private Member toMember;
 }

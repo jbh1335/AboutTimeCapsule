@@ -7,10 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
 @Getter
-public class Member {
+public class Member implements Serializable {
     @Id
     private int id;
     @Enumerated(EnumType.STRING)

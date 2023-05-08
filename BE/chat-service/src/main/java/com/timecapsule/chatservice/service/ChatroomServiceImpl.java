@@ -3,6 +3,7 @@ package com.timecapsule.chatservice.service;
 import com.timecapsule.chatservice.api.request.ChatroomReq;
 import com.timecapsule.chatservice.db.entity.Chatroom;
 import com.timecapsule.chatservice.db.entity.Member;
+import com.timecapsule.chatservice.db.repository.jpa.ChatroomJpaRepository;
 import com.timecapsule.chatservice.db.repository.jpa.MemberRepository;
 import com.timecapsule.chatservice.db.repository.redis.ChatroomRedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class ChatroomServiceImpl implements ChatroomService {
     private final ChatroomRedisRepository chatroomRedisRepository;
     private final MemberRepository memberRepository;
+    private final ChatroomJpaRepository chatroomJpaRepository;
 
     @Override
     public Chatroom createChatroom(ChatroomReq chatroomReq) {
@@ -32,8 +34,8 @@ public class ChatroomServiceImpl implements ChatroomService {
         
         //Redis에 저장
         chatroomRedisRepository.createChatroom(chatroom);
-        
-        //TODO : RDB에 저장
+        //RDB에 저장
+        chatroomJpaRepository.save(chatroom);
 
         return chatroom;
     }
