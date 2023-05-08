@@ -19,7 +19,6 @@ public class AuthorizationExtractor {
         Enumeration<String> headers = request.getHeaders(AUTHORIZATION);
         while (headers.hasMoreElements()) {
             String value = headers.nextElement();
-            log.info("value = ", value);
             if ((value.toLowerCase().startsWith(BEARER_TYPE.toLowerCase()))) {
                 String authHeaderValue = value.substring(BEARER_TYPE.length()).trim();
                 return authHeaderValue;

@@ -4,7 +4,7 @@ import com.timecapsule.oauthservice.db.entity.ProviderType;
 
 import java.util.Map;
 
-public class KakaoUserInfo implements Oauth2UserInfo {
+public class KakaoUserInfo implements OauthUserInfo {
     private Map<String, Object> attributes;
 
     public KakaoUserInfo(Map<String, Object> attributes) {

@@ -62,7 +62,7 @@ public class OauthService {
         log.info("로그인 완료");
         return LoginResponse.builder()
                 .id(member.getId())
-                .nickName(member.getNickName())
+                .nickname(member.getNickname())
                 .email(member.getEmail())
                 .profileImageUrl(member.getProfileImageUrl())
                 .roleType(member.getRoleType())

@@ -61,7 +61,7 @@ public class AuthService {
     @Transactional
     public CustomResponse logout(String accessToken) {
         String id = jwtTokenProvider.getPayload(accessToken);
-        redisUtil.deleteData(id); // 로그아웃 시 토큰 삭제
+        redisUtil.deleteData(id); // 로그아웃 시 토큰 삭제 =>  로그아웃을 하면 Refresh Token을 삭제하여 사용이 불가능하도록 함
         return new CustomResponse("로그아웃 성공");
     }
 

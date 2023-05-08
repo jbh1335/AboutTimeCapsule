@@ -1,6 +1,5 @@
 package com.timecapsule.oauthservice.api.response;
 
-import com.timecapsule.oauthservice.db.entity.ProviderType;
 import com.timecapsule.oauthservice.db.entity.RoleType;
 import lombok.*;
 
@@ -11,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginResponse {
     int id;
-    private String nickName;
+    private String nickname;
     private String email;
     private String profileImageUrl;
     private RoleType roleType;

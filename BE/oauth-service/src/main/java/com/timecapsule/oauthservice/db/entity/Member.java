@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Member extends BaseEntity{
     @Column(length = 64)
-    private String nickName;
+    private String nickname;
     @Column(length = 64)
     private String email;
     @Column(length = 255)

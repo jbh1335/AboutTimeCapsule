@@ -42,7 +42,7 @@ public class OauthController {
     }
 
     // Access Token으로 로그아웃
-    @PostMapping("/logout")
+    @PostMapping("/logout/me")
     public CustomResponse logout(HttpServletRequest request) {
         String accessToken = AuthorizationExtractor.extract(request);
         return authService.logout(accessToken);

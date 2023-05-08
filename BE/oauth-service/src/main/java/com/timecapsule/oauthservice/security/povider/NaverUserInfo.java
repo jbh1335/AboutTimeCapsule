@@ -4,7 +4,7 @@ import com.timecapsule.oauthservice.db.entity.ProviderType;
 
 import java.util.Map;
 
-public class NaverUserInfo implements Oauth2UserInfo {
+public class NaverUserInfo implements OauthUserInfo {
     private Map<String, Object> attributes;
 
     public NaverUserInfo(Map<String, Object> attributes) {

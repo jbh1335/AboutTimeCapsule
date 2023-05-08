@@ -1,4 +1,4 @@
-package com.timecapsule.oauthservice.util;
+package com.timecapsule.oauthservice.security;
 
 import com.timecapsule.oauthservice.db.entity.RoleType;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

@@ -1,4 +1,4 @@
-package com.timecapsule.oauthservice.util;
+package com.timecapsule.oauthservice.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

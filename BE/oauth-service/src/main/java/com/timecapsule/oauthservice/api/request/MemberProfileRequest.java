@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MemberProfileRequest {
-    private String nickName;
+    private String nickname;
     private String email;
     private String profileImageUrl;
 }
