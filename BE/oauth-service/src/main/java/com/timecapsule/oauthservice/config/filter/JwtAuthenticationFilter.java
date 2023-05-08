@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,8 +31,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
+            Set<String> keySet = request.getParameterMap().keySet();
+            log.info(keySet.toString());
             String accessToken = AuthorizationExtractor.extract(request);
-            log.info("accessToken = {}", accessToken);
+            log.info("***** accessToken = {}", accessToken);
             if (StringUtils.hasText(accessToken) && jwtTokenProvider.validateToken(accessToken)) {
                 int loginMemberId = authService.findMemberByToken(accessToken); // token 검증
                 UserAuthentication authentication = new UserAuthentication(loginMemberId); // 인증 객체 생성

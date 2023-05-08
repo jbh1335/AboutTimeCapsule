@@ -26,7 +26,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 // rest api 이므로 기본설정 사용안함(기본설정은 비인증시 로그인폼 화면으로 리다이렉트 됨)
-                .cors().and().httpBasic().disable()
+                .cors()
+                .and()
+                .httpBasic().disable()
                 // rest api 서버로 사용하면 csrf 보안이 필요없으므로 csrf 보안 토큰 비활성화
                 .csrf().disable();
 
@@ -38,7 +40,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 나머지 URL들은 모두 인증된 사용자들에게만 허용
                 .authenticated()
                 // 예외처리 기능 작동
-                .and().exceptionHandling()
+                .and()
+                .exceptionHandling()
                 // Security 필터에 의해 발생하는 예외는 2가지가 있음
                 // Security 필터들 중 마지막에 위치한 FilterSecurityInterceptor가 예외를 발생시킴
                 // 2가지 예외 : AuthenticationException(인증 실패), AccessDeniedException(인가 실패)
@@ -47,9 +50,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // ExceptionTranslationFilter는 예외 발생시 AuthenticationEntryPoint(인증 실패), AccessDeniedHandler(인가 실패)를 실행함
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 // jwt token으로 인증할것이므로 세션이 필요없으므로 생성X
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 // form login 제거
-                .and().formLogin().disable();
+                .and()
+                .formLogin().disable();
 
         http
                 // 지정된 필터 앞에 커스텀 필터를 추가

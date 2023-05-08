@@ -28,7 +28,7 @@ public class OauthController {
     // 인증 코드로 로그인
     @GetMapping("/login/oauth/{provider}")
     public LoginResponse login(@PathVariable String provider, @RequestParam String code) {
-        log.info("In OauthController");
+        log.info("회원가입/로그인 시도");
         return oauthService.login(new AuthorizationRequest(provider, code));
 
     }

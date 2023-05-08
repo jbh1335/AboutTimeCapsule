@@ -5,6 +5,7 @@ import com.timecapsule.oauthservice.api.response.LoginResponse;
 import com.timecapsule.oauthservice.api.response.OauthTokenResponse;
 import com.timecapsule.oauthservice.config.redis.RedisUtil;
 import com.timecapsule.oauthservice.db.entity.Member;
+import com.timecapsule.oauthservice.db.entity.RoleType;
 import com.timecapsule.oauthservice.db.repository.MemberRepository;
 import com.timecapsule.oauthservice.security.OauthAttributes;
 import com.timecapsule.oauthservice.security.jwt.JwtTokenProvider;
@@ -40,6 +41,7 @@ public class OauthService {
 
     @Transactional
     public LoginResponse login(AuthorizationRequest authorizationRequest) {
+        // provider 이름을 통해 InMemoryProviderRepository에서 OauthProvider 가져오기
         ClientRegistration provider = inMemoryRepository.findByRegistrationId(authorizationRequest.getProviderName());
         log.info("{} 로그인 요청", provider.getClientName());
         log.info("provider : {}", provider);
@@ -55,13 +57,14 @@ public class OauthService {
         log.info("refreshToken = {}", refreshToken.getValue());
 
         redisUtil.setDataExpire(String.valueOf(user.getId()), refreshToken.getValue(), refreshToken.getExpiredTime());
-
+        
+        log.info("로그인 완료");
         return LoginResponse.builder()
                 .id(user.getId())
                 .nickName(user.getNickName())
                 .email(user.getEmail())
                 .profileImageUrl(user.getProfileImageUrl())
-                .roleType(user.getRoleType())
+                .roleType(RoleType.USER)
                 .tokenType(BEARER_TYPE)
                 .accessToken(accessToken.getValue())
                 .refreshToken(refreshToken.getValue())
@@ -87,9 +90,6 @@ public class OauthService {
             findUser = memberRepository.save(user);
         }
         log.info("Member id = {}", findUser.getId());
-        for (int i = 1; i < 12; i++){
-            System.out.println(memberRepository.findById(i));
-        }
         return findUser;
     }
 

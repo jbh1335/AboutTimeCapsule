@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -22,8 +23,15 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     // 인증 처리 과정에서 예외가 발생한 경우 commence 메소드를 실행됨
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.info("인증 처리 과정 중 예외 발생");
+        log.info("인증 처리 과정 중 예외 발생 : {}", authException.toString());
+        Set<String> keySet = request.getParameterMap().keySet();
+        log.info(keySet.toString());
+        for(String key: keySet) {
+            log.info("***** {} : {}", key, request.getParameter(key));
+        }
+
         Object errorObject = request.getAttribute("CustomException");
+        log.info("errorObject : {}", errorObject);
         if (errorObject != null) {
             sendError(response, ErrorCode.UNAUTHORIZED_USER);
         }
