@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true"/>
@@ -72,11 +71,6 @@
             </intent-filter>
         </activity>
 
-        <!-- 카카오 지도 -->
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="${kakao_redirect_uri}" />
-
         <!--  FileProvider       -->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -94,6 +88,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+
+        <!-- 구글 지도  -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${google_api_key}"/>
 
     </application>
 

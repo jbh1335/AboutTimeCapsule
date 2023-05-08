@@ -32,7 +32,6 @@ class MainPageVisitedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_visited,container,false)
-
         viewPager = binding.viewPagerLayout
         tabLayout = binding.tabLayout
 

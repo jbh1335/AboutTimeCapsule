@@ -12,6 +12,8 @@ def kakao_redirect_uri = properties.getProperty('kakao.redirect.uri')
 def naver_client_id = properties.getProperty('naver.client.id')
 def naver_client_secret = properties.getProperty('naver.client.secret')
 
+def google_api_key = properties.getProperty('google.api.key')
+
 //FCM
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
@@ -30,6 +32,7 @@ android {
         buildConfigField "String", "NAVER_CLIENT_ID", "\"${naver_client_id}\""
         buildConfigField "String", "NAVER_CLIENT_SECRET", "\"${naver_client_secret}\""
         manifestPlaceholders = [kakao_redirect_uri: kakao_redirect_uri]
+        manifestPlaceholders = [google_api_key : google_api_key]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -80,10 +83,6 @@ dependencies {
     //    이미지 로드 편리하게 사용하기
     implementation 'com.github.bumptech.glide:glide:4.15.1'
 
-    //    카카오 지도 세팅
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation files('libs/libDaumMapAndroid.jar')
-
     // jetpack navigation
     def nav_version="2.5.3"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -96,4 +95,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.0.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
+
+    // 구글 지도
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 }

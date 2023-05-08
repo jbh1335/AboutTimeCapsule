@@ -1,6 +1,8 @@
 package com.aboutcapsule.android.views
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -13,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
 import com.google.firebase.messaging.FirebaseMessaging
+import java.security.MessageDigest
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,8 +31,6 @@ class MainActivity : AppCompatActivity() {
         initFirebase()
 
     }
-
-
 
     private fun initFirebase() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
