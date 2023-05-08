@@ -1,6 +1,7 @@
 package com.timecapsule.oauthservice.db.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ public class Member extends BaseEntity{
     private ProviderType providerType; // 요청이 들어온 서드 파티 앱
     private String providerId; // 서드 파티 앱의 PK
     @Enumerated(EnumType.STRING)
-    private RoleType roleType;
+    @Builder.Default
+    private RoleType roleType = RoleType.USER;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
     private List<Friend> toMemberList = new ArrayList<>();
 
-    public void updateProfile(String email, String profileImageUrl) {
-        this.email = email;
+    public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
 }

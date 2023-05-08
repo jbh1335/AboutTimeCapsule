@@ -33,7 +33,7 @@ public class JwtTokenProvider {
     }
 
     public String createToken(String payload, long expireLength) {
-        Claims claims = Jwts.claims().setSubject(payload);
+        Claims claims = Jwts.claims().setSubject(payload); // subject에 대한 내용을 가진 Claim 생성
         Date now = new Date();
         Date validity = new Date(now.getTime() + expireLength);
         return Jwts.builder()
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getPayload(String token){
+    public String getPayload(String token){ // MemberId 반환
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -59,6 +59,7 @@ public class JwtTokenProvider {
         }
     }
 
+    // Jwt Token의 유효성 및 만료 기간 검사
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claimsJws = Jwts.parserBuilder()

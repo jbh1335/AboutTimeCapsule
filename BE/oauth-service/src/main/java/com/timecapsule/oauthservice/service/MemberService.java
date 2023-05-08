@@ -51,8 +51,7 @@ public class MemberService {
     @Transactional
     public MemberProfileResponse updateProfile(MemberProfileRequest memberProfileRequest) throws IOException {
         Member findUser = findCurrentUserId();
-        findUser.updateProfile(
-                memberProfileRequest.getEmail(),
+        findUser.updateProfileImageUrl(
                 memberProfileRequest.getProfileImageUrl());
 
         return new MemberProfileResponse(findUser.getProfileImageUrl());

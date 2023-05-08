@@ -46,55 +46,58 @@ public class OauthService {
         log.info("{} 로그인 요청", provider.getClientName());
         log.info("provider : {}", provider);
 
-        Member user = getUserProfile(authorizationRequest, provider);
+        Member member = getUserInfo(authorizationRequest, provider);
 
-        log.info("user = {}", user);
+        log.info("Member = {}", member);
 
         // 유저 인증 후 Jwt AccessToken, Refresh Token 생성
-        Token accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
+        // 추후에 DB에 있는 정보와 비교하기 위해서는 해당 사용자만이 가질 수 있는 고유한 값이 필요하기 때문에, 토큰 생성은 memberId를 포함하여 구성
+        Token accessToken = jwtTokenProvider.createAccessToken(String.valueOf(member.getId()));
         log.info("accessToken = {}", accessToken.getValue());
         Token refreshToken = jwtTokenProvider.createRefreshToken();
         log.info("refreshToken = {}", refreshToken.getValue());
 
-        redisUtil.setDataExpire(String.valueOf(user.getId()), refreshToken.getValue(), refreshToken.getExpiredTime());
+        redisUtil.setDataExpire(String.valueOf(member.getId()), refreshToken.getValue(), refreshToken.getExpiredTime());
         
         log.info("로그인 완료");
         return LoginResponse.builder()
-                .id(user.getId())
-                .nickName(user.getNickName())
-                .email(user.getEmail())
-                .profileImageUrl(user.getProfileImageUrl())
-                .roleType(RoleType.USER)
+                .id(member.getId())
+                .nickName(member.getNickName())
+                .email(member.getEmail())
+                .profileImageUrl(member.getProfileImageUrl())
+                .roleType(member.getRoleType())
                 .tokenType(BEARER_TYPE)
                 .accessToken(accessToken.getValue())
                 .refreshToken(refreshToken.getValue())
                 .build();
     }
 
-    private Member getUserProfile(AuthorizationRequest authorizationRequest, ClientRegistration provider) {
+    private Member getUserInfo(AuthorizationRequest authorizationRequest, ClientRegistration provider) {
         OauthTokenResponse token = getToken(authorizationRequest, provider);
         if(token.getAccessToken() == null)
-            log.info("접근코드 발급 실패");
+            log.info("AccessToken 발급 실패");
         else
-            log.info("접근코드 발급 성공 : {}", token);
+            log.info("AccessToken 발급 성공 : {}", token);
         Map<String, Object> userAttributes = getUserAttributes(provider, token);
         Member extract = OauthAttributes.extract(authorizationRequest.getProviderName(), userAttributes);
         return saveOrUpdate(extract);
     }
 
-    private Member saveOrUpdate(Member user) {
-        log.info("ProviderId({}) 회원 정보 저장/갱신 ", user.getProviderId());
-        Member findUser = memberRepository.findByProviderId(user.getProviderId()).orElse(null);
-        if (findUser == null) {
-            log.info("신규 가입 멤버");
-            findUser = memberRepository.save(user);
+    private Member saveOrUpdate(Member member) {
+        Member findMember = memberRepository.findByProviderId(member.getProviderId()).orElse(null);
+        if (findMember == null) {
+            findMember = memberRepository.save(member);
+            log.info("회원가입 진행 - 회원번호 {}", findMember.getId());
         }
-        log.info("Member id = {}", findUser.getId());
-        return findUser;
+        else {
+            findMember.updateProfileImageUrl(member.getProfileImageUrl());
+            log.info("로그인 진행 - 회원번호 {}", findMember.getId());
+        }
+        return findMember;
     }
 
     private OauthTokenResponse getToken(AuthorizationRequest authorizationRequest, ClientRegistration provider) {
-        log.info("Authorization Code로 Oauth 서버에 Token 요청");
+//        log.info("Authorization Code로 Oauth 서버에 Token 요청");
         return WebClient.create()
                 .post()
                 .uri(provider.getProviderDetails().getTokenUri())
@@ -120,7 +123,6 @@ public class OauthService {
     }
 
     private Map<String, Object> getUserAttributes(ClientRegistration provider, OauthTokenResponse tokenResponse) {
-        log.info("userinfoUri = {}", provider.getProviderDetails().getUserInfoEndpoint().getUri());
         return WebClient.create()
                 .get()
                 .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())

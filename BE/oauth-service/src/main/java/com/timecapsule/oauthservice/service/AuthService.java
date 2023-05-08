@@ -40,12 +40,14 @@ public class AuthService {
 
 
     // Access Token 이 만료 되었을 경우 refresh Token 으로 재발급
+    // Redis Server 에서 refresh Token 을 가져옴
     public AccessTokenResponse accessTokenByRefreshToken(String accessToken, RefreshTokenRequest refreshTokenRequest) {
         refreshTokenExtractor(refreshTokenRequest);
         String id = jwtTokenProvider.getPayload(accessToken);
         String data = redisUtil.getData(id);
 
-        if (!data.equals(refreshTokenRequest.getRefreshToken())) { // Redis Server 에서 refresh Token 을 가져옴
+        // 조회해온 RefreshToken과 요청으로 넘어온 RefresToken과 동일하지 않다면 이는 유효하지 않은 RefreshToken
+        if (!data.equals(refreshTokenRequest.getRefreshToken())) {
             log.info("유효하지 않은 Refresh Token으로 인한 에러 발생");
             throw new CustomException(ErrorCode.UNAUTHORIZED_REFRESH_TOKEN);
         }

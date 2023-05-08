@@ -9,8 +9,8 @@ import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
+// Refresh Token 저장용으로 Radis 사용
 public class RedisUtil {
-
     private final StringRedisTemplate stringRedisTemplate;
 
     public String getData(String key) {
