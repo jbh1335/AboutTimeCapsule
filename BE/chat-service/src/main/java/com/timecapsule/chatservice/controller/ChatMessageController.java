@@ -2,21 +2,27 @@ package com.timecapsule.chatservice.controller;
 
 import com.timecapsule.chatservice.api.request.MessageReq;
 import com.timecapsule.chatservice.service.ChatMessageService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+@Api("메시지 API")
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class ChatMessageController {
     private final ChatMessageService chatMessageService;
 
     /**
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
+    @ApiOperation(value = "메시지 보내기", notes = "메시지를 보낸다")
     @MessageMapping("/chat/message")
-    //TODO : ChatMessage 객체가 아니라 Message 객체를 받도록 하기
-    public void message(MessageReq message) {
-        chatMessageService.sendMessage(message);
+    public ResponseEntity<?> message(@RequestBody MessageReq message) {
+        return new ResponseEntity<>(chatMessageService.sendMessage(message), HttpStatus.CREATED);
     }
 }

@@ -25,7 +25,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatMessageJpaRepository chatMessageJpaRepository;
 
     @Override
-    public void sendMessage(MessageReq message) {
+    public ChatMessage sendMessage(MessageReq message) {
         Chatroom chatroom = chatroomRedisRepository.findRoomById(message.getChatroomId());
 
         ChatMessage chatMessage = ChatMessage.builder()
@@ -46,5 +46,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         chatMessageRedisRepository.createMessage(message.getChatroomId(), chatMessage);
         //jpa에 저장
 
+        return chatMessage;
     }
 }
