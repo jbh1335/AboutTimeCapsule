@@ -1,5 +1,5 @@
 server:
-  port: 9001
+  port: 9003
   servlet:
     encoding:
       charset: UTF-8
@@ -15,7 +15,7 @@ eureka:
 
 spring:
   application:
-    name: member-service
+    name: capsule-service
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -40,6 +40,3 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
-
-
