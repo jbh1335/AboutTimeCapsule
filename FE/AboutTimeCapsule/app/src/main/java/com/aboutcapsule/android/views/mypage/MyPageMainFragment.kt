@@ -36,7 +36,6 @@ class MyPageMainFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_page_main, container, false)
-//        getMyPageDataFromBack()
         return binding.root
 
     }
