@@ -32,6 +32,8 @@ public class ChatroomServiceImpl implements ChatroomService {
         
         //Redis에 저장
         chatroomRedisRepository.createChatroom(chatroom);
+        
+        //TODO : RDB에 저장
 
         return chatroom;
     }
