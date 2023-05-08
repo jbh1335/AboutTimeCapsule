@@ -6,7 +6,7 @@ import com.timecapsule.memberservice.db.entity.Member;
 import com.timecapsule.memberservice.db.repository.FriendRepository;
 import com.timecapsule.memberservice.db.repository.MemberRepository;
 import com.timecapsule.memberservice.dto.FriendDto;
-import com.timecapsule.memberservice.dto.RequestDto;
+import com.timecapsule.memberservice.dto.FriendRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
         List<FriendDto> friendDtoList = new ArrayList<>();
-        List<RequestDto> requestDtoList = new ArrayList<>();
+        List<FriendRequestDto> friendRequestDtoList = new ArrayList<>();
         List<Member> myFriendList = friendList(member);
         int friendCnt = myFriendList.size();
 
@@ -37,7 +37,7 @@ public class MemberServiceImpl implements MemberService{
                 .build()));
 
         member.getToMemberList().forEach(friend -> {
-            if(!friend.isAccepted()) requestDtoList.add(RequestDto.builder()
+            if(!friend.isAccepted()) friendRequestDtoList.add(FriendRequestDto.builder()
                     .friendId(friend.getId())
                     .friendMemberId(friend.getFromMember().getId())
                     .nickname(friend.getFromMember().getNickname())
@@ -50,9 +50,9 @@ public class MemberServiceImpl implements MemberService{
                 .email(member.getEmail())
                 .profileImageUrl(member.getProfileImageUrl())
                 .friendCnt(friendCnt)
-                .friendRequestCnt(requestDtoList.size())
+                .friendRequestCnt(friendRequestDtoList.size())
                 .friendDtoList(friendDtoList)
-                .requestDtoList(requestDtoList)
+                .friendRequestDtoList(friendRequestDtoList)
                 .build();
 
         return new SuccessRes<>(true, "나의 마이페이지 정보를 조회합니다.", mypageRes);

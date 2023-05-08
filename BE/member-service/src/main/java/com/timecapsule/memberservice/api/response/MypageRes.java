@@ -1,7 +1,7 @@
 package com.timecapsule.memberservice.api.response;
 
 import com.timecapsule.memberservice.dto.FriendDto;
-import com.timecapsule.memberservice.dto.RequestDto;
+import com.timecapsule.memberservice.dto.FriendRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,16 +15,16 @@ public class MypageRes {
     private int friendCnt;
     private int friendRequestCnt;
     private List<FriendDto> friendDtoList;
-    private List<RequestDto> requestDtoList;
+    private List<FriendRequestDto> friendRequestDtoList;
 
     @Builder
-    public MypageRes(String nickname, String email, String profileImageUrl, int friendCnt, int friendRequestCnt, List<FriendDto> friendDtoList, List<RequestDto> requestDtoList) {
+    public MypageRes(String nickname, String email, String profileImageUrl, int friendCnt, int friendRequestCnt, List<FriendDto> friendDtoList, List<FriendRequestDto> friendRequestDtoList) {
         this.nickname = nickname;
         this.email = email;
         this.profileImageUrl = profileImageUrl;
         this.friendCnt = friendCnt;
         this.friendRequestCnt = friendRequestCnt;
         this.friendDtoList = friendDtoList;
-        this.requestDtoList = requestDtoList;
+        this.friendRequestDtoList = friendRequestDtoList;
     }
 }
