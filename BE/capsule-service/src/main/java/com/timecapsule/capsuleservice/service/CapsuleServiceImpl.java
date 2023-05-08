@@ -18,14 +18,12 @@ import java.util.*;
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
-    private final AwsS3Service awsS3Service;
     private final DistanceService distanceService;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
     private final MemoryOpenMemberRepository memoryOpenMemberRepository;
     private final MemoryRepository memoryRepository;
-    private final FriendRepository friendRepository;
     private final CommentRepository commentRepository;
 
     @Override
@@ -52,36 +50,6 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
-    public SuccessRes<Integer> registMemory(List<MultipartFile> multipartFileList, MemoryRegistReq memoryRegistReq) {
-        Optional<Capsule> oCapsule = capsuleRepository.findById(memoryRegistReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
-
-        Optional<Member> oMember = memberRepository.findById(memoryRegistReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
-        String image = "";
-        if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
-
-        boolean isLocked = true;
-        if(capsule.isGroup()) isLocked = false;
-
-        Memory memory = Memory.builder()
-                .capsule(capsule)
-                .member(member)
-                .title(memoryRegistReq.getTitle())
-                .content(memoryRegistReq.getContent())
-                .image(image)
-                .isDeleted(false)
-                .isLocked(isLocked)
-                .openDate(memoryRegistReq.getOpenDate())
-                .build();
-
-        int memoryId = memoryRepository.save(memory).getId();
-
-        return new SuccessRes<>(true, "추억 등록을 완료했습니다.", memoryId);
-    }
-
-    @Override
     public SuccessRes<CapsuleListRes> getMyCapsule(int memberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
@@ -90,22 +58,69 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
 
+        CapsuleListRes capsuleListRes = getCapsuleList(memberId, member, "my", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
+        return new SuccessRes<>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
+    }
+
+    @Override
+    public SuccessRes<CapsuleListRes> getFriendCapsule(int memberId) {
+        Optional<Member> oMember = memberRepository.findById(memberId);
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
+        List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
+        List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
+
+        // 친구 만들고 다시 테스트하기
+        System.out.println("친구를 구하러 간다");
+
+        for(Member myFriend : friendList(member)) {
+            System.out.println("내친구: " + myFriend.getId() + " 닉네임: " + myFriend.getNickname());
+            CapsuleListRes newCapsuleList = getCapsuleList(memberId, myFriend, "friend", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
+
+            unopenedCapsuleDtoList = newCapsuleList.getUnopenedCapsuleDtoList();
+            openedCapsuleDtoList = newCapsuleList.getOpenedCapsuleDtoList();
+            mapInfoDtoList = newCapsuleList.getMapInfoDtoList();
+
+            System.out.println("unopen 크기: " + unopenedCapsuleDtoList.size());
+            System.out.println("open 크기: " + openedCapsuleDtoList.size());
+            System.out.println("map 크기: " + mapInfoDtoList.size());
+        }
+
+
+        CapsuleListRes capsuleListRes = CapsuleListRes.builder()
+                .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
+                .openedCapsuleDtoList(openedCapsuleDtoList)
+                .mapInfoDtoList(mapInfoDtoList)
+                .build();
+
+        return new SuccessRes<>(true, "친구의 캡슐 목록을 조회합니다.", capsuleListRes);
+    }
+
+    private CapsuleListRes getCapsuleList(int myId, Member member, String who,
+                                          List<UnopenedCapsuleDto> unopenedCapsuleDtoList,
+                                          List<OpenedCapsuleDto> openedCapsuleDtoList,
+                                          List<MapInfoDto> mapInfoDtoList) {
+
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
-            if(capsule.isDeleted()) continue;
-
             int capsuleId = capsule.getId();
+
+            if(capsule.isDeleted()) continue;
+            if(who.equals("friend") && capsule.getRangeType().equals("PRIVATE")) continue;
+
             // 캡슐에 대한 열람 기록이 있는지 확인
-            boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, memberId);
+            boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, myId);
             boolean isLocked = false;
 
-            int memorySize = capsule.getMemoryList().size();
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
+            int memorySize = memoryList.size();
             LocalDate openDate = null;
-            if(memorySize > 0) openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
+            if(memorySize > 0) openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
 
             // 미열람
             if(!isOpened) {
-                // 잠김 O
+                // 잠김 여부
                 if(memorySize > 0 && LocalDate.now().isBefore(openDate)) isLocked = true;
 
                 unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
@@ -116,7 +131,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                         .build());
             } else {
                 // 열람
-                int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, memberId);
+                int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, myId);
                 boolean isAdded = false;
                 if(memorySize != count) isAdded = true;
 
@@ -137,31 +152,14 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .build());
         }
 
-//        Collections.sort(unopenedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
-//        Collections.sort(openedCapsuleDtoList, (o1, o2) -> o1.getOpenDate().compareTo(o2.getOpenDate()));
         Collections.sort(unopenedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
         Collections.sort(openedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
 
-        CapsuleListRes capsuleListRes = CapsuleListRes.builder()
+        return CapsuleListRes.builder()
                 .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
                 .openedCapsuleDtoList(openedCapsuleDtoList)
                 .mapInfoDtoList(mapInfoDtoList)
                 .build();
-
-        return new SuccessRes<>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
-    }
-
-    @Override
-    public SuccessRes<CapsuleListRes> getFriendCapsule(int memberId) {
-        Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
-        List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
-        List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
-        List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
-
-        // 이어서
-        return null;
     }
 
     @Override
@@ -177,9 +175,10 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(capsule.isDeleted()) continue;
             int capsuleId = capsule.getId();
 
-            int memorySize = capsule.getMemoryList().size();
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
+            int memorySize = memoryList.size();
             LocalDate openDate = null;
-            if(memorySize > 0) openDate = capsule.getMemoryList().get(0).getOpenDate();
+            if(memorySize > 0) openDate = memoryList.get(0).getOpenDate();
 
             int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, memberId);
             boolean isAdded = false;
@@ -251,150 +250,18 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             if(!capsule.getRangeType().equals("ALL")) continue;
 
-            String memberName = capsule.getCapsuleMemberList().get(0).getMember().getName();
+            String memberNickname = capsule.getCapsuleMemberList().get(0).getMember().getNickname();
             int memberSize = capsule.getCapsuleMemberList().size() - 1;
-            if(memberSize > 1) memberName += (" 외 " + memberSize + "명");
+            if(memberSize >= 1) memberNickname += (" 외 " + memberSize + "명");
 
             aroundCapsuleResList.add(AroundCapsuleRes.builder()
                     .capsuleId(capsule.getId())
-                    .memberName(memberName)
+                    .memberNickname(memberNickname)
                     .address(capsule.getAddress())
                     .build());
         }
 
         return new SuccessRes<>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleResList);
-    }
-
-    @Override
-    public SuccessRes<MemoryRes> getMemory(MemoryReq memoryReq) {
-        Optional<Capsule> oCapsule = capsuleRepository.findById(memoryReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
-
-        List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
-        for(Memory memory : capsule.getMemoryList()) {
-            if(memory.isDeleted()) continue;
-
-            String[] imageUrl = memory.getImage().split("#");
-            int commentCnt = commentRepository.findAllByMemoryId(memory.getId()).size();
-
-            // 잠김 X, 내가 오픈한 적 있는 추억은 계속 오픈O 거리상관X -> isOpened = true, isLocked = false
-            // 잠김 X, 오픈한 적 없는데 거리가 가까우면 가능 오픈O -> isOpened = true, isLocked = false + memoryOpenMember에 추가
-            // 잠김 X, 오픈한 적 없는데 거리도 멀면 불가능 오픈X -> isOpened = false, isLocked = false
-            // 잠김 O, 그냥 불가능 isOpened = false, isLocked = true
-
-            boolean isOpened = memoryOpenMemberRepository.existsByMemoryIdAndMemberId(memory.getId(), memoryReq.getMemberId());
-            boolean isNowOpened = false;
-            boolean isLocked = false;
-            if(LocalDate.now().isBefore(memory.getOpenDate())) isLocked = true;
-            else {
-                if(isOpened) {
-                    isNowOpened = true;
-                } else {
-                    // 거리 계산
-                    double distance = distanceService.distance(memoryReq.getLatitude(), memoryReq.getLongitude(),
-                            capsule.getLatitude(), capsule.getLongitude(), "meter");
-                    if(distance <= 100) {
-                        isNowOpened = true;
-
-                        Optional<Member> oMember = memberRepository.findById(memoryReq.getMemberId());
-                        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
-                        memoryOpenMemberRepository.save(MemoryOpenMember.builder()
-                                .capsule(capsule)
-                                .member(member)
-                                .memory(memory)
-                                .build());
-                    }
-                }
-            }
-
-            memoryDetailDtoList.add(MemoryDetailDto.builder()
-                    .memoryId(memory.getId())
-                    .nickname(memory.getMember().getNickname())
-                    .memoryTitle(memory.getTitle())
-                    .profileImageUrl(memory.getMember().getProfileImageUrl())
-                    .content(memory.getContent())
-                    .imageUrl(memory.getImage().split("#"))
-                    .commentCnt(commentCnt)
-                    .createdDate(memory.getCreatedDate().toLocalDate())
-                    .isLocked(isLocked)
-                    .isOpened(isNowOpened)
-                    .build());
-        }
-
-        MemoryRes memoryRes = MemoryRes.builder()
-                .capsuleTitle(capsule.getTitle())
-                .isGroup(capsule.isGroup())
-                .rangeType(capsule.getRangeType())
-                .memoryDetailDtoList(memoryDetailDtoList)
-                .build();
-
-        return new SuccessRes<>(true, "해당 캡슐의 추억을 조회합니다.", memoryRes);
-    }
-
-    @Override
-    public CommonRes deleteMemory(int memoryId) {
-        Optional<Memory> oMemory = memoryRepository.findById(memoryId);
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
-        memoryRepository.save(Memory.of(memory, true));
-
-        return new CommonRes(true, "추억 삭제를 완료했습니다.");
-    }
-
-    @Override
-    public CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq) {
-        Optional<Memory> oMemory = memoryRepository.findById(memoryModifyReq.getMemoryId());
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        String image = memory.getImage();
-        if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
-
-        memoryRepository.save(Memory.of(memory, memoryModifyReq.getTitle(), memoryModifyReq.getContent(), image));
-        return new CommonRes(true, "추억 수정을 완료했습니다.");
-    }
-
-    @Override
-    public CommonRes registComment(CommentRegistReq commentRegistReq) {
-        Optional<Member> oMember = memberRepository.findById(commentRegistReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
-        Optional<Memory> oMemory = memoryRepository.findById(commentRegistReq.getMemoryId());
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        commentRepository.save(Comment.builder()
-                .member(member)
-                .memory(memory)
-                .content(commentRegistReq.getContent())
-                .isDeleted(false)
-                .build());
-
-        return new CommonRes(true, "댓글 등록을 완료했습니다.");
-    }
-
-    @Override
-    public SuccessRes<List<CommentRes>> getComment(int memoryId) {
-        Optional<Memory> oMemory = memoryRepository.findById(memoryId);
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
-
-        List<CommentRes> commentResList = new ArrayList<>();
-        for(Comment comment : memory.getCommentList()) {
-            if(comment.isDeleted()) continue;
-            Member member = comment.getMember();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy.MM.dd HH:mm");
-
-            commentResList.add(CommentRes.builder()
-                    .commentId(comment.getId())
-                    .memberId(member.getId())
-                    .nickname(member.getNickname())
-                    .profileImageUrl(member.getProfileImageUrl())
-                    .content(comment.getContent())
-                    .createdDate(comment.getCreatedDate().format(dateTimeFormatter))
-                    .build());
-        }
-
-        return new SuccessRes<>(true, "댓글 목록을 조회합니다.", commentResList);
     }
 
     @Override
@@ -418,24 +285,107 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
+        CapsuleDetailRes capsuleDetailRes = (CapsuleDetailRes) capsuleDetail(capsuleDetailReq, "getCapsuleDetail");
+        return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보를 조회합니다.", capsuleDetailRes);
+    }
+
+    @Override
+    public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq) {
+        MapCapsuleDetailRes mapCapsuleDetailRes = (MapCapsuleDetailRes) capsuleDetail(capsuleDetailReq, "getMapCapsuleDetail");
+        return new SuccessRes<>(true, "지도에서 마커 클릭 시 캡슐의 상세 정보를 조회합니다.", mapCapsuleDetailRes);
+    }
+
+    @Override
+    public SuccessRes<List<MapRes>> getMapCapsule(CapsuleDetailReq capsuleDetailReq) {
+        List<MapRes> mapResList = new ArrayList<>();
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude());
+
+        for(Capsule capsule : aroundCapsuleList) {
+            if(capsule.isDeleted()) continue;
+
+            boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
+            if(!isMine && capsule.getRangeType().equals("PRIVATE")) continue;
+            
+            // 친구 공개 구현하기
+            boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
+            boolean isLocked = false;
+
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsule.getId());
+            int memorySize = memoryList.size();
+            LocalDate openDate = null;
+
+            if(memorySize > 0) {
+                openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
+                if(!isOpened && openDate!= null && LocalDate.now().isBefore(openDate)) isLocked = true;
+            }
+
+            int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
+                    capsule.getLatitude(), capsule.getLongitude(), "meter");
+            boolean isAllowedDistance = (distance <= 100);
+
+            mapResList.add(MapRes.builder()
+                    .capsuleId(capsule.getId())
+                    .isLocked(isLocked)
+                    .isMine(isMine)
+                    .isAllowedDistance(isAllowedDistance)
+                    .build());
+        }
+        return new SuccessRes<>(true, "1km 이내에 있는 캡슐을 조회합니다.", mapResList);
+    }
+
+    @Override
+    public SuccessRes<CapsuleCountRes> getCapsuleCount(int memberId) {
+        SuccessRes<CapsuleListRes> myCapsule = getMyCapsule(memberId);
+        SuccessRes<CapsuleListRes> friendCapsule = getFriendCapsule(memberId);
+        SuccessRes<OpenedCapsuleListRes> openCapsule = getOpenCapsule(memberId);
+
+        CapsuleCountRes capsuleCountRes = CapsuleCountRes.builder()
+                .myCapsuleCnt(myCapsule.getData().getMapInfoDtoList().size())
+                .friendCapsuleCnt(friendCapsule.getData().getMapInfoDtoList().size())
+                .openCapsuleCnt(openCapsule.getData().getMapInfoDtoList().size())
+                .build();
+
+        return new SuccessRes<>(true, "나의 캡슐, 친구의 캡슐, 나의 방문 기록의 개수를 조회합니다.", capsuleCountRes);
+    }
+
+    @Override
+    public SuccessRes<List<FriendRes>> getFriendList(int memberId) {
+        Optional<Member> oMember = memberRepository.findById(memberId);
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        List<FriendRes> friendResList = new ArrayList<>();
+        friendList(member).forEach(friend -> friendResList.add(FriendRes.builder()
+                .memberId(friend.getId())
+                .nickname(friend.getNickname())
+                .profileImageUrl(friend.getProfileImageUrl())
+                .build()));
+
+        return new SuccessRes<>(true, "나의 친구 목록을 조회합니다.", friendResList);
+    }
+
+    private Object capsuleDetail(CapsuleDetailReq capsuleDetailReq, String what) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleDetailReq.getCapsuleId());
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
-        Optional<Member> oMember = memberRepository.findById(capsuleDetailReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-
         String leftTime = "";
-        boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), member.getId());
+        String memberNickname = capsule.getCapsuleMemberList().get(0).getMember().getNickname();
+        int memberSize = capsule.getCapsuleMemberList().size() - 1;
+        if(memberSize >= 1) memberNickname += (" 외 " + memberSize + "명");
+
         boolean isLocked = false;
+        boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
+        boolean isGroup = capsule.getCapsuleMemberList().size() > 0;
+
         int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
                 capsule.getLatitude(), capsule.getLongitude(), "meter");
 
-        int memorySize = capsule.getMemoryList().size();
+        List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleDetailReq.getCapsuleId());
+        int memorySize = memoryList.size();
         LocalDate openDate = null;
 
         if(memorySize > 0) {
-            openDate = (isOpened) ? capsule.getMemoryList().get(0).getOpenDate() : capsule.getMemoryList().get(memorySize-1).getOpenDate();
-            if(LocalDate.now().isBefore(openDate)) {
+            openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
+            if(openDate!= null && LocalDate.now().isBefore(openDate)) {
                 isLocked = true;
                 // 남은 시간 구하기
                 LocalDateTime openDateTime = openDate.atStartOfDay();
@@ -445,15 +395,39 @@ public class CapsuleServiceImpl implements CapsuleService {
             }
         }
 
-        CapsuleDetailRes capsuleDetailRes = CapsuleDetailRes.builder()
-                .nickname(member.getNickname())
-                .distance(distance)
+        if(what.equals("getCapsuleDetail")) {
+            return CapsuleDetailRes.builder()
+                    .memberNickname(memberNickname)
+                    .distance(distance)
+                    .leftTime(leftTime)
+                    .isLocked(isLocked)
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
+                    .address(capsule.getAddress())
+                    .build();
+        }
+        return MapCapsuleDetailRes.builder()
+                .capsuleId(capsule.getId())
+                .memberNickname(memberNickname)
                 .leftTime(leftTime)
                 .isLocked(isLocked)
-                .latitude(capsule.getLatitude())
-                .longitude(capsule.getLongitude())
-                .address(capsule.getAddress())
+                .isGroup(isGroup)
+                .openDate(openDate)
                 .build();
-        return new SuccessRes<>(true, "캡슐 클릭 시 상세 정보 조회합니다.", capsuleDetailRes);
     }
+
+    private List<Member> friendList(Member member) {
+        List<Member> friendList = new ArrayList<>();
+        member.getFromMemberList().forEach(friend -> {
+            if(friend.isAccepted()) friendList.add(friend.getToMember());
+        });
+
+        member.getToMemberList().forEach(friend -> {
+            if(friend.isAccepted()) friendList.add(friend.getFromMember());
+        });
+
+        friendList.sort(Comparator.comparing(Member::getNickname));
+        return friendList;
+    }
+
 }

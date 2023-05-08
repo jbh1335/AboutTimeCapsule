@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class AroundCapsuleReq {
-    int memberId;
-    Double latitude;
-    Double longitude;
+    private int memberId;
+    private Double latitude;
+    private Double longitude;
 }
