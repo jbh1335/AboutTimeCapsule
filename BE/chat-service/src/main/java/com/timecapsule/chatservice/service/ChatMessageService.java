@@ -1,7 +1,7 @@
 package com.timecapsule.chatservice.service;
 
-import com.timecapsule.chatservice.db.entity.ChatMessage;
+import com.timecapsule.chatservice.api.request.MessageReq;
 
 public interface ChatMessageService {
-    void sendMessage(ChatMessage message);
+    void sendMessage(MessageReq message);
 }
