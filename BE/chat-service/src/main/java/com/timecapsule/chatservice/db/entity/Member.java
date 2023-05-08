@@ -1,5 +1,6 @@
 package com.timecapsule.chatservice.db.entity;
 
+import com.timecapsule.chatservice.dto.ProviderType;
 import lombok.Getter;
 
 import javax.persistence.Entity;
