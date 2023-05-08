@@ -1,6 +1,5 @@
 package com.timecapsule.chatservice.db.repository.redis;
 
-import com.sun.xml.bind.v2.TODO;
 import com.timecapsule.chatservice.db.entity.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
@@ -32,7 +31,7 @@ public class ChatMessageRedisRepository {
             chatMessageList = new ArrayList<>();
         }
 
-        chatMessage.setId(chatMessageList.size() + 1);
+        chatMessage.setId(chatMessage.getId());
         chatMessageList.add(chatMessage);
         opsHashChatMessageList.put(CHAT_MESSAGES, roomId, chatMessageList);
     }
