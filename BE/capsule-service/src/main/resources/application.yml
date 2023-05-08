@@ -40,3 +40,27 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA4FLIYWIS5EWVHTV5
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: abouttimecapsule
+    stack:
+      auto: false
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
