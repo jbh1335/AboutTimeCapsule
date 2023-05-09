@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -12,11 +14,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.mypage.FriendDtoList
+import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
+import com.aboutcapsule.android.data.mypage.GetMyPageRes
 import com.aboutcapsule.android.databinding.FragmentMyPageMainBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.mypage.MypageRepo
 import com.aboutcapsule.android.util.RetrofitManager
+import com.bumptech.glide.Glide
 
 
 class MyPageMainFragment : Fragment() {
@@ -24,9 +30,9 @@ class MyPageMainFragment : Fragment() {
     private lateinit var binding: FragmentMyPageMainBinding
 
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getMyPageFriendRequestList()
         getMyPageDataFromBack()
     }
 
@@ -39,20 +45,46 @@ class MyPageMainFragment : Fragment() {
         return binding.root
 
     }
+    fun getMyPageDataFromBack() {
+        val repository = MypageRepo()
+        val myPageViewModelFactory = MyPageViewModelFactory(repository)
+        var viewModel: MyPageViewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
+        viewModel.getMyPage(1)
+        viewModel.myPageList.observe(viewLifecycleOwner, Observer {
+            Log.i("데이터왔다.", "${it}")
+
+            // 상단 프로필 이미지 렌더링
+            getMyPageProfileInfo(it)
+
+            // 중단 친구목록 이미지 렌더링
+            getMyPageFriendList(it.friendDtoList)
+
+            //하단 친구 요청 이미지 렌더링
+            getMyPageFriendRequestList(it.friendRequestDtoList)
+        })
+
+
+    }
 
     // 유저 프로필정보 가져오기
-    fun getMyPageProfileInfo() {
-
+    fun getMyPageProfileInfo(getMyPageRes: GetMyPageRes) {
+        Glide.with(this).load(getMyPageRes.profileImageUrl).into(binding.myPageProfilePicture)
+        binding.myPageUserName.text = getMyPageRes.nickname
+        binding.myPageUserMail.text = getMyPageRes.email
     }
 
 
     // 친구목록 썸네일들 띄워주기
-    fun getMyPageFriendList() {
+    fun getMyPageFriendList(friendDtoList: MutableList<FriendDtoList>) {
+        for (i in 1 until 7) {
+            binding.friendListThumbnail
+
+        }
 
     }
 
     // 친구요청목록리스트띄워주기
-    fun getMyPageFriendRequestList() {
+    fun getMyPageFriendRequestList(friendRequestDtoList: MutableList<FriendRequestDtoList>) {
         val friendRequestData = getFriendRequestData()
         val friendRequestAdapter = MyPageFriendRequestAdapter()
         friendRequestAdapter.itemList = friendRequestData
@@ -74,17 +106,7 @@ class MyPageMainFragment : Fragment() {
         }
         return itemList
     }
-    fun getMyPageDataFromBack() {
-        val repository = MypageRepo()
-        val myPageViewModelFactory = MyPageViewModelFactory(repository)
-        var viewModel: MyPageViewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
-        viewModel.getMyPage(1)
-        viewModel.myPageList.observe(viewLifecycleOwner, Observer {
-            Log.e("응답옴", "응애3")
-        })
 
-
-    }
 
 
 
