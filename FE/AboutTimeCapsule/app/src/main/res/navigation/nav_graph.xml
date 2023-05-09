@@ -91,7 +91,11 @@
         android:id="@+id/capsuleFindFriendFragment"
         android:name="com.aboutcapsule.android.views.capsule.CapsuleFindFriendFragment"
         android:label="fragment_capsule_find_friend"
-        tools:layout="@layout/fragment_capsule_find_friend"/>
+        tools:layout="@layout/fragment_capsule_find_friend">
+        <action
+            android:id="@+id/action_capsuleFindFriendFragment_to_capsuleRegistGroupFragment"
+            app:destination="@id/capsuleRegistGroupFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/articleRegistFragment"
