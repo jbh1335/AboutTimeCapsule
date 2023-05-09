@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
             android:background="@drawable/btn_radius"
             android:orientation="horizontal">
 
@@ -25,18 +25,18 @@
                 android:id="@+id/searchEditText"
                 android:layout_width="330dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
                 android:fontFamily="@font/onemobile"
                 android:hint="친구를 검색해보세요" />
 
-<!--            <ImageView-->
-<!--                android:id="@+id/searchIconBtn"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginLeft="2dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:src="@drawable/search" />-->
+            <!--            <ImageView-->
+            <!--                android:id="@+id/searchIconBtn"-->
+            <!--                android:layout_width="30dp"-->
+            <!--                android:layout_height="30dp"-->
+            <!--                android:layout_marginLeft="2dp"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:src="@drawable/search" />-->
 
         </LinearLayout>
 
@@ -62,12 +62,16 @@
                     android:text="그룹캡슐 멤버"
                     android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/addedMember"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="추가된 멤버들 쌓인다 " />
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/addedMemberListView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" />
+                </ScrollView>
             </LinearLayout>
 
         </LinearLayout>
@@ -75,22 +79,22 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/find_friends_recycler_view"
             android:layout_width="328dp"
-            android:layout_height="530dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
             android:layout_marginTop="55dp"
             android:orientation="vertical"
             android:visibility="gone"
-            tools:listitem="@layout/find_friend_recycler_item"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/find_friend_recycler_item" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/complete_btn"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="650dp"
             android:layout_marginRight="15dp"
             android:layout_marginBottom="20dp"
-            android:layout_marginTop="650dp"
             android:background="@drawable/btn_radius"
             android:backgroundTint="@color/btnColor"
             android:fontFamily="@font/onemobile"

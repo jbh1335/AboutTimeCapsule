@@ -5,7 +5,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/friend_img"
@@ -18,13 +19,21 @@
 
             <TextView
                 android:id="@+id/friend_name"
-                android:layout_width="wrap_content"
+                android:layout_width="210dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:text="여기 친구 이름 "
                 android:textColor="@color/mypageTextColor" />
-
+            <Button
+                android:id="@+id/friend_addBtn"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:textSize="10sp"
+                android:backgroundTint="@color/skyblueBtnColor"
+                android:textColor="@color/btnColor"
+                android:text="추가"/>
         </LinearLayout>
 
 </layout>

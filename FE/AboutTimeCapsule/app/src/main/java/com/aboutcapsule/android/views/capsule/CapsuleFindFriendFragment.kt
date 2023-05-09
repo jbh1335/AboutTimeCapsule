@@ -1,13 +1,15 @@
 package com.aboutcapsule.android.views.capsule
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -20,9 +22,11 @@ class CapsuleFindFriendFragment : Fragment() , TextWatcher {
 
     companion object {
         lateinit var binding: FragmentCapsuleFindFriendBinding
-        private var findFriendAdapter = FindFriendAdapter()
+        private lateinit var findFriendAdapter : FindFriendAdapter
         lateinit var navController: NavController
-
+        private var itemList = mutableListOf<FindFriendData>()
+        // 라시이클러뷰 에서 삭제된 친구 아래에 추가해주기
+        private var chkidx = 0 // 임시로, 리사이클러뷰 지우는거 체크용
     }
 
     override fun onCreateView(
@@ -52,9 +56,13 @@ class CapsuleFindFriendFragment : Fragment() , TextWatcher {
     }
 
     private fun redirectPage(){
+        // 추가된 멤버 번들에 담아서 넘어가서 뿌려주기
         binding.completeBtn.setOnClickListener{
+
             navController.navigate(R.id.action_capsuleFindFriendFragment_to_capsuleRegistGroupFragment)
         }
+
+
     }
 
     // 네비게이션 세팅
@@ -83,10 +91,32 @@ class CapsuleFindFriendFragment : Fragment() , TextWatcher {
     fun setFindFriendRecylcer(){
         binding.searchEditText.addTextChangedListener(this)
 
-        findFriendAdapter = FindFriendAdapter()
+        findFriendAdapter = FindFriendAdapter(onClickDeleteIcon = { deleteTask(it)} )
         findFriendAdapter.itemList = getFriendList()
         findFriendAdapter.filterList = getFriendList() // 필터용
         binding.findFriendsRecyclerView.adapter=findFriendAdapter
+    }
+
+    // 리사이클러뷰에서 하나 지우고 아래 멤버로 추가 되기
+    fun deleteTask(findFriendData: FindFriendData){
+
+        createView(findFriendData)
+        itemList.remove(findFriendData)
+        binding.findFriendsRecyclerView.adapter?.notifyDataSetChanged()
+        binding.findFriendsRecyclerView.visibility=View.GONE
+        Log.d("추가멤버","${findFriendData}")
+    }
+
+    //멤버 추가 동적으로 뷰 생성
+    private fun createView(findFriendData: FindFriendData){
+        val customView = LayoutInflater.from(requireContext()).inflate(R.layout.added_member_list,null,false)
+        val param: LinearLayout.LayoutParams =
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT)
+        param.bottomMargin = 30
+        customView.layoutParams=param
+        customView.findViewById<ImageView>(R.id.added_member_img).setImageResource(findFriendData.Img)
+        customView.findViewById<TextView>(R.id.added_member_name).text=findFriendData.name
+        binding.addedMemberListView.addView(customView)
     }
 
 //    edittext watcher
@@ -102,7 +132,7 @@ class CapsuleFindFriendFragment : Fragment() , TextWatcher {
 
     // 친구 찾기 데이터
     private fun getFriendList() : MutableList<FindFriendData> {
-        var itemList = mutableListOf<FindFriendData>()
+        itemList = mutableListOf()
 
         var img = R.drawable.camera
         itemList.add(FindFriendData(img,"강나다"))

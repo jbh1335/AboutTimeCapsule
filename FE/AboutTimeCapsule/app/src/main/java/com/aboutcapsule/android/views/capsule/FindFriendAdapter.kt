@@ -4,11 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.lifecycle.ProcessLifecycleOwner.get
 import androidx.recyclerview.widget.RecyclerView
 import com.aboutcapsule.android.databinding.FindFriendRecyclerItemBinding
 import com.bumptech.glide.Glide
 
-class FindFriendAdapter : RecyclerView.Adapter<FindFriendAdapter.ViewHolder>() , Filterable{
+class FindFriendAdapter(val onClickDeleteIcon : (findFriendData: FindFriendData )-> Unit) : RecyclerView.Adapter<FindFriendAdapter.ViewHolder>() , Filterable{
     var itemList = mutableListOf<FindFriendData>()
     var filterList = mutableListOf<FindFriendData>()
     var itemFilter = ItemFilter()
@@ -23,13 +24,19 @@ class FindFriendAdapter : RecyclerView.Adapter<FindFriendAdapter.ViewHolder>() ,
 
     override fun onBindViewHolder(holder: FindFriendAdapter.ViewHolder, position: Int) {
         holder.bind(itemList[position])
+
+        holder.binding.friendAddBtn.setOnClickListener{
+            onClickDeleteIcon.invoke(itemList[position])
+        }
     }
 
     inner class ViewHolder(val binding: FindFriendRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(findFriendData: FindFriendData) {
             Glide.with(itemView).load(findFriendData.Img).into(binding.friendImg)
             binding.friendName.text=findFriendData.name
+
         }
+
     }
 
     override fun getItemCount(): Int {
