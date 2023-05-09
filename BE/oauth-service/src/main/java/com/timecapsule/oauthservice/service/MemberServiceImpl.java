@@ -48,14 +48,17 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     public CommonRes updateNickname(String nickname){
         Member findMember = findCurrentMemberId();
-        findMember.updateNickname(nickname);
-        memberRepository.save(findMember);
-        return new CommonRes(true, "회원 닉네임을 변경했습니다.");
+        if(!memberRepository.existsByNickname(nickname)) {
+            findMember.updateNickname(nickname);
+            return new CommonRes(true, "회원 닉네임을 수정했습니다.");
+        } else {
+            return new CommonRes(false, "중복된 닉네임이 있어 수정하지 못했습니다.");
+        }
     }
 
     @Transactional(readOnly = true)
     public SuccessRes checkNicknameDuplicate(String nickname) {
         boolean isExist = memberRepository.existsByNickname(nickname); // 중복된 닉네임이 있으면 true
-        return new SuccessRes(true, (isExist)? "중복된 닉네임이 있습니다." : "중복된 닉네임이 없습니다", isExist);
+        return new SuccessRes(true, (isExist)? "중복된 닉네임이 있습니다." : "중복된 닉네임이 없습니다.", isExist);
     }
 }

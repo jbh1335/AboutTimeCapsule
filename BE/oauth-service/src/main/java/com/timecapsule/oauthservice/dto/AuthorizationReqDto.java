@@ -1,4 +1,4 @@
-package com.timecapsule.oauthservice.api.request;
+package com.timecapsule.oauthservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorizationReq {
+public class AuthorizationReqDto {
     private String providerName;
     private String code;
 }
