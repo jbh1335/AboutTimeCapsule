@@ -8,8 +8,8 @@ server:
 
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: http://k8b302.p.ssafy.io:8761/eureka
 
@@ -60,8 +60,8 @@ logging:
         util:
           EC2MetadataUtils: error
 
-#firebase:
-#  key:
-#    path: /firebase/ServiceAccountKey.json
-#    scope: https://www.googleapis.com/auth/cloud-platform
+firebase:
+  key:
+    path: ./src/main/resources/firebase/ServiceAccountKey.json
+    scope: https://www.googleapis.com/auth/cloud-platform
 
