@@ -55,14 +55,8 @@ class CapsuleRegistGroupFragment : Fragment() {
 
         setNavigation()
         redirectFindFriend()
-        redirectTest()
 
-       binding.capsuleRegistGruopRegistbtn.setOnClickListener {
-                Log.d("allData", radioBtn)
-                Log.d("allData", binding.capsuleRegistGroupTitle.text.toString())
-        }
-
-//        submitDatas()
+        submitDatas()
 
     }
 
@@ -84,8 +78,9 @@ class CapsuleRegistGroupFragment : Fragment() {
                 Toast.makeText(requireContext(), "제목길이는 1~10글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                Log.d("allData", radioBtn)
-                Log.d("allData", binding.capsuleRegistGroupTitle.text.toString())
+//                Log.d("allData", radioBtn)
+//                Log.d("allData", binding.capsuleRegistGroupTitle.text.toString())
+                navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
             }
         }
     }
@@ -98,11 +93,6 @@ class CapsuleRegistGroupFragment : Fragment() {
     private fun redirectFindFriend(){
         binding.addMemberBtn.setOnClickListener {
             navController.navigate(R.id.action_capsuleRegistGroupFragment_to_capsuleFindFriendFragment)
-        }
-    }
-    private fun redirectTest(){
-        binding.addMemberView.setOnClickListener{
-            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
         }
     }
 

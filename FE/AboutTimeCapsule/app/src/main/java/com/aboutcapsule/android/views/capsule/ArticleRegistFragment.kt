@@ -5,39 +5,49 @@ import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
+import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.toColor
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentArticleRegistBinding
 import com.bumptech.glide.Glide
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
-    private lateinit var binding : FragmentArticleRegistBinding
-    private var picture_flag = 0
-    private var fileAbsolutePath: String? = null
 
-    private var flag = false
+    /*
 
-    // 갤러리에서 데이터(사진) 가져올 때 사용
-    lateinit var resultLauncher: ActivityResultLauncher<Intent>
+        상황에 따라 달력 보이게 안보이게 onCreate에서 받아온 데이터 체크 한다음 view visibility 정해주기
+
+     */
+
+
+    companion object {
+        private lateinit var binding: FragmentArticleRegistBinding
+        lateinit var navController: NavController
+        private var picture_flag = 0
+        private var fileAbsolutePath: String? = null
+        var bellFlag: Boolean = true
+
+        private var flag = false
+
+        // 갤러리에서 데이터(사진) 가져올 때 사용
+        lateinit var resultLauncher: ActivityResultLauncher<Intent>
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,16 +55,48 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_article_regist,container,false)
 
+
         binding.galleryBtn.setOnClickListener(this)
 
         getGalleryData()
 
         getCalendarDate()
 
+        bellToggle(bellFlag)
+
+        setNavigation()
+
+        redirectPage()
+
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
+
+    }
+
+    override fun onDestroy() {
+        // 상단 벨 다시 살리기
+        bellToggle(CapsuleRegistFragment.bellFlag)
+
+        super.onDestroy()
+    }
+
+    fun redirectPage(){
+        binding.articleRegistRegistbtn.setOnClickListener{
+            navController.navigate(R.id.action_articleRegistFragment_to_capsuleMineFragment)
+        }
+    }
+
+    // 네비게이션 세팅
+    private fun setNavigation(){
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        CapsuleRegistFragment.navController = navHostFragment.navController
+    }
+
     fun getCalendarDate(){
 
         binding.dateCommentlayout.setOnClickListener {
@@ -67,9 +109,6 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                 binding.dateCommentlayout.visibility = View.GONE
                 binding.datepickedlayout.visibility=View.VISIBLE
             }
-
-
-
 
             val cal = Calendar.getInstance()
 
@@ -113,6 +152,17 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
             negBtn.setTextColor(textColor)
         }
 
+    }
+
+    // 상단바 벨 사라지게 / 페이지 전환 시 다시 생성
+    private fun bellToggle(sign : Boolean){
+        var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
+        if(sign) {
+            bell?.visibility = View.GONE
+        }else{
+            bell?.visibility = View.VISIBLE
+        }
+        CapsuleRegistFragment.bellFlag = !CapsuleRegistFragment.bellFlag
     }
 
     fun getGalleryData(){

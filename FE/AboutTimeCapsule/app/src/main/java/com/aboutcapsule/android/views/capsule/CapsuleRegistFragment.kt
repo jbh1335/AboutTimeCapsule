@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -23,6 +25,7 @@ class CapsuleRegistFragment : Fragment() {
      companion object{
         var radioBtn :String= ""
         var bottomNavFlag : Boolean = true
+        lateinit var navController: NavController
         var bellFlag : Boolean = true
         var editTitle : String = ""
     }
@@ -55,6 +58,8 @@ class CapsuleRegistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setNavigation()
     }
 
     override fun onDestroy() {
@@ -68,17 +73,24 @@ class CapsuleRegistFragment : Fragment() {
         super.onDestroy()
     }
 
+    // 네비게이션 세팅
+    private fun setNavigation(){
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+    }
+
     // TODO : (개인) 캡슐 생성버튼 클릭 시 , 캡슐생성 api 보내고 페이지 이동
     private fun submitBtnClickListner(){
         // editText 값이 destroy() 시에는 찍히는데 그전에 제출 버튼 클릭시에는 공백으로 찍히는 이유 찾기 ,,
         editTitle = binding.capsuleRegistTitle.text.toString().trim()
         binding.capsuleRegistRegistbtn.setOnClickListener{
-            if(editTitle.isEmpty() || editTitle.length<11){
-                Toast.makeText(requireContext(),"제목의 길이는 1~10글자로 작성 가능합니다.",Toast.LENGTH_SHORT).show()
-            }else{
-                Log.d("submitData", editTitle)
-                Log.d("submitData", radioBtn)
-            }
+//            if(editTitle.isEmpty() || editTitle.length<11){
+//                Toast.makeText(requireContext(),"제목의 길이는 1~10글자로 작성 가능합니다.",Toast.LENGTH_SHORT).show()
+//            }else{
+//                Log.d("submitData", editTitle)
+//                Log.d("submitData", radioBtn)
+//            }
+            navController.navigate(R.id.action_capsuleRegistFragment_to_articleRegistFragment)
         }
     }
 

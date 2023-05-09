@@ -72,7 +72,11 @@
         android:id="@+id/capsuleRegistFragment"
         android:name="com.aboutcapsule.android.views.capsule.CapsuleRegistFragment"
         android:label="fragment_capsule_regist"
-        tools:layout="@layout/fragment_capsule_regist"/>
+        tools:layout="@layout/fragment_capsule_regist">
+        <action
+            android:id="@+id/action_capsuleRegistFragment_to_articleRegistFragment"
+            app:destination="@id/articleRegistFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/capsuleRegistGroupFragment"
@@ -101,7 +105,11 @@
         android:id="@+id/articleRegistFragment"
         android:name="com.aboutcapsule.android.views.capsule.ArticleRegistFragment"
         android:label="fragment_article_regist"
-        tools:layout="@layout/fragment_article_regist"/>
+        tools:layout="@layout/fragment_article_regist">
+        <action
+            android:id="@+id/action_articleRegistFragment_to_capsuleMineFragment"
+            app:destination="@id/capsuleMineFragment" />
+    </fragment>
     <fragment
         android:id="@+id/notificationMainFragment"
         android:name="com.aboutcapsule.android.views.notification.NotificationMainFragment"
@@ -117,5 +125,10 @@
             android:id="@+id/action_mainPageVisitedFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/capsuleMineFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleMineFragment"
+        android:label="fragment_capsule_mine"
+        tools:layout="@layout/fragment_capsule_mine"/>
 
 </navigation>
