@@ -1,6 +1,7 @@
 package com.timecapsule.oauthservice.db.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,10 +10,11 @@ import java.util.List;
 @Getter
 @Entity
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member extends BaseEntity{
-    @Column(length = 64, unique = true)
+    @Column(length = 64)
     private String nickname;
     @Column(length = 64)
     private String email;
@@ -20,15 +22,20 @@ public class Member extends BaseEntity{
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType; // 요청이 들어온 서드 파티 앱
-    private String oauthId; // 서드 파티 앱의 PK
+    private String providerId; // 서드 파티 앱의 PK
     @Enumerated(EnumType.STRING)
-    private RoleType roleType;
+    @Builder.Default
+    private RoleType roleType = RoleType.USER;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
     private List<Friend> toMemberList = new ArrayList<>();
 
-    public void setProfileImageUrl(String profileImageUrl) {
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
+
+    public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
 }

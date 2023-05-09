@@ -1,9 +1,9 @@
 package com.timecapsule.oauthservice.service;
 
-import com.timecapsule.oauthservice.dto.AuthResponseDto;
-import org.springframework.stereotype.Service;
+import com.timecapsule.oauthservice.dto.AuthorizationReqDto;
+import com.timecapsule.oauthservice.api.response.LoginRes;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
 
 public interface OauthService {
-    void logout(String accessToken, String refreshToken);
-    AuthResponseDto reissue(String refreshToken);
+    SuccessRes<LoginRes> login(AuthorizationReqDto authorizationReqDto);
 }

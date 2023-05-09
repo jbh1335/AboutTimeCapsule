@@ -12,10 +12,10 @@ server:
 
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
 #    register-with-eureka: false
 #    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: https://k8b302.p.ssafy.io:8761/eureka
 
@@ -23,8 +23,11 @@ spring:
   application:
     name: outh-service
   redis:
-    host: localhost
+#    host: localhost
     port: 6379
+    host: k8b302.p.ssafy.io
+    password: b302capsule
+
   datasource:
 #    url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
 #    username: root
@@ -37,7 +40,7 @@ spring:
   jpa:
     open-in-view: false
     generate-ddl: true
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: none
     properties:
@@ -46,14 +49,15 @@ spring:
         globally_quoted_identifiers: true
         format_sql: true
         check_nullability: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   profiles:
     include: oauth
 
-logging.level:
-  org.hibernate.SQL: debug
-
 jwt:
   secret-key: YWJvdXQtdGltZS1jYXBzdWxlLWFib3V0LXRpbWUtY2Fwc3VsZS1hYm91dC10aW1lLWNhcHN1bGUtYWJvdXQtdGltZS1jYXBzdWxl
-  refresh-expiration-time: 1209600 # 14일
-  access-expiration-time: 43200 # 12시간
-
+  access-expiration-time: 43200000 # 12시간
+  refresh-expiration-time: 1209600000 # 14일

@@ -1,44 +1,49 @@
 package com.timecapsule.oauthservice.controller;
 
-import com.timecapsule.oauthservice.api.response.LoginResponse;
-import com.timecapsule.oauthservice.api.response.TokenResponse;
-import com.timecapsule.oauthservice.dto.AuthResponseDto;
+import com.timecapsule.oauthservice.dto.AuthorizationReqDto;
+import com.timecapsule.oauthservice.api.request.RefreshTokenReq;
+import com.timecapsule.oauthservice.api.response.AccessTokenRes;
+import com.timecapsule.oauthservice.api.response.CommonRes;
+import com.timecapsule.oauthservice.api.response.LoginRes;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
+import com.timecapsule.oauthservice.security.jwt.AuthorizationExtractor;
+import com.timecapsule.oauthservice.service.TokenService;
 import com.timecapsule.oauthservice.service.OauthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
+@RequestMapping("/api")
+@RequiredArgsConstructor
 @Slf4j
 @RestController
-@RequestMapping("/api/oauth2")
-//@PreAuthorize("isAuthenticated()") // 메서드 실행 전 (요청전)에 권한 확인 -> 현재 사용자가 로그인 상태라면 true
-@RequiredArgsConstructor
 public class OauthController {
-
     private final OauthService oauthService;
+    private final TokenService tokenService;
 
-    @GetMapping("/callback/{provider}")
-    public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestParam String code) {
-        log.info(provider + " " + code);
-//        LoginResponse loginResponse = oauthService.login(provider, code);
-        return ResponseEntity.ok().body(null);
+    // 인증 코드로 로그인
+    @GetMapping("/login/oauth/{provider}")
+    public SuccessRes<LoginRes> login(@PathVariable String provider, @RequestParam String code) {
+        log.info("회원가입/로그인 시도");
+        return oauthService.login(new AuthorizationReqDto(provider, code));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader(value = "Authorization") String accessToken,
-                                       @RequestHeader(value = "refreshToken") String refreshToken) {
-        oauthService.logout(accessToken,refreshToken);
-        return ResponseEntity.ok().build();
+    // Refresh Token으로 Access Token을 갱신
+    @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public SuccessRes<AccessTokenRes> updateAccessToken(HttpServletRequest request, @Validated RefreshTokenReq refreshToken) {
+        String accessToken = AuthorizationExtractor.extract(request);
+        log.info("accessToken = {}", accessToken);
+        return tokenService.accessTokenByRefreshToken(accessToken, refreshToken);
     }
 
-
-    @PostMapping("/reissue") // 재발급
-    public ResponseEntity<TokenResponse> reissueToken(@RequestHeader(value = "Authorization") String refreshToken){
-        AuthResponseDto authResponseDto = oauthService.reissue(refreshToken);
-        return ResponseEntity.ok(TokenResponse.from(authResponseDto));
+    // Access Token으로 로그아웃
+    @PostMapping("/logout/me")
+    public CommonRes logout(HttpServletRequest request) {
+        String accessToken = AuthorizationExtractor.extract(request);
+        return tokenService.logout(accessToken);
     }
-
-
 }
