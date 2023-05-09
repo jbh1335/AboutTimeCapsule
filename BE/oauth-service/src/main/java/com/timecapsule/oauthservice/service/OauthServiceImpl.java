@@ -1,8 +1,9 @@
 package com.timecapsule.oauthservice.service;
 
-import com.timecapsule.oauthservice.api.request.AuthorizationRequest;
-import com.timecapsule.oauthservice.api.response.LoginResponse;
-import com.timecapsule.oauthservice.api.response.OauthTokenResponse;
+import com.timecapsule.oauthservice.api.request.AuthorizationReq;
+import com.timecapsule.oauthservice.api.response.LoginRes;
+import com.timecapsule.oauthservice.dto.OauthTokenResDto;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.config.redis.RedisUtil;
 import com.timecapsule.oauthservice.db.entity.Member;
 import com.timecapsule.oauthservice.db.repository.MemberRepository;
@@ -39,13 +40,13 @@ public class OauthServiceImpl implements OauthService{
     private final RedisUtil redisUtil;
 
     @Transactional
-    public LoginResponse login(AuthorizationRequest authorizationRequest) {
+    public SuccessRes<LoginRes> login(AuthorizationReq authorizationReq) {
         // provider 이름을 통해 InMemoryProviderRepository에서 OauthProvider 가져오기
-        ClientRegistration provider = inMemoryRepository.findByRegistrationId(authorizationRequest.getProviderName());
+        ClientRegistration provider = inMemoryRepository.findByRegistrationId(authorizationReq.getProviderName());
         log.info("{} 로그인 요청", provider.getClientName());
         log.info("provider : {}", provider);
 
-        Member member = getUserInfo(authorizationRequest, provider);
+        Member member = getUserInfo(authorizationReq, provider);
 
         log.info("Member = {}", member);
 
@@ -59,26 +60,25 @@ public class OauthServiceImpl implements OauthService{
         redisUtil.setDataExpire(String.valueOf(member.getId()), refreshToken.getValue(), refreshToken.getExpiredTime());
         
         log.info("로그인 완료");
-        return LoginResponse.builder()
+        LoginRes loginRes = LoginRes.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .profileImageUrl(member.getProfileImageUrl())
-                .roleType(member.getRoleType())
-                .tokenType(BEARER_TYPE)
                 .accessToken(accessToken.getValue())
                 .refreshToken(refreshToken.getValue())
                 .build();
+        return new SuccessRes<>(true, "로그인을 완료했습니다.", loginRes);
     }
 
-    private Member getUserInfo(AuthorizationRequest authorizationRequest, ClientRegistration provider) {
-        OauthTokenResponse token = getToken(authorizationRequest, provider);
+    private Member getUserInfo(AuthorizationReq authorizationReq, ClientRegistration provider) {
+        OauthTokenResDto token = getToken(authorizationReq, provider);
         if(token.getAccessToken() == null)
             log.info("AccessToken 발급 실패");
         else
             log.info("AccessToken 발급 성공 : {}", token);
         Map<String, Object> userAttributes = getUserAttributes(provider, token);
-        Member extract = OauthAttributes.extract(authorizationRequest.getProviderName(), userAttributes);
+        Member extract = OauthAttributes.extract(authorizationReq.getProviderName(), userAttributes);
         return saveOrUpdate(extract);
     }
 
@@ -95,7 +95,7 @@ public class OauthServiceImpl implements OauthService{
         return findMember;
     }
 
-    private OauthTokenResponse getToken(AuthorizationRequest authorizationRequest, ClientRegistration provider) {
+    private OauthTokenResDto getToken(AuthorizationReq authorizationReq, ClientRegistration provider) {
 //        log.info("Authorization Code로 Oauth 서버에 Token 요청");
         return WebClient.create()
                 .post()
@@ -104,16 +104,16 @@ public class OauthServiceImpl implements OauthService{
                     header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
                     header.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
                 })
-                .bodyValue(tokenRequest(authorizationRequest, provider))
+                .bodyValue(tokenRequest(authorizationReq, provider))
                 .retrieve()
-                .bodyToMono(OauthTokenResponse.class)
+                .bodyToMono(OauthTokenResDto.class)
                 .block();
     }
 
     // 토큰을 받기 위한 HTTP Body 생성
-    private MultiValueMap<String, String> tokenRequest(AuthorizationRequest authorizationRequest, ClientRegistration provider) {
+    private MultiValueMap<String, String> tokenRequest(AuthorizationReq authorizationReq, ClientRegistration provider) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("code", authorizationRequest.getCode());
+        formData.add("code", authorizationReq.getCode());
         formData.add("grant_type", "authorization_code");
         formData.add("client_secret",provider.getClientSecret());
         formData.add("client_id",provider.getClientId());
@@ -121,7 +121,7 @@ public class OauthServiceImpl implements OauthService{
         return formData;
     }
 
-    private Map<String, Object> getUserAttributes(ClientRegistration provider, OauthTokenResponse tokenResponse) {
+    private Map<String, Object> getUserAttributes(ClientRegistration provider, OauthTokenResDto tokenResponse) {
         return WebClient.create()
                 .get()
                 .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())

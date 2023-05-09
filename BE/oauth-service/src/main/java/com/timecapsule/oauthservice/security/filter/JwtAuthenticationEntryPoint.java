@@ -1,7 +1,6 @@
 package com.timecapsule.oauthservice.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.timecapsule.oauthservice.dto.ErrorResponseDto;
 import com.timecapsule.oauthservice.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Set;
 
 @Component
 @Slf4j
@@ -24,11 +22,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     // 인증 처리 과정에서 예외가 발생한 경우 commence 메소드를 실행됨
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.info("인증 처리 과정 중 예외 발생 : {}", authException.toString());
-        Set<String> keySet = request.getParameterMap().keySet();
-        log.info(keySet.toString());
-        for(String key: keySet) {
-            log.info("***** {} : {}", key, request.getParameter(key));
-        }
 
         Object errorObject = request.getAttribute("CustomException");
         log.info("errorObject : {}", errorObject);
@@ -43,7 +36,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json,charset=utf-8");
         try (OutputStream os = response.getOutputStream()) {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(os, ErrorResponseDto.of(errorCode));
+            objectMapper.writeValue(os, JwtAuthenticationErrorRes.of(errorCode));
             os.flush();
         }
     }

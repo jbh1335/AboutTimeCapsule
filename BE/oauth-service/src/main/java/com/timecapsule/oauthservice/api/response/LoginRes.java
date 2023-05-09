@@ -7,8 +7,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class MemberResponse {
+public class LoginRes {
+    int id;
     private String nickname;
     private String email;
     private String profileImageUrl;
+    private String accessToken;
+    private String refreshToken;
 }

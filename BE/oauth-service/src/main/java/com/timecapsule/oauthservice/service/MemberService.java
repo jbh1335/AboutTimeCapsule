@@ -1,11 +1,13 @@
 package com.timecapsule.oauthservice.service;
 
-import com.timecapsule.oauthservice.api.response.MemberResponse;
+import com.timecapsule.oauthservice.api.response.CommonRes;
+import com.timecapsule.oauthservice.api.response.MemberRes;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.db.entity.Member;
 
 public interface MemberService {
-    MemberResponse getMemberInfo();
+    SuccessRes<MemberRes> getMemberInfo();
     Member findById(int id);
-    boolean updateNickname(String nickname);
-    boolean checkNicknameDuplicate(String nickname);
+    CommonRes updateNickname(String nickname);
+    SuccessRes checkNicknameDuplicate(String nickname);
 }

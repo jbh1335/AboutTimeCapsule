@@ -1,6 +1,8 @@
 package com.timecapsule.oauthservice.controller;
 
-import com.timecapsule.oauthservice.api.response.MemberResponse;
+import com.timecapsule.oauthservice.api.response.CommonRes;
+import com.timecapsule.oauthservice.api.response.MemberRes;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,18 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     private final MemberService memberService;
     @GetMapping("/me")
-    public MemberResponse getUser() {
+    public SuccessRes<MemberRes> getUser() {
         log.info("내 회원정보 조회");
         return memberService.getMemberInfo();
     }
 
     @GetMapping("/nickname/{nickname}")
-    public boolean updateNickname(@PathVariable String nickname){
+    public CommonRes updateNickname(@PathVariable String nickname){
         return memberService.updateNickname(nickname);
     }
 
     @GetMapping("/nickname/{nickname}/exists")
-    public boolean checkNicknameDuplicate(@PathVariable String nickname){
+    public SuccessRes checkNicknameDuplicate(@PathVariable String nickname){
         return memberService.checkNicknameDuplicate(nickname);
     }
 }

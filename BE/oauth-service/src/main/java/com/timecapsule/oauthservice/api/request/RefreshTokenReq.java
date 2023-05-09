@@ -1,15 +1,14 @@
 package com.timecapsule.oauthservice.api.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorizationRequest {
-    private String providerName;
-    private String code;
+public class RefreshTokenReq {
+    private String refreshToken;
 }

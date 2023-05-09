@@ -1,16 +1,15 @@
 package com.timecapsule.oauthservice.api.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class MemberProfileRequest {
-    private String nickname;
-    private String email;
-    private String profileImageUrl;
+public class AuthorizationReq {
+    private String providerName;
+    private String code;
 }

@@ -1,10 +1,11 @@
 package com.timecapsule.oauthservice.controller;
 
-import com.timecapsule.oauthservice.api.request.AuthorizationRequest;
-import com.timecapsule.oauthservice.api.request.RefreshTokenRequest;
-import com.timecapsule.oauthservice.api.response.AccessTokenResponse;
-import com.timecapsule.oauthservice.api.response.CustomResponse;
-import com.timecapsule.oauthservice.api.response.LoginResponse;
+import com.timecapsule.oauthservice.api.request.AuthorizationReq;
+import com.timecapsule.oauthservice.api.request.RefreshTokenReq;
+import com.timecapsule.oauthservice.api.response.AccessTokenRes;
+import com.timecapsule.oauthservice.api.response.CommonRes;
+import com.timecapsule.oauthservice.api.response.LoginRes;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.security.jwt.AuthorizationExtractor;
 import com.timecapsule.oauthservice.service.TokenService;
 import com.timecapsule.oauthservice.service.OauthService;
@@ -20,22 +21,19 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RestController
 public class OauthController {
-
     private final OauthService oauthService;
     private final TokenService tokenService;
 
-
     // 인증 코드로 로그인
     @GetMapping("/login/oauth/{provider}")
-    public LoginResponse login(@PathVariable String provider, @RequestParam String code) {
+    public SuccessRes<LoginRes> login(@PathVariable String provider, @RequestParam String code) {
         log.info("회원가입/로그인 시도");
-        return oauthService.login(new AuthorizationRequest(provider, code));
-
+        return oauthService.login(new AuthorizationReq(provider, code));
     }
 
     // Refresh Token으로 Access Token을 갱신
     @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public AccessTokenResponse updateAccessToken(HttpServletRequest request, @Validated RefreshTokenRequest refreshToken) {
+    public SuccessRes<AccessTokenRes> updateAccessToken(HttpServletRequest request, @Validated RefreshTokenReq refreshToken) {
         String accessToken = AuthorizationExtractor.extract(request);
         log.info("accessToken = {}", accessToken);
         return tokenService.accessTokenByRefreshToken(accessToken, refreshToken);
@@ -43,7 +41,7 @@ public class OauthController {
 
     // Access Token으로 로그아웃
     @PostMapping("/logout/me")
-    public CustomResponse logout(HttpServletRequest request) {
+    public CommonRes logout(HttpServletRequest request) {
         String accessToken = AuthorizationExtractor.extract(request);
         return tokenService.logout(accessToken);
     }

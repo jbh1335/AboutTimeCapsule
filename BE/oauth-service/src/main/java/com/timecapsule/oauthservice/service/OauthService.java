@@ -1,8 +1,9 @@
 package com.timecapsule.oauthservice.service;
 
-import com.timecapsule.oauthservice.api.request.AuthorizationRequest;
-import com.timecapsule.oauthservice.api.response.LoginResponse;
+import com.timecapsule.oauthservice.api.request.AuthorizationReq;
+import com.timecapsule.oauthservice.api.response.LoginRes;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
 
 public interface OauthService {
-    LoginResponse login(AuthorizationRequest authorizationRequest);
+    SuccessRes<LoginRes> login(AuthorizationReq authorizationReq);
 }

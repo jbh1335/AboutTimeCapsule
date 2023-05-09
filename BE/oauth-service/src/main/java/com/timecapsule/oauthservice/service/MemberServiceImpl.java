@@ -1,6 +1,8 @@
 package com.timecapsule.oauthservice.service;
 
-import com.timecapsule.oauthservice.api.response.MemberResponse;
+import com.timecapsule.oauthservice.api.response.CommonRes;
+import com.timecapsule.oauthservice.api.response.MemberRes;
+import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.db.entity.Member;
 import com.timecapsule.oauthservice.db.repository.MemberRepository;
 import com.timecapsule.oauthservice.exception.CustomException;
@@ -28,13 +30,14 @@ public class MemberServiceImpl implements MemberService{
     }
 
     // 회원 프로필 조회
-    public MemberResponse getMemberInfo() {
+    public SuccessRes<MemberRes> getMemberInfo() {
         Member findMember = findCurrentMemberId();
-        return MemberResponse.builder()
+        MemberRes memberRes =  MemberRes.builder()
                 .nickname(findMember.getNickname())
                 .email(findMember.getEmail())
                 .profileImageUrl(findMember.getProfileImageUrl())
                 .build();
+        return new SuccessRes<>(true, "내 회원정보를 조회합니다.", memberRes);
     }
 
     public Member findById(int id){
@@ -42,14 +45,15 @@ public class MemberServiceImpl implements MemberService{
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public boolean updateNickname(String nickname){
+    public CommonRes updateNickname(String nickname){
         Member findMember = findCurrentMemberId();
         findMember.setNickname(nickname);
-        return true;
+        return new CommonRes(true, "회원 닉네임을 변경했습니다.");
     }
 
     @Transactional(readOnly = true)
-    public boolean checkNicknameDuplicate(String nickname) {
-        return memberRepository.existsByNickname(nickname);
+    public SuccessRes checkNicknameDuplicate(String nickname) {
+        boolean isExist = memberRepository.existsByNickname(nickname); // 중복된 닉네임이 있으면 true
+        return new SuccessRes(true, (isExist)? "중복된 닉네임이 있습니다." : "중복된 닉네임이 없습니다", isExist);
     }
 }
