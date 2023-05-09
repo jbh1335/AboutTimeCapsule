@@ -1,19 +1,21 @@
 package com.aboutcapsule.android.views.mainpage
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
+import com.aboutcapsule.android.views.notification.NotificationMainFragment
 
 class MainPageMainFragment : Fragment() {
 
@@ -32,6 +34,8 @@ class MainPageMainFragment : Fragment() {
 //        물음표 버튼 토글버틀
         bannerToggle()
 
+
+
         return binding.root
     }
 
@@ -40,7 +44,6 @@ class MainPageMainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-
 
         val section2DataList = getSection2datas()
         val section2adapter = Section2Adapter()
@@ -94,7 +97,15 @@ class MainPageMainFragment : Fragment() {
         binding.mainSection1Capsule1img.setOnClickListener {
             navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment)
         }
+
+        val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
+        notiBtn?.setOnClickListener{
+            navController.navigate(R.id.action_mainPageMainFragment_to_notificationMainFragment)
+        }
+
     }
+
+
 
 
     //   TODO: retrofit으로 내 주변의 타임캡슐 데이터 가져오기

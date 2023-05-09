@@ -8,8 +8,13 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 
 def kakao_Native_App_Key = properties.getProperty('kakao.native.app.key')
 def kakao_redirect_uri = properties.getProperty('kakao.redirect.uri')
+
 def naver_client_id = properties.getProperty('naver.client.id')
 def naver_client_secret = properties.getProperty('naver.client.secret')
+
+//FCM
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace 'com.aboutcapsule.android'
@@ -84,4 +89,22 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    // permission 편리하게 관리해주는 라이브러리
+    implementation "io.github.ParkSangGwon:tedpermission-normal:3.3.0"
+
+    // 파이어베이스 설정
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
+
+    //코루틴 설정
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+
+    //코루틴 관련 ktx
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+
+    // preference-datastore 가벼운 저장소
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences-core:1.0.0")
 }
