@@ -1,9 +1,9 @@
-package com.timecapsule.capsuleservice.dto;
+package com.timecapsule.capsuleservice.api.request;
 
 import lombok.Getter;
 
 @Getter
-public class RequestDto {
+public class AlarmReq {
     private String targetToken;
     private String title;
     private String body;

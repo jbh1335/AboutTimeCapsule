@@ -1,5 +1,5 @@
 server:
-  port: 9001
+  port: 9003
   servlet:
     encoding:
       charset: UTF-8
@@ -15,7 +15,7 @@ eureka:
 
 spring:
   application:
-    name: member-service
+    name: capsule-service
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -41,8 +41,27 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-firebase:
-  key:
-    path: /firebase/ServiceAccountKey.json
-    scope: https://www.googleapis.com/auth/cloud-platform
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA4FLIYWIS5EWVHTV5
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: abouttimecapsule
+    stack:
+      auto: false
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
+#firebase:
+#  key:
+#    path: /firebase/ServiceAccountKey.json
+#    scope: https://www.googleapis.com/auth/cloud-platform
 

@@ -328,6 +328,8 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .isLocked(isLocked)
                     .isMine(isMine)
                     .isAllowedDistance(isAllowedDistance)
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
                     .build());
         }
         return new SuccessRes<>(true, "1km 이내에 있는 캡슐을 조회합니다.", mapResList);
