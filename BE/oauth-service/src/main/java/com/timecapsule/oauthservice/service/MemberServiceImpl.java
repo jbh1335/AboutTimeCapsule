@@ -45,9 +45,11 @@ public class MemberServiceImpl implements MemberService{
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
+    @Transactional
     public CommonRes updateNickname(String nickname){
         Member findMember = findCurrentMemberId();
-        findMember.setNickname(nickname);
+        findMember.updateNickname(nickname);
+        memberRepository.save(findMember);
         return new CommonRes(true, "회원 닉네임을 변경했습니다.");
     }
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
 @RestController

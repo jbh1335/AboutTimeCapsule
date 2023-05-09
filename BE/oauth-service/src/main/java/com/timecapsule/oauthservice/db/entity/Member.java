@@ -31,7 +31,7 @@ public class Member extends BaseEntity{
     @OneToMany(mappedBy = "toMember")
     private List<Friend> toMemberList = new ArrayList<>();
 
-    public void setNickname(String nickname){
+    public void updateNickname(String nickname){
         this.nickname = nickname;
     }
 

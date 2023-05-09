@@ -6,13 +6,15 @@ import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
+@RequestMapping("/api/member")
 @RequiredArgsConstructor
 @Slf4j
-@RestController("/member")
+@RestController
 public class MemberController {
     private final MemberService memberService;
     @GetMapping("/me")
@@ -21,13 +23,15 @@ public class MemberController {
         return memberService.getMemberInfo();
     }
 
-    @GetMapping("/nickname/{nickname}")
+    @PutMapping ("/nickname/{nickname}")
     public CommonRes updateNickname(@PathVariable String nickname){
-        return memberService.updateNickname(nickname);
+        String encodedNickname = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
+        return memberService.updateNickname(encodedNickname);
     }
 
     @GetMapping("/nickname/{nickname}/exists")
     public SuccessRes checkNicknameDuplicate(@PathVariable String nickname){
-        return memberService.checkNicknameDuplicate(nickname);
+        String encodedNickname = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
+        return memberService.checkNicknameDuplicate(encodedNickname);
     }
 }

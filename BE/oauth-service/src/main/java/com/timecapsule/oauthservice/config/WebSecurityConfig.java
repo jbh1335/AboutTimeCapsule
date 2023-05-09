@@ -31,13 +31,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
 
         http
-                // URL 별 권한 관리를 설정하는 옵션 사용 => antMatchers
+                // 요청에 의한 보안검사 사용(URL 별 권한 관리를 설정 => antMatchers)
                 .authorizeRequests()
-                .antMatchers(
-                        "/",
-                        "/login/oauth/**",
-                        "/oauth/**",
-                        "/token",
+                .antMatchers( // 아래 주소는 누구나 접근 가능
+                        "/api",
+                        "/api/login/oauth/**",
+                        "/api/oauth/**",
+                        "/api/token",
                         "/favicon.ico"
                 ).permitAll()
 
