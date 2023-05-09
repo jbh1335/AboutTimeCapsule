@@ -46,11 +46,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
 cloud:
   aws:
     credentials:
@@ -69,3 +64,8 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
+
+#firebase:
+#  key:
+#    path: /firebase/ServiceAccountKey.json
+#    scope: https://www.googleapis.com/auth/cloud-platform
