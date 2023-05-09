@@ -12,8 +12,8 @@ data class GetMyPageRes(
     @SerializedName("friend_request_cnt")
     val friendRequestCnt:Int,
     @SerializedName("friend_dto_list")
-    val friendDtoList:ArrayList<FriendDtoList>,
-    @SerializedName("request_dto_list")
-    val requestDtoList:ArrayList<FriendRequestDtoList>
+    val friendDtoList:MutableList<FriendDtoList>,
+    @SerializedName("friend_request_dto_list")
+    val friendRequestDtoList:MutableList<FriendRequestDtoList>
 
 )
