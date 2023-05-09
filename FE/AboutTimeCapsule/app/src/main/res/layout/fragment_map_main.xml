@@ -2,43 +2,70 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".views.map.MapMainFragment">
 
-        <!-- TODO: Update blank fragment layout -->
-        <TextView
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="map 프래그먼트입니다" />
+            android:layout_height="match_parent"
+            android:contentDescription="맵 뷰"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="map 프래그먼트입니다" />
+        <ImageView
+            android:id="@+id/camera_btn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="right"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="6dp"
+            android:background="@drawable/circle_background_white_stroke"
+            android:padding="12dp"
+            android:src="@drawable/camera" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="map 프래그먼트입니다" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/capsule_regist_btn"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="17dp"
+            android:background="@drawable/btn_radius"
+            android:backgroundTint="@color/btnColor"
+            android:fontFamily="@font/onemobile"
+            android:text="캡슐 생성하기"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="map 프래그먼트입니다" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/capsule_regist_group_btn"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="77dp"
+            android:background="@drawable/btn_radius"
+            android:backgroundTint="@color/skyblueBtnColor"
+            android:fontFamily="@font/onemobile"
+            android:text="그룹 캡슐"
+            android:visibility="gone"
+            android:textColor="@color/btnColor"
+            android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="map 프래그먼트입니다" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/capsule_regist_alone_btn"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="137dp"
+            android:background="@drawable/btn_radius"
+            android:backgroundTint="@color/skyblueBtnColor"
+            android:fontFamily="@font/onemobile"
+            android:text="개인 캡슐"
+            android:visibility="gone"
+            android:textColor="@color/btnColor"
+            android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="map 프래그먼트입니다" />
 
-
-    </LinearLayout>
+    </FrameLayout>
 </layout>
