@@ -41,5 +41,8 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-
+firebase:
+  key:
+    path: /firebase/ServiceAccountKey.json
+    scope: https://www.googleapis.com/auth/cloud-platform
 
