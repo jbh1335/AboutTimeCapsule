@@ -1,6 +1,7 @@
 package com.timecapsule.chatservice.service;
 
 import com.timecapsule.chatservice.api.request.ChatroomReq;
+import com.timecapsule.chatservice.api.response.ChatroomRes;
 import com.timecapsule.chatservice.db.entity.Chatroom;
 import com.timecapsule.chatservice.db.entity.Member;
 import com.timecapsule.chatservice.db.repository.jpa.ChatroomJpaRepository;
@@ -9,6 +10,7 @@ import com.timecapsule.chatservice.db.repository.redis.ChatroomRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,5 +40,10 @@ public class ChatroomServiceImpl implements ChatroomService {
         chatroomJpaRepository.save(chatroom);
 
         return chatroom;
+    }
+
+    @Override
+    public List<ChatroomRes> getMyChatroomList(Integer memberId) {
+        return chatroomJpaRepository.findChatroomListByMemberId(memberId);
     }
 }

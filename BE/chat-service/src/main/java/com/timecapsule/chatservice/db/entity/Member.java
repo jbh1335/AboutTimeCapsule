@@ -13,7 +13,8 @@ import java.io.Serializable;
 @Getter
 public class Member implements Serializable {
     @Id
-    private int id;
+    private Integer id;
+    private String nickname;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
     private String email;
