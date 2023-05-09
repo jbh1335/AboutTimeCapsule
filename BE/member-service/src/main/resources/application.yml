@@ -6,6 +6,13 @@ server:
       enable: true
       force: true
 
+  ssl:
+    enabled: true
+    key-alias: bns-ssl
+    key-store-password: b302capsule
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+
 eureka:
   client:
     register-with-eureka: true
