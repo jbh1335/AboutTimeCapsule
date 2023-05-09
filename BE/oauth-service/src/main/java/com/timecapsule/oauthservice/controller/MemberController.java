@@ -19,9 +19,13 @@ public class MemberController {
         return memberService.getMemberInfo();
     }
 
+    @GetMapping("/nickname/{nickname}")
+    public boolean updateNickname(@PathVariable String nickname){
+        return memberService.updateNickname(nickname);
+    }
+
     @GetMapping("/nickname/{nickname}/exists")
     public boolean checkNicknameDuplicate(@PathVariable String nickname){
         return memberService.checkNicknameDuplicate(nickname);
     }
-
 }

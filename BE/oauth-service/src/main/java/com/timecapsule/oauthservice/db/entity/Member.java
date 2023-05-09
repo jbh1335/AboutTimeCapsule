@@ -31,6 +31,10 @@ public class Member extends BaseEntity{
     @OneToMany(mappedBy = "toMember")
     private List<Friend> toMemberList = new ArrayList<>();
 
+    public void setNickname(String nickname){
+        this.nickname = nickname;
+    }
+
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
