@@ -38,11 +38,6 @@ class CapsuleListFragment : Fragment() {
 
         redirectPage()
 
-        // 리다이렉트 체크용 나중에 제거하기
-        binding.testbtn.setOnClickListener {
-            navController.navigate(R.id.action_mainPageMyCapsuleFragment_to_capsuleRegistGroupFragment)
-        }
-
     }
 
     // 000님을 기다리고 있어요 ( view )

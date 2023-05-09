@@ -15,7 +15,7 @@
         <item name="colorControlHighlight">@color/datePickerColor</item>
         <!-- 취소/확인 버튼 글꼴 -->
         <item name="android:fontFamily">@font/onemobile</item>
-
     </style>
+
 
 </resources>

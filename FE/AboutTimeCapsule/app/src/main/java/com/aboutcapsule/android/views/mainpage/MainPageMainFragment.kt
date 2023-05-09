@@ -67,7 +67,6 @@ class MainPageMainFragment : Fragment() {
         //       어댑터에 api로 받아온 데이터 넘겨주기
         section2adapter.itemList = section2DataList
         binding.section2RecyclerView.adapter = section2adapter
-
     }
 
     private fun setSection3View(){

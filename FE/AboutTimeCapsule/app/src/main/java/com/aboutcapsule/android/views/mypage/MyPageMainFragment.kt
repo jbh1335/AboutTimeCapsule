@@ -5,11 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMyPageMainBinding
@@ -22,12 +25,17 @@ import com.aboutcapsule.android.util.RetrofitManager
 class MyPageMainFragment : Fragment() {
 
     private lateinit var binding: FragmentMyPageMainBinding
-
+    private lateinit var navController: NavController
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getMyPageFriendRequestList()
         getMyPageDataFromBack()
+
+        // 네비게이션 세팅
+        setNavigation()
+        // 페이지 이동
+        redirectPage()
     }
 
     override fun onCreateView(
@@ -49,6 +57,20 @@ class MyPageMainFragment : Fragment() {
     // 친구목록 썸네일들 띄워주기
     fun getMyPageFriendList() {
 
+    }
+
+
+    // 네비게이션 세팅
+    private fun setNavigation(){
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+    }
+    private fun redirectPage(){
+        // 상단 툴바 알림페이지로 리다이렉트
+        val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
+        notiBtn?.setOnClickListener{
+            navController.navigate(R.id.action_myPageMainFragment_to_notificationMainFragment)
+        }
     }
 
     // 친구요청목록리스트띄워주기

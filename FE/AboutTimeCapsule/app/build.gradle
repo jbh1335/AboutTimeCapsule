@@ -31,8 +31,7 @@ android {
         buildConfigField "String", "KAKAO_APP_KEY", "\"${kakao_Native_App_Key}\""
         buildConfigField "String", "NAVER_CLIENT_ID", "\"${naver_client_id}\""
         buildConfigField "String", "NAVER_CLIENT_SECRET", "\"${naver_client_secret}\""
-        manifestPlaceholders = [kakao_redirect_uri: kakao_redirect_uri]
-        manifestPlaceholders = [google_api_key : google_api_key]
+        manifestPlaceholders = [kakao_redirect_uri: kakao_redirect_uri , google_api_key : google_api_key ]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }

@@ -32,6 +32,12 @@
         <action
             android:id="@+id/action_mapMainFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleRegistGroupFragment"
+            app:destination="@id/capsuleRegistGroupFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleRegistFragment"
+            app:destination="@id/capsuleRegistFragment" />
     </fragment>
 
     <fragment
@@ -57,12 +63,6 @@
         android:name="com.aboutcapsule.android.views.mainpage.MainPageMyCapsuleFragment"
         android:label="fragment_my_page_my_capsule"
         tools:layout="@layout/fragment_main_page_my_capsule">
-        <action
-            android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistFragment"
-            app:destination="@id/capsuleRegistFragment" />
-        <action
-            android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistGroupFragment"
-            app:destination="@id/capsuleRegistGroupFragment" />
         <action
             android:id="@+id/action_mainPageMyCapsuleFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
