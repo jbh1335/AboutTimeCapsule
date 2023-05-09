@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aboutcapsule.android.databinding.CapsuleListRecyclerItemBinding
 import com.bumptech.glide.Glide
 
-class CapsuleListWaitingAdapter()
-    : RecyclerView.Adapter<CapsuleListWaitingAdapter.ViewHolder>() {
-    var itemList = mutableListOf<CapsuleListWaitingData>()
+class CapsuleListAdapter()
+    : RecyclerView.Adapter<CapsuleListAdapter.ViewHolder>() {
+    var itemList = mutableListOf<CapsuleListData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = CapsuleListRecyclerItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -20,11 +20,11 @@ class CapsuleListWaitingAdapter()
     }
 
     inner class ViewHolder(val binding: CapsuleListRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(capsuleListWaitingData: CapsuleListWaitingData) {
-            Glide.with(itemView).load(capsuleListWaitingData.img).into(binding.capsuleListImg)
-            binding.capsuleListPlace.text=capsuleListWaitingData.place
-            Glide.with(itemView).load(capsuleListWaitingData.lockimg).into(binding.capsuleListLockimg)
-            binding.capsuleListTime.text=capsuleListWaitingData.time
+        fun bind(capsuleListData: CapsuleListData) {
+            Glide.with(itemView).load(capsuleListData.img).into(binding.capsuleListImg)
+            binding.capsuleListPlace.text=capsuleListData.place
+            Glide.with(itemView).load(capsuleListData.lockimg).into(binding.capsuleListLockimg)
+            binding.capsuleListTime.text=capsuleListData.time
         }
     }
 

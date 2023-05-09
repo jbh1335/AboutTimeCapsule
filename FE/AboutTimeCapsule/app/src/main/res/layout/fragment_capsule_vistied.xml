@@ -6,26 +6,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/defaultBackColor"
         android:orientation="vertical"
-        tools:context=".views.notification.NotificationMainFragment">
-
+        tools:context=".views.mainpage.CapsuleVistiedFragment">
         <TextView
+            android:id="@+id/capsule_list_frag_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:textSize="25sp"
-            android:layout_marginBottom="30dp"
-            android:text="알림"/>
+            android:textSize="18dp"
+            android:text="방문 타임캡슐 목록"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/notiftcation_recyclerView"
+            android:id="@+id/capsule_visited_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/notification_recycler_item"/>
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            tools:listitem="@layout/capsule_list_recycler_item" />
 
     </LinearLayout>
+
 </layout>
