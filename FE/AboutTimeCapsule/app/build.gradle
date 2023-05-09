@@ -107,4 +107,8 @@ dependencies {
     //코루틴 관련 ktx
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
 
+    // preference-datastore 가벼운 저장소
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences-core:1.0.0")
+
 }
