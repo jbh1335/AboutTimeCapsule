@@ -8,34 +8,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCustomDialogMainpageBinding
+import com.aboutcapsule.android.views.map.MapMainFragment
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
 
-class CustomDialogMainpage : DialogFragment() , OnMapReadyCallback {
+class CustomDialogMainpage : DialogFragment(), OnMapReadyCallback  {
     companion object{
         private var binding : FragmentCustomDialogMainpageBinding? = null
-        private lateinit var mapView : MapView
+        private lateinit var mapFragment : GoogleMap
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        binding = FragmentCustomDialogMainpageBinding.inflate(inflater, container, false)
+        binding = FragmentCustomDialogMainpageBinding.inflate(inflater, container, false)
+
+        binding?.mapDialogFragment?.onCreate(savedInstanceState)
+        binding?.mapDialogFragment?.getMapAsync(this)
+
 
         setDialog()
 
-        val rootView = inflater.inflate(R.layout.fragment_custom_dialog_mainpage,container,false)
-        mapView = rootView.findViewById(R.id.mapView) as MapView
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
-//        return binding?.root
-        return rootView
+
+        return binding?.root
 
     }
 
@@ -48,7 +50,7 @@ class CustomDialogMainpage : DialogFragment() , OnMapReadyCallback {
     // 다이얼로그 테두리 설정
     private fun setDialog(){
 
-//      테두리 둥글게 만들기 위한 설정
+    //  테두리 둥글게 만들기 위한 설정
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
@@ -57,11 +59,19 @@ class CustomDialogMainpage : DialogFragment() , OnMapReadyCallback {
         }
     }
 
-    //지도
+    // 지도
     override fun onMapReady(p0: GoogleMap) {
-        val point = LatLng(37.514655, 126.979974)
-//        map.addMarker(MarkerOptions().position(point).titile("현위치")
-//                map.moveCamera(CameraUpdateFactory.newLatLngZoom(point,12f))
+        TODO("Not yet implemented")
+    }
+
+    // 좌표 띄우기
+    private fun addMarkers(googleMap:GoogleMap) {
+        val pos = LatLng(37.514644,126.979974)
+        val marker = googleMap.addMarker(
+            MarkerOptions()
+                .title(" __ 서울 마커 __ ")
+                .position(pos)
+        )
     }
 
 }
