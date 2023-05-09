@@ -1,4 +1,4 @@
-package com.timecapsule.oauthservice.config.filter;
+package com.timecapsule.oauthservice.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timecapsule.oauthservice.dto.ErrorResponseDto;

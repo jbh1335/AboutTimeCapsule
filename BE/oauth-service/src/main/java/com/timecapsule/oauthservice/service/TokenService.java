@@ -17,16 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class TokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final RedisUtil redisUtil;
-
-    // Access Token 유효 검사
-    public void validateAccessToken(String accessToken) {
-        accessTokenExtractor(accessToken);
-    }
 
     @Transactional(readOnly = true)
     public int findMemberByToken(String accessToken) {

@@ -6,7 +6,7 @@ import com.timecapsule.oauthservice.api.response.AccessTokenResponse;
 import com.timecapsule.oauthservice.api.response.CustomResponse;
 import com.timecapsule.oauthservice.api.response.LoginResponse;
 import com.timecapsule.oauthservice.security.jwt.AuthorizationExtractor;
-import com.timecapsule.oauthservice.service.AuthService;
+import com.timecapsule.oauthservice.service.TokenService;
 import com.timecapsule.oauthservice.service.OauthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 public class OauthController {
 
     private final OauthService oauthService;
-    private final AuthService authService;
+    private final TokenService tokenService;
 
 
     // 인증 코드로 로그인
@@ -38,13 +38,13 @@ public class OauthController {
     public AccessTokenResponse updateAccessToken(HttpServletRequest request, @Validated RefreshTokenRequest refreshToken) {
         String accessToken = AuthorizationExtractor.extract(request);
         log.info("accessToken = {}", accessToken);
-        return authService.accessTokenByRefreshToken(accessToken, refreshToken);
+        return tokenService.accessTokenByRefreshToken(accessToken, refreshToken);
     }
 
     // Access Token으로 로그아웃
     @PostMapping("/logout/me")
     public CustomResponse logout(HttpServletRequest request) {
         String accessToken = AuthorizationExtractor.extract(request);
-        return authService.logout(accessToken);
+        return tokenService.logout(accessToken);
     }
 }

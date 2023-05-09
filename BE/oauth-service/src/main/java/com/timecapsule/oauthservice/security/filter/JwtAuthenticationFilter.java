@@ -1,9 +1,9 @@
-package com.timecapsule.oauthservice.config.filter;
+package com.timecapsule.oauthservice.security.filter;
 
 import com.timecapsule.oauthservice.exception.CustomException;
 import com.timecapsule.oauthservice.security.jwt.AuthorizationExtractor;
 import com.timecapsule.oauthservice.security.jwt.JwtTokenProvider;
-import com.timecapsule.oauthservice.service.AuthService;
+import com.timecapsule.oauthservice.service.TokenService;
 import com.timecapsule.oauthservice.security.UserAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final AuthService authService;
+    private final TokenService tokenService;
     private final JwtTokenProvider jwtTokenProvider;
 
 
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // StringUtils.hasText(accessToken) : Access Token이 존재하는지 확인
             // jwtTokenProvider.validateToken(accessToken) : Access Token 검증
             if (StringUtils.hasText(accessToken) && jwtTokenProvider.validateToken(accessToken)) {
-                int loginMemberId = authService.findMemberByToken(accessToken);
+                int loginMemberId = tokenService.findMemberByToken(accessToken);
                 UserAuthentication authentication = new UserAuthentication(loginMemberId); // 인증 객체 생성
                 SecurityContextHolder.getContext().setAuthentication(authentication); // Access Token이 유효하다면 Token에서 유저 정보를 담은 Authentication 객체를 생성해 SecurityContextHolder의 SecurityContext에 저장하여 전역적으로 참조
                 log.info("회원번호 {}의 Access Token 인증 완료", authentication.getMemberId());
