@@ -50,7 +50,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         lateinit var mainActivity: MainActivity
         lateinit var binding : FragmentMapMainBinding
         lateinit var navController: NavController
-        var bellFlag : Boolean = true
+        private var bellFlag : Boolean = true // 상단 벨 제거
 
         private var btnFlag : Boolean = true   // 캡슐 등록버튼 view 용 변수
 
@@ -87,7 +87,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         }
 
         // 상단 벨 숨기기
-        bellToggle(CapsuleRegistFragment.bellFlag)
+        bellToggle(bellFlag)
 
         return binding.root
     }
@@ -112,10 +112,11 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
+            bellFlag=false
         }else{
             bell?.visibility = View.VISIBLE
+            bellFlag=true
         }
-        CapsuleRegistFragment.bellFlag = !CapsuleRegistFragment.bellFlag
     }
 
     fun redirectPage(){
@@ -302,7 +303,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         btnFlag=true
 
         // 상단 벨 다시 살리기
-        bellToggle(CapsuleRegistFragment.bellFlag)
+        bellToggle(bellFlag)
 
         super.onDestroy()
     }

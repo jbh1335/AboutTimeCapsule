@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
@@ -45,7 +46,8 @@
            <com.google.android.gms.maps.MapView
                android:id="@+id/mapDialogFragment"
                android:layout_width="300dp"
-               android:layout_height="400dp"/>
+               android:layout_height="400dp"
+               android:contentDescription="맵 뷰 "/>
 
             <Button
                 android:id="@+id/main_dialog_close_btn"

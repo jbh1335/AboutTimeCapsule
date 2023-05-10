@@ -41,7 +41,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         lateinit var navController: NavController
         private var picture_flag = 0
         private var fileAbsolutePath: String? = null
-        var bellFlag: Boolean = true
+        private var bellFlag: Boolean = true
 
         private var flag = false
 
@@ -80,7 +80,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
     override fun onDestroy() {
         // 상단 벨 다시 살리기
-        bellToggle(CapsuleRegistFragment.bellFlag)
+        bellToggle(bellFlag)
 
         super.onDestroy()
     }
@@ -159,10 +159,11 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
+            bellFlag=false
         }else{
             bell?.visibility = View.VISIBLE
+            bellFlag =true
         }
-        CapsuleRegistFragment.bellFlag = !CapsuleRegistFragment.bellFlag
     }
 
     fun getGalleryData(){

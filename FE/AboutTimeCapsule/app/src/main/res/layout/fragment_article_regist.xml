@@ -167,7 +167,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="65dp"
             android:layout_marginRight="15dp"
             android:background="@drawable/btn_radius"
             android:backgroundTint="@color/btnColor"

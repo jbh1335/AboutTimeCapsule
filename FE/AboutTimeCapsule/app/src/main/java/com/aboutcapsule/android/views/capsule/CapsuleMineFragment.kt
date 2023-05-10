@@ -23,6 +23,8 @@ class CapsuleMineFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_mine,container,false)
 
+
+
         return binding.root
     }
 
