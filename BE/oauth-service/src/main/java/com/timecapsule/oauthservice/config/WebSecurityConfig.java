@@ -5,8 +5,10 @@ import com.timecapsule.oauthservice.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -33,14 +35,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 // 요청에 의한 보안검사 사용(URL 별 권한 관리를 설정 => antMatchers)
                 .authorizeRequests()
-                .antMatchers( // 아래 주소는 누구나 접근 가능
-                        "/api",
-                        "/api/login/oauth/**",
-                        "/api/oauth/**",
-                        "/api/token",
-                        "/favicon.ico"
-                ).permitAll()
-
                 // 설정된 값들 이외의 나머지 URL에 대한 설정 사용
                 .anyRequest()
                 // 나머지 URL들은 모두 인증된 사용자들에게만 허용
@@ -80,13 +74,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-//    @Override
-//    // 스프링 시큐리티 룰을 무시하게 하는 Url 규칙(여기 등록하면 규칙 적용하지 않음)
-//    public void configure(WebSecurity web) { // 인증 예외 URL 설정
-//        web.ignoring()
-//                // antMatchers : 권한관리 대상 설정
-//                .antMatchers(HttpMethod.GET, "/login/oauth/**")
-//                .antMatchers("/oauth/**")
-//                .antMatchers(HttpMethod.POST, "/token");
-//    }
+    @Override
+    // 스프링 시큐리티 룰을 무시하게 하는 Url 규칙(여기 등록하면 규칙 적용하지 않음)
+    public void configure(WebSecurity web) { // 인증 예외 URL 설정
+        web.ignoring()
+                // antMatchers : 권한관리 대상 설정
+                .antMatchers(HttpMethod.GET, "/api/login/oauth/**")
+                .antMatchers(HttpMethod.POST, "/api/token")
+                .antMatchers(HttpMethod.OPTIONS, "/**") //OPTIONS 메소드 허락
+                .antMatchers("/favicon.ico");
+    }
 }

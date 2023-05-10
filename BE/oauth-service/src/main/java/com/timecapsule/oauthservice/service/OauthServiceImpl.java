@@ -1,6 +1,5 @@
 package com.timecapsule.oauthservice.service;
 
-import com.timecapsule.oauthservice.dto.AuthorizationReqDto;
 import com.timecapsule.oauthservice.api.response.LoginRes;
 import com.timecapsule.oauthservice.dto.OauthTokenResDto;
 import com.timecapsule.oauthservice.api.response.SuccessRes;
@@ -40,13 +39,13 @@ public class OauthServiceImpl implements OauthService{
     private final RedisUtil redisUtil;
 
     @Transactional
-    public SuccessRes<LoginRes> login(AuthorizationReqDto authorizationReqDto) {
+    public SuccessRes<LoginRes> login(String providerName, String code) {
         // provider 이름을 통해 InMemoryProviderRepository에서 OauthProvider 가져오기
-        ClientRegistration provider = inMemoryRepository.findByRegistrationId(authorizationReqDto.getProviderName());
+        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
         log.info("{} 로그인 요청", provider.getClientName());
         log.info("provider : {}", provider);
 
-        Member member = getUserInfo(authorizationReqDto, provider);
+        Member member = getUserInfo(code, provider);
 
         log.info("Member = {}", member);
 
@@ -71,14 +70,14 @@ public class OauthServiceImpl implements OauthService{
         return new SuccessRes<>(true, "로그인을 완료했습니다.", loginRes);
     }
 
-    private Member getUserInfo(AuthorizationReqDto authorizationReqDto, ClientRegistration provider) {
-        OauthTokenResDto token = getToken(authorizationReqDto, provider);
+    private Member getUserInfo(String code, ClientRegistration provider) {
+        OauthTokenResDto token = getToken(code, provider);
         if(token.getAccessToken() == null)
             log.info("AccessToken 발급 실패");
         else
             log.info("AccessToken 발급 성공 : {}", token);
         Map<String, Object> userAttributes = getUserAttributes(provider, token);
-        Member extract = OauthAttributes.extract(authorizationReqDto.getProviderName(), userAttributes);
+        Member extract = OauthAttributes.extract(provider.getClientName(), userAttributes);
         return saveOrUpdate(extract);
     }
 
@@ -86,16 +85,16 @@ public class OauthServiceImpl implements OauthService{
         Member findMember = memberRepository.findByProviderId(member.getProviderId()).orElse(null);
         if (findMember == null) {
             findMember = memberRepository.save(member);
-            log.info("회원가입 진행 - 회원번호 {}", findMember.getId());
+            log.info("비회원이므로 회원가입 후 로그인 진행 - 회원번호 {}", findMember.getId());
         }
         else {
             findMember.updateProfileImageUrl(member.getProfileImageUrl());
-            log.info("로그인 진행 - 회원번호 {}", findMember.getId());
+            log.info("가입된 회원이므로 로그인 진행 - 회원번호 {}", findMember.getId());
         }
         return findMember;
     }
 
-    private OauthTokenResDto getToken(AuthorizationReqDto authorizationReqDto, ClientRegistration provider) {
+    private OauthTokenResDto getToken(String code, ClientRegistration provider) {
 //        log.info("Authorization Code로 Oauth 서버에 Token 요청");
         return WebClient.create()
                 .post()
@@ -104,16 +103,16 @@ public class OauthServiceImpl implements OauthService{
                     header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
                     header.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
                 })
-                .bodyValue(tokenRequest(authorizationReqDto, provider))
+                .bodyValue(tokenRequest(code, provider))
                 .retrieve()
                 .bodyToMono(OauthTokenResDto.class)
                 .block();
     }
 
     // 토큰을 받기 위한 HTTP Body 생성
-    private MultiValueMap<String, String> tokenRequest(AuthorizationReqDto authorizationReqDto, ClientRegistration provider) {
+    private MultiValueMap<String, String> tokenRequest(String code, ClientRegistration provider) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("code", authorizationReqDto.getCode());
+        formData.add("code", code);
         formData.add("grant_type", "authorization_code");
         formData.add("client_secret",provider.getClientSecret());
         formData.add("client_id",provider.getClientId());

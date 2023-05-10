@@ -1,6 +1,5 @@
 package com.timecapsule.oauthservice.controller;
 
-import com.timecapsule.oauthservice.dto.AuthorizationReqDto;
 import com.timecapsule.oauthservice.api.request.RefreshTokenReq;
 import com.timecapsule.oauthservice.api.response.AccessTokenRes;
 import com.timecapsule.oauthservice.api.response.CommonRes;
@@ -26,10 +25,9 @@ public class OauthController {
     private final TokenService tokenService;
 
     // 인증 코드로 로그인
-    @GetMapping("/login/oauth/{provider}")
-    public SuccessRes<LoginRes> login(@PathVariable String provider, @RequestParam String code) {
-        log.info("회원가입/로그인 시도");
-        return oauthService.login(new AuthorizationReqDto(provider, code));
+    @GetMapping("/login/oauth/{providerName}")
+    public SuccessRes<LoginRes> login(@PathVariable String providerName, @RequestParam String code) {
+        return oauthService.login(providerName, code);
     }
 
     // Refresh Token으로 Access Token을 갱신
