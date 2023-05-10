@@ -236,12 +236,13 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq) {
-        // 그냥 전체 공개로 설정한 사람들의 캡슐 조회
+        // 전체 공개로 설정한 모르는 사람들의 캡슐 조회 (내꺼, 친구 X)
         // 오픈 기간 지났고 내가 열람한 적 없는 주변 1km 이내에 있는 모든 캡슐 조회
+        Optional<Member> oMember = memberRepository.findById(aroundCapsuleReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
         List<AroundCapsuleRes> aroundCapsuleResList = new ArrayList<>();
         List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
-
         for(Capsule capsule : aroundCapsuleList) {
             if(capsule.isDeleted()) continue;
             // 내 권한 X
@@ -249,6 +250,15 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(isMember) continue;
 
             if(!capsule.getRangeType().equals("ALL")) continue;
+
+            boolean isFriendCapsule = false;
+            for(Member myFriend : friendList(member)) {
+                if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) {
+                    isFriendCapsule = true;
+                    break;
+                }
+            }
+            if(isFriendCapsule) continue;
 
             String memberNickname = capsule.getCapsuleMemberList().get(0).getMember().getNickname();
             int memberSize = capsule.getCapsuleMemberList().size() - 1;
