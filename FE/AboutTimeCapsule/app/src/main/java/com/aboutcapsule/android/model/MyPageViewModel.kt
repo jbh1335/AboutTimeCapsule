@@ -15,7 +15,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
-    val myPageList : MutableLiveData<GetMyPageRes> = MutableLiveData()
+    var myPageList : MutableLiveData<GetMyPageRes> = MutableLiveData()
+    lateinit var friendList : MutableList<FriendDtoList>
+    lateinit var friendRequestList : MutableList<FriendRequestDtoList>
 
     fun getMyPage(memberId:Int) {
         viewModelScope.launch {
@@ -32,7 +34,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                 val friendRequestCnt = dataObjects.getInt("friendRequestCnt")
 
                 val friendDtoListData = dataObjects.getJSONArray("friendDtoList")
-                val friendList = mutableListOf<FriendDtoList>()
+                friendList = mutableListOf<FriendDtoList>()
                 for (i in 0 until friendDtoListData.length()) {
                     val friendDtoListObject = friendDtoListData.getJSONObject(i)
                     val friendMemberId = friendDtoListObject.getInt("friendMemberId")
@@ -43,7 +45,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
 
                 val friendRequestDtoListData = dataObjects.getJSONArray("friendRequestDtoList")
 
-                val friendRequestList = mutableListOf<FriendRequestDtoList>()
+                friendRequestList = mutableListOf<FriendRequestDtoList>()
                 for (j in 0 until friendRequestDtoListData.length()) {
                     val friendReqeustDtoListObject = friendRequestDtoListData.getJSONObject(j)
                     val friendId = friendReqeustDtoListObject.getInt("friendId")
@@ -60,6 +62,31 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
             }
         }
     }
+    fun friendAcceptRequest(friendId: Int?, memberId:Int) {
+        viewModelScope.launch {
+            val response = repository.acceptFriendRequest(friendId)
+            if (response.isSuccessful) {
+                getMyPage(memberId)
+                Log.i("친구요청", "친구 요청 성공 ${response.body()?.string()}")
+            }else {
+                Log.e("친구요청실패", "친구 요청 실패")
+            }
+
+        }
+
+    }
+    fun refuseFriendRequest(friendId: Int?, memberId:Int) {
+        viewModelScope.launch {
+            val response = repository.refuseFriendRequest(friendId)
+            if (response.isSuccessful) {
+                getMyPage(memberId)
+                Log.i("친구요청거절", "친구 요청거절 성공")
+            } else {
+                Log.e("친구요청거절실패", "친구 요청거절 실패")
+            }
+        }
+    }
+
     protected val exceptionHandler = CoroutineExceptionHandler(){ i, exception ->
         Log.d("ERR ::::", "에러 발생.... ${exception.message}");
         Log.d("ERR ::::", "에러 발생.... ${exception.toString()}");

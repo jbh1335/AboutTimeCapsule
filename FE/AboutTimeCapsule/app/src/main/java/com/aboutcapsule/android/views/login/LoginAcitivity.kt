@@ -21,6 +21,18 @@ class LoginAcitivity : AppCompatActivity() {
     val successTag = "loginSuccess"
     val failTag = "loginFail"
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        _binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.kakaoLoginBtnLayout.setOnClickListener{
+            kakaoLogin()
+        }
+        binding.naverLoginBtn.setOnClickListener {
+            naverLogin()
+        }
+    }
+
     private fun naverLogin() {
 
         val loginCallback = object : OAuthLoginCallback {
@@ -86,17 +98,7 @@ class LoginAcitivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.kakaoLoginBtnLayout.setOnClickListener{
-            kakaoLogin()
-        }
-        binding.naverLoginBtn.setOnClickListener {
-            naverLogin()
-        }
-    }
+
 
 
 

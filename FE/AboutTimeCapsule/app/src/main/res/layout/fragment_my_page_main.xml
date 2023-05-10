@@ -136,6 +136,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/friendListLength"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -148,157 +149,17 @@
                     android:id="@+id/friendListThumbnail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:columnCount="3">
+                    android:columnCount="2"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:id="@+id/friendThumbnailItem1"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/friendListThumbnailItem"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        tools:listitem="@layout/mypage_friend_list_recycler_item">
 
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-
-                            />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginBottom="10dp"
-                            android:text=""
-                            android:textColor="@color/cloudyColor" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/friendThumbnailItem2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-
-                            />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginBottom="10dp"
-                            android:text=""
-                            android:textColor="@color/cloudyColor" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/friendThumbnailItem3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-
-                            />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginBottom="10dp"
-                            android:text=""
-                            android:textColor="@color/cloudyColor" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/friendThumbnailItem4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-
-                            />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginBottom="10dp"
-                            android:text=""
-                            android:textColor="@color/cloudyColor" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/friendThumbnailItem5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-
-                            />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginBottom="10dp"
-                            android:text=""
-                            android:textColor="@color/cloudyColor" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/friendThumbnailItem6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-
-                            />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:layout_marginBottom="10dp"
-                            android:text=""
-                            android:textColor="@color/cloudyColor" />
-
-                    </LinearLayout>
+                    </androidx.recyclerview.widget.RecyclerView>
                 </GridLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -324,6 +185,7 @@
                         android:textColor="@color/cloudyColor" />
 
                     <TextView
+                        android:id="@+id/friendRequestLength"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_marginLeft="5dp"
