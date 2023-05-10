@@ -1,6 +1,7 @@
 package com.timecapsule.capsuleservice.service;
 
 import com.google.firebase.messaging.*;
+import com.timecapsule.capsuleservice.db.entity.Capsule;
 import com.timecapsule.capsuleservice.db.entity.Member;
 import com.timecapsule.capsuleservice.db.entity.Memory;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,6 @@ public class FcmServiceImpl implements FcmService {
 
         String title = "어바웃타임캡슐 - 댓글";
         String body = sender.getNickname() + "님이 나의 추억에 댓글을 남겼습니다.";
-        String token = memory.getMember().getAlarmToken();
 
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("capsuleId", String.valueOf(memory.getCapsule().getId()));
@@ -46,7 +46,7 @@ public class FcmServiceImpl implements FcmService {
                 .setBody(body)
                 .build();
 
-        sendMessage(token, notification, dataMap);
+        sendMessage(memory.getMember().getAlarmToken(), notification, dataMap);
     }
 
     @Override
@@ -56,7 +56,6 @@ public class FcmServiceImpl implements FcmService {
         String title = "어바웃타임캡슐 - 추억 오픈";
         String body = memory.getOpenDate() + "에 생성한 추억이 " +
                 member.getNickname() + "님의 방문을 기다리고 있습니다.";
-        String token = member.getAlarmToken();
 
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("capsuleId", String.valueOf(memory.getCapsule().getId()));
@@ -67,6 +66,24 @@ public class FcmServiceImpl implements FcmService {
                 .setBody(body)
                 .build();
 
-        sendMessage(token, notification, dataMap);
+        sendMessage(member.getAlarmToken(), notification, dataMap);
+    }
+
+    @Override
+    public void groupCapsuleInviteNotification(Capsule capsule, Member me, Member sender) {
+        System.out.println("service - groupCapsuleInviteNotification");
+
+        String title = "어바웃타임캡슐 - 그룹 캡슐 초대";
+        String body = sender.getNickname() + "님이 당신을 캡슐에 초대했습니다.";
+
+        HashMap<String, String> dataMap = new HashMap<>();
+        dataMap.put("capsuleId", String.valueOf(capsule));
+
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .build();
+
+        sendMessage(me.getAlarmToken(), notification, dataMap);
     }
 }

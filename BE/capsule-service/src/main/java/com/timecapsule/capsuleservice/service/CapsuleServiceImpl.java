@@ -19,6 +19,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
     private final DistanceService distanceService;
+    private final FcmService fcmService;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
@@ -39,11 +40,17 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         Capsule newCapsule = capsuleRepository.save(capsule);
 
+        int count = 0;
+        Member sender = new Member();
         for(Integer id : capsuleRegistReq.getMemberIdList()) {
             Optional<Member> oMember = memberRepository.findById(id);
             Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
+            if(count == 0) sender = member;
             capsuleMemberRepository.save(CapsuleMember.builder().member(member).capsule(newCapsule).build());
+
+            count++;
+            if(count >= 2) fcmService.groupCapsuleInviteNotification(newCapsule, member, sender);
         }
 
         return new SuccessRes<>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
