@@ -1,11 +1,16 @@
 package com.aboutcapsule.android.views.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.aboutcapsule.android.databinding.ActivityLoginBinding
+import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -14,6 +19,10 @@ import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 class LoginAcitivity : AppCompatActivity() {
     private var _binding: ActivityLoginBinding? = null
@@ -32,6 +41,7 @@ class LoginAcitivity : AppCompatActivity() {
             naverLogin()
         }
     }
+
 
     private fun naverLogin() {
 
