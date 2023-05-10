@@ -8,8 +8,8 @@ server:
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://k8b302.p.ssafy.io:8761/eureka
 
@@ -29,7 +29,7 @@ spring:
     generate-ddl: true
     show-sql: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         enable_lazy_load_no_trans: true
@@ -63,5 +63,4 @@ logging:
 firebase:
   key:
     path: src/main/resources/firebase/ServiceAccountKey.json
-    scope: https://www.googleapis.com/auth/cloud-platform
 

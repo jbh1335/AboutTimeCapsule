@@ -10,17 +10,15 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Member extends BaseEntity{
-    @Column(length = 64)
-    private String name;
+public class Member extends BaseEntity {
     @Column(length = 64, unique = true)
     private String nickname;
     @Column(length = 64, unique = true)
     private String email;
-    @Column(length = 255)
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
+    private String alarmToken;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
@@ -33,5 +31,7 @@ public class Member extends BaseEntity{
     private List<Comment> commentList = new ArrayList<>();
     @OneToMany(mappedBy = "member")
     private List<Memory> memoryList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Alarm> alarmList = new ArrayList<>();
 
 }
