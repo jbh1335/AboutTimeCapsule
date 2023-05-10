@@ -4,6 +4,9 @@ import android.app.Application
 import com.aboutcapsule.android.BuildConfig
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class GlobalAplication:Application() {
     private lateinit var dataStore: DataStoreModule
@@ -19,9 +22,11 @@ class GlobalAplication:Application() {
 
         globalAplication = this
         dataStore = DataStoreModule(this)
-
-
     }
+    fun getDataStore() : DataStoreModule = dataStore
+
+
+
 
 
 }
