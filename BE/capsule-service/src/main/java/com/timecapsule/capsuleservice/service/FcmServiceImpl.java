@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 @Service("fcmService")
 public class FcmServiceImpl implements FcmService {
+
+    @Override
     public void sendMessage(String targetToken, Notification notification, HashMap<String, String> dataMap) {
         System.out.println("service - sendMessageTo");
 
@@ -34,6 +36,27 @@ public class FcmServiceImpl implements FcmService {
         String title = "어바웃타임캡슐 - 댓글";
         String body = sender.getNickname() + "님이 나의 추억에 댓글을 남겼습니다.";
         String token = memory.getMember().getAlarmToken();
+
+        HashMap<String, String> dataMap = new HashMap<>();
+        dataMap.put("capsuleId", String.valueOf(memory.getCapsule().getId()));
+        dataMap.put("memoryId", String.valueOf(memory.getId()));
+
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .build();
+
+        sendMessage(token, notification, dataMap);
+    }
+
+    @Override
+    public void openDateNotification(Memory memory, Member member) {
+        System.out.println("service - openDateNotification");
+
+        String title = "어바웃타임캡슐 - 추억 오픈";
+        String body = memory.getOpenDate() + "에 생성한 추억이 " +
+                member.getNickname() + "님의 방문을 기다리고 있습니다.";
+        String token = member.getAlarmToken();
 
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("capsuleId", String.valueOf(memory.getCapsule().getId()));

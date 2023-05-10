@@ -12,13 +12,17 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class SchedulerService {
+    private final FcmService fcmService;
     private final MemoryRepository memoryRepository;
     @Scheduled(cron = "0 0 0 * * *")
     public void unlockMemory() {
         List<Memory> memoryList = memoryRepository.findAllByIsDeletedFalseAndIsLockedTrue();
 
         memoryList.forEach(memory -> {
-            if(memory.getOpenDate().equals(LocalDate.now())) memoryRepository.save(Memory.unLockMemory(memory, false));
+            if(memory.getOpenDate().equals(LocalDate.now())) {
+                memoryRepository.save(Memory.unLockMemory(memory, false));
+                fcmService.openDateNotification(memory, memory.getMember());
+            }
         });
     }
 }
