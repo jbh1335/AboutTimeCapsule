@@ -35,3 +35,6 @@ spring:
           uri: lb://CHAT
           predicates:
             - Path=/api/chat/**
+
+token:
+  secret: YWJvdXQtdGltZS1jYXBzdWxlLWFib3V0LXRpbWUtY2Fwc3VsZS1hYm91dC10aW1lLWNhcHN1bGUtYWJvdXQtdGltZS1jYXBzdWxl
