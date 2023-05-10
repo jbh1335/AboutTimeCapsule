@@ -307,6 +307,9 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<List<MapRes>> getMapCapsule(CapsuleDetailReq capsuleDetailReq) {
+        Optional<Member> oMember = memberRepository.findById(capsuleDetailReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
         List<MapRes> mapResList = new ArrayList<>();
         List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude());
 
@@ -315,8 +318,27 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
             if(!isMine && capsule.getRangeType().equals("PRIVATE")) continue;
-            
             // 친구 공개 구현하기
+            // 그룹 : 전체, 그룹
+            // 나 : 전체, 친구공개, 개인
+
+            // 일반 캡슐
+            // 나: 전체 o, 친구공개 o, 개인 o
+            // 친구: 전체 o, 친구 o, 개인 x
+            // 모르는 사람: 전체 o, 친구 x, 개인 x
+
+            // 그룹 캡슐
+            // 나: 전체 o, 그룹 o
+            // 친구: 전체 o, 그룹 x
+            // 모르는 사람: 전체 o, 그룹 x
+
+            boolean isFriendCapsule = false;
+            for(Member myFriend : friendList(member)) {
+                if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) isFriendCapsule = true;
+            }
+            if(!isFriendCapsule && !capsule.getRangeType().equals("ALL")) continue;
+            if(isFriendCapsule && capsule.isGroup() && !capsule.getRangeType().equals("ALL")) continue;
+
             boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
             boolean isLocked = false;
 
@@ -338,6 +360,8 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .isLocked(isLocked)
                     .isMine(isMine)
                     .isAllowedDistance(isAllowedDistance)
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
                     .build());
         }
         return new SuccessRes<>(true, "1km 이내에 있는 캡슐을 조회합니다.", mapResList);
