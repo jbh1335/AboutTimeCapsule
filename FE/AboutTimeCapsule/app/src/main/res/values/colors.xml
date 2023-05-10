@@ -14,4 +14,5 @@
     <color name="mypageBtnTextColor">#364FC7</color>
     <color name="chatContentTextColor">#A7A7A7</color>
     <color name="chatNicknameTextColor">#6C6C6C</color>
+    <color name="chatCommentEditView">#EFEFEF</color>
 </resources>
