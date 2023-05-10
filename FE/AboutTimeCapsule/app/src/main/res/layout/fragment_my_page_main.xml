@@ -63,6 +63,7 @@
                     app:layout_constraintVertical_bias="0.077" />
 
                 <ImageView
+                    android:id="@+id/profileOptionBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="15dp"
                     android:src="@drawable/vector"
@@ -74,6 +75,7 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/friendRequestBtn"
                     android:layout_width="130dp"
                     android:layout_height="25dp"
                     android:layout_marginTop="15dp"
@@ -89,7 +91,7 @@
                     app:layout_constraintVertical_bias="0.2" />
 
                 <androidx.appcompat.widget.AppCompatButton
-
+                    android:id="@+id/chattingBtn"
                     android:layout_width="130dp"
                     android:layout_height="25dp"
                     android:background="@drawable/btn_radius_color"
@@ -163,6 +165,7 @@
                 </GridLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/redirectAllFriendPageBtn"
                     android:layout_width="310dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_horizontal"

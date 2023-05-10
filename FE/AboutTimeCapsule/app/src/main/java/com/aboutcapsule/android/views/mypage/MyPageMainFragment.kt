@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -24,7 +26,10 @@ import com.aboutcapsule.android.databinding.FragmentMyPageMainBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.mypage.MypageRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 
 
 class MyPageMainFragment : Fragment() {
@@ -33,6 +38,9 @@ class MyPageMainFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var myPageFriendRequestAdapter: MyPageFriendRequestAdapter
     private lateinit var viewModel: MyPageViewModel
+    suspend fun getCurrentUser() : Int {
+        return GlobalAplication.getInstance().getDataStore().getcurrentMemberId.first()
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,16 +51,17 @@ class MyPageMainFragment : Fragment() {
         setNavigation()
         // 페이지 이동
         redirectPage()
+
+        redirectAllFriendsPage()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_page_main, container, false)
-        return binding.root
 
+        return binding.root
     }
     fun getMyPageDataFromBack() {
         val repository = MypageRepo()
@@ -76,13 +85,12 @@ class MyPageMainFragment : Fragment() {
             refuseFriendRequest()
         })
 
-
     }
-
-
-
     // 유저 프로필정보 가져오기
     fun getMyPageProfileInfo(getMyPageRes: GetMyPageRes) {
+        binding.profileOptionBtn.visibility = View.GONE
+        binding.friendRequestBtn.visibility = View.GONE
+        binding.chattingBtn.visibility = View.GONE
         Glide.with(this).load(getMyPageRes.profileImageUrl).into(binding.myPageProfilePicture)
         binding.myPageUserName.text = getMyPageRes.nickname
         binding.myPageUserMail.text = getMyPageRes.email
@@ -104,7 +112,15 @@ class MyPageMainFragment : Fragment() {
         layout.orientation = LinearLayoutManager.VERTICAL
         binding.friendListThumbnailItem.layoutManager = layout
 
+
         Log.i("아이템리스트", "아이템 리스트 ${mypageFriendThumbnailAdapter.itemList}")
+    }
+
+    fun redirectAllFriendsPage() {
+        binding.redirectAllFriendPageBtn.setOnClickListener {
+            val bundle = bundleOf("memberId" to 1)
+            navController.navigate(R.id.action_myPageMainFragment_to_myAllFriendsFragment, bundle)
+        }
     }
 
 
