@@ -134,7 +134,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <FrameLayout
-                android:id="@+id/Linear_2_frame"
+                android:id="@+id/framelayout_2_frame"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:layout_margin="15dp"
@@ -145,10 +145,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/constraint_1_frame">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="371dp"
+                    android:id="@+id/comments_recycler_view"
+                    android:layout_width="match_parent"
                     android:layout_height="290dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp" />
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/comments_recycler_item"/>
 
             </FrameLayout>
 
