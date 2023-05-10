@@ -66,6 +66,5 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return response.setComplete();
     }
 
-    public class Config {
-    }
+    public static class Config {}
 }

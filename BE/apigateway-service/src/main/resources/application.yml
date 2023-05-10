@@ -18,23 +18,52 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - "*"
+            allow-credentials: true
+            allowedHeaders:
+              - x-requested-with
+              - authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - PATCH
+              - OPTIONS
+              - DELETE
       routes:
         - id: member-service
           uri: lb://MEMBER
           predicates:
             - Path=/api/member/**
+          filters:
+            - AuthorizationHeaderFilter
+
         - id: outh-service
           uri: lb://OUTH
           predicates:
             - Path=/api/aouth/**
+
         - id: capsule-service
           uri: lb://CAPSULE
           predicates:
             - Path=/api/capsule/**
+          filters:
+            - AuthorizationHeaderFilter
+
         - id: chat-service
           uri: lb://CHAT
           predicates:
             - Path=/api/chat/**
+          filters:
+            - AuthorizationHeaderFilter
 
 token:
   secret: YWJvdXQtdGltZS1jYXBzdWxlLWFib3V0LXRpbWUtY2Fwc3VsZS1hYm91dC10aW1lLWNhcHN1bGUtYWJvdXQtdGltZS1jYXBzdWxl
