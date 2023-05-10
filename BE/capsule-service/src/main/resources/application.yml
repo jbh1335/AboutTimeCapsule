@@ -62,6 +62,6 @@ logging:
 
 firebase:
   key:
-    path: ./src/main/resources/firebase/ServiceAccountKey.json
+    path: src/main/resources/firebase/ServiceAccountKey.json
     scope: https://www.googleapis.com/auth/cloud-platform
 

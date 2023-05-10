@@ -1,5 +1,6 @@
 package com.timecapsule.capsuleservice.dto;
 
+import com.google.firebase.messaging.Message;
 import lombok.Builder;
 import lombok.Getter;
 

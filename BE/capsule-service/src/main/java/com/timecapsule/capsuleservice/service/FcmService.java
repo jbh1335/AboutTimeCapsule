@@ -1,69 +1,31 @@
 package com.timecapsule.capsuleservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.timecapsule.capsuleservice.api.response.CommonRes;
-import com.timecapsule.capsuleservice.dto.FcmMessageDto;
 import lombok.RequiredArgsConstructor;
-import okhttp3.*;
-import org.apache.http.HttpHeaders;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
-import java.io.IOException;
-
-@Component
+@Service
 @RequiredArgsConstructor
 public class FcmService {
-    @Value("${firebase.key.path}")
-    private String firebaseSdkPath;
-    @Value("$firebase.key.scope")
-    private String firebaseScope;
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/abouttimecapsule-ef8be/messages:send";
-    private final ObjectMapper objectMapper;
-    public CommonRes sendMessageTo(String targetToken, String title, String body) throws IOException {
-        String message = makeMessage(targetToken, title, body);
+    private final FirebaseMessaging firebaseMessaging;
+    public CommonRes sendMessageTo(String targetToken, String title, String body) {
+        System.out.println("service - sendMessageTo");
 
-        OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
-        Request request = new Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
-                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
-                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
-                .build();
+        Notification notification = Notification.builder().setTitle(title).setBody(body).setImage(null).build();
+        Message message = Message.builder().setToken(targetToken).setNotification(notification).build();
 
-        Response response = client.newCall(request).execute();
-        System.out.println("response.body().string(): " + response.body().string());
+        try {
+            firebaseMessaging.send(message);
+            System.out.println("알림 전송 성공");
+        } catch (FirebaseMessagingException e) {
+            System.out.println("알림 전송 실패");
+            throw new RuntimeException(e);
+        }
 
-        return new CommonRes(true, "메세지 푸시");
-    }
-
-    private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
-        FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
-                .message(FcmMessageDto.Message.builder()
-                        .token(targetToken)
-                        .notification(FcmMessageDto.Notification.builder()
-                                .title(title)
-                                .body(body)
-                                .image(null)
-                                .build())
-                        .build()).validateOnly(false).build();
-
-        // fcmMessageDto 객체 -> Json 문자열
-        return objectMapper.writeValueAsString(fcmMessageDto);
-    }
-
-    private String getAccessToken() throws IOException {
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(firebaseSdkPath).getInputStream())
-                .createScoped(Arrays.asList(firebaseScope));
-
-        googleCredentials.refreshIfExpired();
-        return googleCredentials.getAccessToken().getTokenValue();
+        return new CommonRes(true, "메세지 전송을 완료했습니다.");
     }
 }
