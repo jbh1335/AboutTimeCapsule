@@ -20,10 +20,13 @@ import com.aboutcapsule.android.views.notification.NotificationMainFragment
 
 class MainPageMainFragment : Fragment() {
 
-    lateinit var binding: FragmentMainPageMainBinding
-    lateinit var navController: NavController
-    lateinit var section2adapter :Section2Adapter
-    lateinit var section3adapter: Section3Adapter
+    companion object {
+        lateinit var binding: FragmentMainPageMainBinding
+        lateinit var navController: NavController
+        lateinit var section2adapter: Section2Adapter
+        lateinit var section3adapter: Section3Adapter
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
