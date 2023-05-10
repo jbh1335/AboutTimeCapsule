@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RequestMapping("/api")
+@RequestMapping("/api/oauth")
 @RequiredArgsConstructor
 @Slf4j
 @RestController
@@ -24,8 +24,8 @@ public class OauthController {
     private final OauthService oauthService;
     private final TokenService tokenService;
 
-    // 인증 코드로 로그인
-    @GetMapping("/login/oauth/{providerName}")
+    // 인가 코드로 로그인
+    @GetMapping("/login/{providerName}")
     public SuccessRes<LoginRes> login(@PathVariable String providerName, @RequestParam String code) {
         return oauthService.login(providerName, code);
     }

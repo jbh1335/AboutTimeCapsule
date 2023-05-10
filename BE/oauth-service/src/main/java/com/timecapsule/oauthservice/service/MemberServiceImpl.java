@@ -1,7 +1,6 @@
 package com.timecapsule.oauthservice.service;
 
 import com.timecapsule.oauthservice.api.response.CommonRes;
-import com.timecapsule.oauthservice.api.response.MemberRes;
 import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.db.entity.Member;
 import com.timecapsule.oauthservice.db.repository.MemberRepository;
@@ -27,17 +26,6 @@ public class MemberServiceImpl implements MemberService{
         log.info(memberRepository.findById(authentication.getMemberId()).toString());
         return memberRepository.findById(authentication.getMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-    }
-
-    // 회원 프로필 조회
-    public SuccessRes<MemberRes> getMemberInfo() {
-        Member findMember = findCurrentMemberId();
-        MemberRes memberRes =  MemberRes.builder()
-                .nickname(findMember.getNickname())
-                .email(findMember.getEmail())
-                .profileImageUrl(findMember.getProfileImageUrl())
-                .build();
-        return new SuccessRes<>(true, "내 회원정보를 조회합니다.", memberRes);
     }
 
     public Member findById(int id){
