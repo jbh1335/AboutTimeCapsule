@@ -25,6 +25,7 @@
             android:textSize="12dp" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/friendRequestacceptBtn"
             android:layout_width="60dp"
             android:layout_height="25dp"
             android:layout_marginLeft="15dp"
@@ -34,6 +35,7 @@
             android:textSize="12dp" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/friendRequestRefuseBtn"
             android:layout_width="60dp"
             android:layout_height="25dp"
             android:layout_marginLeft="10dp"

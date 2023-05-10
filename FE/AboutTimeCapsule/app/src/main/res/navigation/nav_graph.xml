@@ -57,6 +57,9 @@
         <action
             android:id="@+id/action_myPageMainFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_myPageMainFragment_to_myAllFriendsFragment"
+            app:destination="@id/myAllFriendsFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainPageMyCapsuleFragment"
@@ -113,5 +116,10 @@
             android:id="@+id/action_mainPageVisitedFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/myAllFriendsFragment"
+        android:name="com.aboutcapsule.android.views.mypage.MyAllFriendsFragment"
+        android:label="fragment_my_all_friends"
+        tools:layout="@layout/fragment_my_all_friends"/>
 
 </navigation>

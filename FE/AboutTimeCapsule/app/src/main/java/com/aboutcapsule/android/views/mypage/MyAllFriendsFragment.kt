@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.views.mypage
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ class MyAllFriendsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my_all_friends,container,false)
+        getDataFromPreFragment()
         return inflater.inflate(R.layout.fragment_my_all_friends, container, false)
     }
 
@@ -32,7 +34,10 @@ class MyAllFriendsFragment : Fragment() {
         binding.myAllFriendsRecyclerView.layoutManager=
             LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
     }
-
+    fun getDataFromPreFragment() {
+        val friendId = requireArguments().getInt("memberId")
+        Log.d("데이터왔니안왔니", "${friendId}")
+    }
     private fun getMyAllFriendsDatas() : MutableList<MyAllFriendsData>{
         var itemList = mutableListOf<MyAllFriendsData>()
 

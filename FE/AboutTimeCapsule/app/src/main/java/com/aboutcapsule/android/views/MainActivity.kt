@@ -14,7 +14,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
+import com.aboutcapsule.android.util.GlobalAplication
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
 
@@ -24,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setCurrentUser()
         initBinding()
         initNavigation()
 
@@ -66,6 +70,13 @@ class MainActivity : AppCompatActivity() {
             getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
         return super.dispatchTouchEvent(ev)
+    }
+
+    fun setCurrentUser() {
+        CoroutineScope(Dispatchers.Main).launch {
+            val memberId = 1
+            GlobalAplication.getInstance().getDataStore().setCurrentUser(memberId)
+        }
     }
 
 }
