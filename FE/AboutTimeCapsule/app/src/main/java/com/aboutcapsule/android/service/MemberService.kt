@@ -7,19 +7,23 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.Path
 
 
 interface MemberService {
     @GET("mypage/{memberId}")
-    suspend fun getMyPage (@Path("memberId") memberId:Int) : Response<ResponseBody>
+    suspend fun getMyPage (@Path("memberId") memberId:Int?) : Response<ResponseBody>
 
     @PATCH("request/accept/{friendId}")
     suspend fun acceptFriendRequest(@Path("friendId") friendId:Int?) : Response<ResponseBody>
 
     @DELETE("request/refuse/{friendId}")
     suspend fun refuseFriendRequest(@Path("friendId") friendId: Int?) : Response<ResponseBody>
+
+    @GET("friend/{memberId}")
+    suspend fun getMyAllFriend(@Path("memberId") memberid: Int?) : Response<ResponseBody>
 
 
 

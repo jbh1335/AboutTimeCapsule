@@ -9,8 +9,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class MypageRepo {
-    suspend fun getMyPage(memberId: Int): Response<ResponseBody> {
-//        Log.i("마이페이지리스폰스", "${RetrofitManager.memberInstacne.api.getMyPage(memberId).body()?.string()}")
+    suspend fun getMyPage(memberId: Int?): Response<ResponseBody> {
+        Log.i("마이페이지리스폰스", "${RetrofitManager.memberInstacne.api.getMyPage(memberId).body()?.string()}")
         return RetrofitManager.memberInstacne.api.getMyPage(memberId)
 
     }
@@ -20,6 +20,10 @@ class MypageRepo {
     }
     suspend fun refuseFriendRequest(friendId: Int?) : Response<ResponseBody> {
         return RetrofitManager.memberInstacne.api.refuseFriendRequest(friendId)
+    }
+    suspend fun getMyAllFriend(memberId: Int?) : Response<ResponseBody> {
+        Log.d("여기는레포", "여기는레포")
+        return RetrofitManager.memberInstacne.api.getMyAllFriend(memberId)
     }
 
 }

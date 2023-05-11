@@ -120,6 +120,10 @@
         android:id="@+id/myAllFriendsFragment"
         android:name="com.aboutcapsule.android.views.mypage.MyAllFriendsFragment"
         android:label="fragment_my_all_friends"
-        tools:layout="@layout/fragment_my_all_friends"/>
+        tools:layout="@layout/fragment_my_all_friends">
+        <action
+            android:id="@+id/action_myAllFriendsFragment_to_myPageMainFragment"
+            app:destination="@id/myPageMainFragment" />
+    </fragment>
 
 </navigation>

@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aboutcapsule.android.data.mypage.AllFriendRes
 import com.aboutcapsule.android.data.mypage.FriendDtoList
 import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
 import com.aboutcapsule.android.data.mypage.GetMyPageRes
@@ -14,17 +15,21 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
+import retrofit2.Response
 
 class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     var myPageList : MutableLiveData<GetMyPageRes> = MutableLiveData()
     lateinit var friendList : MutableList<FriendDtoList>
     lateinit var friendRequestList : MutableList<FriendRequestDtoList>
+    var allFriendList : MutableLiveData<MutableList<AllFriendRes>> = MutableLiveData()
     var isCurrentUser: Boolean = false
 
-    fun getMyPage(memberId:Int) {
+    fun getMyPage(memberId:Int?) {
         viewModelScope.launch {
+            Log.d("뷰모델겟마이페이지", "${memberId}")
             val response = repository.getMyPage(memberId)
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
@@ -58,11 +63,9 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                     val profileImageUrl = friendReqeustDtoListObject.getString("profileImageUrl")
                     friendRequestList.add(FriendRequestDtoList(friendId, friendMemeberId, nickname, profileImageUrl))
                 }
-                val getMyPageRes: GetMyPageRes = GetMyPageRes(nickname, email, profileImageUrl, friendRequestCnt,friendCnt, friendList, friendRequestList)
+                val getMyPageRes = GetMyPageRes(nickname, email, profileImageUrl, friendRequestCnt,friendCnt, friendList, friendRequestList)
                  myPageList.value = getMyPageRes
-                val currentUser = GlobalAplication.getInstance().getDataStore().getcurrentMemberId.first()
-                Log.i("currentUser" ,"${currentUser}")
-                Log.i("myPageLoadSuccess", "마이페이지 데이터를 성공적으로 받았습니다.: ${dataObjects}}")
+
             }else {
                 Log.e("myPageLoadFail", "마이페이지를 불러오지 못했습니다.")
             }
@@ -91,6 +94,39 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                 Log.e("친구요청거절실패", "친구 요청거절 실패")
             }
         }
+    }
+    fun getMyAllFriendList(memberId: Int?) {
+        viewModelScope.launch {
+            val response = repository.getMyAllFriend(memberId)
+
+            if (response.isSuccessful) {
+                val jsonString = response.body()?.string()
+                Log.d("뷰모델초반", "${jsonString}")
+                val jsonObject = JSONObject(jsonString)
+                val dataArray = jsonObject.getJSONArray("data")
+                var dataList = mutableListOf<AllFriendRes>()
+                for (i in 0 until dataArray.length()) {
+                    val dataObject = dataArray.getJSONObject(i)
+                    val friendId = dataObject.getInt("friendId")
+                    val friendMemberId = dataObject.getInt("friendMemberId")
+                    val nickname = dataObject.getString("nickname")
+                    val profileImageUrl = dataObject.getString("profileImageUrl")
+                    dataList.add(AllFriendRes(friendId, friendMemberId, nickname, profileImageUrl))
+                }
+                allFriendList.value = dataList
+                Log.d("마이페이지 뷰모델", "여기야?")
+            }else {
+                Log.e("모든친구불러오기실패", "${response.code()}, ${response.message()}")
+            }
+        }
+    }
+
+    fun jsonParsing(response : Response<ResponseBody>) :JSONObject {
+        val jsonString = response.body()?.string()
+        val jsonObject = JSONObject(jsonString)
+        return jsonObject
+
+
     }
 
     protected val exceptionHandler = CoroutineExceptionHandler(){ i, exception ->
