@@ -30,8 +30,6 @@ public class ChatMessageRedisRepository {
         if(chatMessageList == null){
             chatMessageList = new ArrayList<>();
         }
-
-        chatMessage.setId(chatMessage.getId());
         chatMessageList.add(chatMessage);
         opsHashChatMessageList.put(CHAT_MESSAGES, roomId, chatMessageList);
     }

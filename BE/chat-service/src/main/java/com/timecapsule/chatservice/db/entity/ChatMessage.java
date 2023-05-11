@@ -15,11 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @ToString
-public class ChatMessage implements Serializable {
-    private static final long serialVersionUID = 921452535326804170L;
-    
-    @Id
-    private String id;
+public class ChatMessage extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MessageType type;
     @JsonIgnore
@@ -31,5 +27,4 @@ public class ChatMessage implements Serializable {
     @JoinColumn(name = "member_id")
     private Member sender;
     private String content;
-    private LocalDateTime createdDate;
 }

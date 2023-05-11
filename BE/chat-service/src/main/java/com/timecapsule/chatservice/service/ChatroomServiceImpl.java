@@ -29,7 +29,6 @@ public class ChatroomServiceImpl implements ChatroomService {
                 .orElseThrow(NullPointerException::new);
 
         Chatroom chatroom = Chatroom.builder()
-                .id(UUID.randomUUID().toString())
                 .fromMember(fromMember)
                 .toMember(toMember)
                 .build();

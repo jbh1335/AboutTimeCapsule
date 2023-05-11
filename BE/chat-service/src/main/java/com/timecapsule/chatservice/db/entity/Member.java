@@ -1,23 +1,34 @@
 package com.timecapsule.chatservice.db.entity;
 
 import com.timecapsule.chatservice.dto.ProviderType;
-import lombok.Getter;
+import com.timecapsule.chatservice.dto.RoleType;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import java.io.Serializable;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
 @Getter
-public class Member implements Serializable {
-    @Id
-    private Integer id;
+@Entity
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class Member extends BaseEntity{
+    @Column(length = 64)
     private String nickname;
-    @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
+    @Column(length = 64)
     private String email;
+    @Column(length = 255)
     private String profileImageUrl;
-    private String createdDate;
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType; // 요청이 들어온 서드 파티 앱
+    private String providerId; // 서드 파티 앱의 PK
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private RoleType roleType = RoleType.USER;
+    @OneToMany(mappedBy = "fromMember")
+    private List<Friend> fromMemberList = new ArrayList<>();
+    @OneToMany(mappedBy = "toMember")
+    private List<Friend> toMemberList = new ArrayList<>();
 }

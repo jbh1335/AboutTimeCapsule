@@ -34,10 +34,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         Chatroom chatroom = chatroomRedisRepository.findRoomById(message.getChatroomId());
 
         ChatMessage chatMessage = ChatMessage.builder()
-                .id(UUID.randomUUID().toString())
                 .chatroom(chatroom)
                 .content(message.getContent())
-                .createdDate(LocalDateTime.now())
                 .build();
         
         //채팅방 입장
