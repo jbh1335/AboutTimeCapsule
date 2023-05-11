@@ -1,10 +1,9 @@
 package com.timecapsule.chatservice.api.response;
 
-import com.querydsl.core.annotations.QueryProjection;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ChatroomRes {
+public class ChatroomRes implements Serializable {
     private String nickname;
     private String profileImageUrl;
     private String content;

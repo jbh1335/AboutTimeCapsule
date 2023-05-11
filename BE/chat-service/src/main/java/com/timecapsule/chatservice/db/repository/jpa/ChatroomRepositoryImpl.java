@@ -19,28 +19,28 @@ public class ChatroomRepositoryImpl implements ChatroomRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    @Override
-    public List<ChatroomRes> findChatroomListByMemberId(Integer memberId) {
-        //TODO : error - No property 'memberId' found for type 'Chatroom'
-//        List<ChatroomRes> result = queryFactory
-//                .select(Projections.fields(ChatroomRes.class,
-//                        new CaseBuilder()
-//                                .when(chatroom.fromMember.id.eq(memberId)).then(chatroom.fromMember.nickname)
-//                                .otherwise(chatroom.toMember.nickname),
-//                        chatMessage.content, chatMessage.createdDate
-//                        )
-//                )
-//                .from(chatroom.fromMember)
-//                .leftJoin(chatroom.toMember)
-//                .leftJoin(member)
-//                .leftJoin(chatMessage.chatroom)
-//                .where(chatroom.fromMember.id.eq(memberId).or(chatroom.toMember.id.eq(memberId))
-//                )
-//                .orderBy(chatMessage.createdDate.desc())
-//                .fetch();
+//    @Override
+//    public List<ChatroomRes> findChatroomListByMemberId(Integer memberId) {
+//        //TODO : error - No property 'memberId' found for type 'Chatroom'
+////        List<ChatroomRes> result = queryFactory
+////                .select(Projections.fields(ChatroomRes.class,
+////                        new CaseBuilder()
+////                                .when(chatroom.fromMember.id.eq(memberId)).then(chatroom.fromMember.nickname)
+////                                .otherwise(chatroom.toMember.nickname),
+////                        chatMessage.content, chatMessage.createdDate
+////                        )
+////                )
+////                .from(chatroom.fromMember)
+////                .leftJoin(chatroom.toMember)
+////                .leftJoin(member)
+////                .leftJoin(chatMessage.chatroom)
+////                .where(chatroom.fromMember.id.eq(memberId).or(chatroom.toMember.id.eq(memberId))
+////                )
+////                .orderBy(chatMessage.createdDate.desc())
+////                .fetch();
+////
+////        return result;
 //
-//        return result;
-
-        return null;
-    }
+//        return null;
+//    }
 }

@@ -5,5 +5,5 @@ import com.timecapsule.chatservice.api.response.ChatroomRes;
 import java.util.List;
 
 public interface ChatroomRepositoryCustom {
-    List<ChatroomRes> findChatroomListByMemberId(Integer memberId);
+//    List<ChatroomRes> findChatroomListByMemberId(Integer memberId);
 }

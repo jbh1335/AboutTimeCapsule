@@ -44,6 +44,8 @@ public class ChatroomServiceImpl implements ChatroomService {
 
     @Override
     public List<ChatroomRes> getMyChatroomList(Integer memberId) {
-        return chatroomJpaRepository.findChatroomListByMemberId(memberId);
+//        return chatroomJpaRepository.findChatroomListByMemberId(memberId);
+        return null;
     }
+
 }
