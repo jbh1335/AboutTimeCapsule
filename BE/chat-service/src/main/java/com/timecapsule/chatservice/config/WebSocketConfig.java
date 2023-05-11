@@ -14,14 +14,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/sub");
         registry.setApplicationDestinationPrefixes("/pub");
+        registry.enableSimpleBroker("/sub");
     }
 
-    @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/chat") // ws://localhost:9004/ws/chat
-                .setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws/chat") // 소켓 연결
+                .setAllowedOriginPatterns("*")
+                .withSockJS(); // 소켓 지원하지 않는 브라우저는 sockJS 사용하도록 설정
         registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*");
     }
 }

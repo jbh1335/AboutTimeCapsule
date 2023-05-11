@@ -1,15 +1,15 @@
 package com.timecapsule.chatservice.service;
 
-import com.timecapsule.chatservice.api.request.MessageReq;
+import com.timecapsule.chatservice.api.request.ChatroomReq;
 import com.timecapsule.chatservice.api.response.ChatMessageRes;
+import com.timecapsule.chatservice.api.response.ChatroomRes;
 import com.timecapsule.chatservice.db.entity.ChatMessage;
 import com.timecapsule.chatservice.db.entity.Chatroom;
+import com.timecapsule.chatservice.db.entity.Member;
 import com.timecapsule.chatservice.db.repository.jpa.ChatMessageJpaRepository;
 import com.timecapsule.chatservice.db.repository.jpa.ChatroomJpaRepository;
-import com.timecapsule.chatservice.db.repository.redis.ChatMessageRedisRepository;
+import com.timecapsule.chatservice.db.repository.jpa.MemberRepository;
 import com.timecapsule.chatservice.db.repository.redis.ChatroomRedisRepository;
-import com.timecapsule.chatservice.dto.MessageType;
-import com.timecapsule.chatservice.service.redis.RedisPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,37 +18,38 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ChatMessageServiceImpl implements ChatMessageService {
-    //Redis 관련
-    private final RedisPublisher redisPublisher;
+public class ChatServiceImpl implements ChatService {
     private final ChatroomRedisRepository chatroomRedisRepository;
-    private final ChatMessageRedisRepository chatMessageRedisRepository;
-    //jpa 관련
+    private final MemberRepository memberRepository;
     private final ChatroomJpaRepository chatroomJpaRepository;
+
     private final ChatMessageJpaRepository chatMessageJpaRepository;
 
     @Override
-    public ChatMessage sendMessage(MessageReq message) {
-        Chatroom chatroom = chatroomRedisRepository.findRoomById(message.getChatroomId());
+    public Chatroom createChatroom(ChatroomReq chatroomReq) {
+        //chatroom 객체 생성
+        Member fromMember = memberRepository.findById(chatroomReq.getFromMemberId())
+                .orElseThrow(NullPointerException::new);
+        Member toMember = memberRepository.findById(chatroomReq.getToMemberId())
+                .orElseThrow(NullPointerException::new);
 
-        ChatMessage chatMessage = ChatMessage.builder()
-                .chatroom(chatroom)
-                .content(message.getContent())
+        Chatroom chatroom = Chatroom.builder()
+                .fromMember(fromMember)
+                .toMember(toMember)
                 .build();
         
-        //채팅방 입장
-        if (MessageType.ENTER.equals(message.getType())) {
-            chatroomRedisRepository.enterChatroom(message.getChatroomId());
-        }
+        //Redis에 저장
+        chatroomRedisRepository.createChatroom(chatroom);
+        //RDB에 저장
+        chatroomJpaRepository.save(chatroom);
 
-        //Websocket에 발행된 메시지를 redis로 발행한다(publish)
-        redisPublisher.publish(chatroomRedisRepository.getTopic(message.getChatroomId()), chatMessage);
-        //redis에 저장
-        chatMessageRedisRepository.createMessage(message.getChatroomId(), chatMessage);
-        //jpa에 저장
-        //TODO :채팅보내기 - RDB 저장
+        return chatroom;
+    }
 
-        return chatMessage;
+    @Override
+    public List<ChatroomRes> getMyChatroomList(Integer memberId) {
+//        return chatroomJpaRepository.findChatroomListByMemberId(memberId);
+        return null;
     }
 
     @Override
@@ -74,8 +75,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 messageResList.add(chatMessageRes);
             }
         }
-
-
         return messageResList;
     }
+
 }
