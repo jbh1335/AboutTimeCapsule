@@ -12,13 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
     private final DistanceService distanceService;
+    private final FcmService fcmService;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
@@ -39,11 +39,17 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         Capsule newCapsule = capsuleRepository.save(capsule);
 
+        int count = 0;
+        Member sender = new Member();
         for(Integer id : capsuleRegistReq.getMemberIdList()) {
             Optional<Member> oMember = memberRepository.findById(id);
             Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
+            if(count == 0) sender = member;
             capsuleMemberRepository.save(CapsuleMember.builder().member(member).capsule(newCapsule).build());
+
+            count++;
+            if(count >= 2) fcmService.groupCapsuleInviteNotification(newCapsule, member, sender);
         }
 
         return new SuccessRes<>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
@@ -71,20 +77,12 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
 
-        // 친구 만들고 다시 테스트하기
-        System.out.println("친구를 구하러 간다");
-
         for(Member myFriend : friendList(member)) {
-            System.out.println("내친구: " + myFriend.getId() + " 닉네임: " + myFriend.getNickname());
             CapsuleListRes newCapsuleList = getCapsuleList(memberId, myFriend, "friend", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
 
             unopenedCapsuleDtoList = newCapsuleList.getUnopenedCapsuleDtoList();
             openedCapsuleDtoList = newCapsuleList.getOpenedCapsuleDtoList();
             mapInfoDtoList = newCapsuleList.getMapInfoDtoList();
-
-            System.out.println("unopen 크기: " + unopenedCapsuleDtoList.size());
-            System.out.println("open 크기: " + openedCapsuleDtoList.size());
-            System.out.println("map 크기: " + mapInfoDtoList.size());
         }
 
 

@@ -20,6 +20,7 @@ import java.util.Optional;
 public class MemoryServiceImpl implements MemoryService {
     private final AwsS3Service awsS3Service;
     private final DistanceService distanceService;
+    private final FcmService fcmService;
     private final CapsuleRepository capsuleRepository;
     private final MemberRepository memberRepository;
     private final CapsuleMemberRepository capsuleMemberRepository;
@@ -170,6 +171,8 @@ public class MemoryServiceImpl implements MemoryService {
                 .content(commentRegistReq.getContent())
                 .isDeleted(false)
                 .build());
+
+        fcmService.commentNotification(memory, member);
 
         return new CommonRes(true, "댓글 등록을 완료했습니다.");
     }
