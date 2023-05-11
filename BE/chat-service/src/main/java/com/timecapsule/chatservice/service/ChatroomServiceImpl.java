@@ -10,6 +10,8 @@ import com.timecapsule.chatservice.db.repository.redis.ChatroomRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,8 +46,38 @@ public class ChatroomServiceImpl implements ChatroomService {
 
     @Override
     public List<ChatroomRes> getMyChatroomList(Integer memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(NullPointerException::new);
+
+        List<Chatroom> chatroomListFrom = chatroomJpaRepository.findByFromMember(member);
+        List<Chatroom> chatroomListTo = chatroomJpaRepository.findByToMember(member);
+
+        List<ChatroomRes> result = new ArrayList<>();
+
+        for(Chatroom chatroom : chatroomListFrom) {
+            ChatroomRes chatroomRes = ChatroomRes.builder()
+                    .nickname(chatroom.getToMember().getNickname())
+                    .profileImageUrl(chatroom.getToMember().getProfileImageUrl())
+                    .content(chatroom.getLastMessage())
+                    .createdDate(chatroom.getLastMessageTime())
+                    .build();
+
+            result.add(chatroomRes);
+        }
+
+        for(Chatroom chatroom : chatroomListTo) {
+            ChatroomRes chatroomRes = ChatroomRes.builder()
+                    .nickname(chatroom.getFromMember().getNickname())
+                    .profileImageUrl(chatroom.getFromMember().getProfileImageUrl())
+                    .content(chatroom.getLastMessage())
+                    .createdDate(chatroom.getLastMessageTime())
+                    .build();
+
+            result.add(chatroomRes);
+        }
+        
 //        return chatroomJpaRepository.findChatroomListByMemberId(memberId);
-        return null;
+        return result;
     }
 
 }

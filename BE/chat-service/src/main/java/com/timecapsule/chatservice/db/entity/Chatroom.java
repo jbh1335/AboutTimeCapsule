@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,4 +23,6 @@ public class Chatroom implements Serializable {
     @ManyToOne
     @JoinColumn(name = "to_member_id")
     private Member toMember;
+    private String lastMessage;
+    private LocalDateTime lastMessageTime;
 }
