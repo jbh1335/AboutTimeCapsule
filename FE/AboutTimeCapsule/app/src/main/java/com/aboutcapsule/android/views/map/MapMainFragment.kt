@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,11 +30,14 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
+import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class MapMainFragment : Fragment() ,OnMapReadyCallback{
+class MapMainFragment : Fragment() ,OnMapReadyCallback , OnMyLocationButtonClickListener,OnMyLocationClickListener{
 
     companion object{
         lateinit var binding : FragmentMapMainBinding
@@ -45,8 +49,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         // ------------ 지도 ----------------
         //클라이언트(사용자위치) 변수 ( provider -> 배터리 소모 줄이고 정확도 높이게 도와줌 )
         private lateinit var fusedLocationClient :FusedLocationProviderClient
-        // LocationCallBack -> 좌표값 가져오고 응답값을 받아서 처리
-        private lateinit var locationCallback : LocationCallback
         // 기본 위치
         private val defaultLocation = LatLng(37.514644,126.979974) // 대전캠퍼스
         // 권한 체크용 boolean 변수
@@ -62,7 +64,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
-        // Keys for storing activity state.
         private const val KEY_CAMERA_POSITION = "카메라 위치"
         private const val KEY_LOCATION = "위치정보"
     }
@@ -83,10 +84,10 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)!!
         }
+
        // 지도
         binding.mapFragment.onCreate(savedInstanceState)
         binding.mapFragment.getMapAsync(this)
-
 
         // 상단 벨 숨기기
         bellToggle(bellFlag)
@@ -195,6 +196,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
 
     // 지도 띄워주기
     // onCreateView에서 getMapAsync(this) 사용허가를 구하면 안드로이드가 메서드 실행
+    @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         // 사용자 위치
         mMap = map
@@ -209,6 +211,12 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         // 사용자의 위치,카메라 가져오기
         getDeviceLocation()
 
+        val latLng = LatLng(37.566168, 126.901609)
+        mMap.addMarker(MarkerOptions().position(latLng).title("여기"))
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        mMap.isMyLocationEnabled = true
+        mMap.setOnMyLocationButtonClickListener(this)
+        mMap.setOnMyLocationClickListener(this)
     }
 
     // 사용자 위치 정보 권한 체크
@@ -240,7 +248,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         }
         updateLocationUI()
     }
-
 
     @SuppressLint("MissingPermission")
     private fun updateLocationUI() {
@@ -291,6 +298,17 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         }
     }
 
+    // 버튼 클릭 시 내 현재 위치로 이동
+    override fun onMyLocationButtonClick(): Boolean {
+        Toast.makeText(mainActivity, "onMyLocationButtonClick/curr location", Toast.LENGTH_SHORT)
+            .show()
+        return false
+    }
+    // 현재 내 위치 표시 ( 파란 점 )
+    override fun onMyLocationClick(p0: Location) {
+        Toast.makeText(mainActivity,"onMyLocationClick/curr location",Toast.LENGTH_SHORT).show()
+    }
+
 
     override fun onStart() {
         super.onStart()
@@ -327,4 +345,5 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
 
         super.onDestroy()
     }
+
 }
