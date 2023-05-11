@@ -44,7 +44,7 @@ spring:
           predicates:
             - Path=/api/member/**
           filters:
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
         - id: outh-service
           uri: lb://OUTH-SERVICE
@@ -56,14 +56,14 @@ spring:
           predicates:
             - Path=/api/capsule/**
           filters:
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
         - id: chat
           uri: lb://CHAT
           predicates:
             - Path=/api/chat/**
           filters:
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
 token:
   secret: YWJvdXQtdGltZS1jYXBzdWxlLWFib3V0LXRpbWUtY2Fwc3VsZS1hYm91dC10aW1lLWNhcHN1bGUtYWJvdXQtdGltZS1jYXBzdWxl
