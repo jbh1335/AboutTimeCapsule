@@ -6,6 +6,4 @@ import com.timecapsule.oauthservice.db.entity.Member;
 
 public interface MemberService {
     Member findById(int id);
-    CommonRes updateNickname(String nickname);
-    SuccessRes checkNicknameDuplicate(String nickname);
 }
