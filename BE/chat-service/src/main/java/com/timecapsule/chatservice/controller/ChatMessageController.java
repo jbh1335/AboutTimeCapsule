@@ -33,7 +33,7 @@ public class ChatMessageController {
     }
 
     @ApiOperation(value = "채팅의 메시지 보기", notes = "방번호에 해당하는 메시지 리스트를 가져온다")
-    @GetMapping("/api/chat/message/{roomId}")
+    @GetMapping("/chat/message/{roomId}")
     public ResponseEntity<?> viewMessages(@PathVariable("roomId") String roomId) {
         try {
             List<ChatMessageRes> list = chatMessageService.getMessageByRoomId(roomId);

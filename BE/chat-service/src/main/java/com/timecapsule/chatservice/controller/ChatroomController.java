@@ -25,8 +25,8 @@ public class ChatroomController {
     }
 
     @ApiOperation(value = "채팅방 리스트 보기", notes = "멤버ID에 해당하는 채팅방 리스트를 가져온다")
-    @GetMapping("/room/{memberid}")
-    public ResponseEntity<?> viewMyChatroom(@PathVariable("memberid") Integer memberId) {
+    @GetMapping("/room/{memberId}")
+    public ResponseEntity<?> viewMyChatroom(@PathVariable Integer memberId) {
         try {
             List<ChatroomRes> list = chatroomService.getMyChatroomList(memberId);
 

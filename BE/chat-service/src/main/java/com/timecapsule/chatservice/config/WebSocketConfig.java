@@ -20,7 +20,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws-stomp") // ws://localhost:9004/ws-stomp
+        registry.addEndpoint("/ws/chat") // ws://localhost:9004/ws/chat
                 .setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*");
     }
 }

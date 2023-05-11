@@ -1,4 +1,4 @@
-package com.timecapsule.chatservice.service.pubsub;
+package com.timecapsule.chatservice.service.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timecapsule.chatservice.db.entity.ChatMessage;
@@ -29,12 +29,11 @@ public class RedisSubscriber implements MessageListener {
             // redis에서 발행된 데이터를 받아 deserialize
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
             // ChatMessage 객체로 매핑
-            ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
+            ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
             // WebSocket 구독자에게 채팅 메세지 Send
-            messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getChatroom().getId(), roomMessage);
+            messagingTemplate.convertAndSend("/sub/room/" + chatMessage.getChatroom().getId(), chatMessage);
         } catch (Exception e){
             log.error(e.getMessage());
         }
     }
-
 }

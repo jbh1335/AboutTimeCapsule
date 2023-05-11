@@ -9,14 +9,12 @@ import com.timecapsule.chatservice.db.repository.jpa.ChatroomJpaRepository;
 import com.timecapsule.chatservice.db.repository.redis.ChatMessageRedisRepository;
 import com.timecapsule.chatservice.db.repository.redis.ChatroomRedisRepository;
 import com.timecapsule.chatservice.dto.MessageType;
-import com.timecapsule.chatservice.service.pubsub.RedisPublisher;
+import com.timecapsule.chatservice.service.redis.RedisPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         if (MessageType.ENTER.equals(message.getType())) {
             chatroomRedisRepository.enterChatroom(message.getChatroomId());
         }
-        
+
         //Websocket에 발행된 메시지를 redis로 발행한다(publish)
         redisPublisher.publish(chatroomRedisRepository.getTopic(message.getChatroomId()), chatMessage);
         //redis에 저장

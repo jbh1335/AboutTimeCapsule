@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ChatMessageJpaRepository extends JpaRepository<ChatMessage, String> {
+public interface ChatMessageJpaRepository extends JpaRepository<ChatMessage, Integer> {
     List<ChatMessage> findByChatroom(Chatroom chatroom);
 }

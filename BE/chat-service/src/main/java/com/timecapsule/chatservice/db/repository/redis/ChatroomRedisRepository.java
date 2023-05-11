@@ -1,7 +1,7 @@
 package com.timecapsule.chatservice.db.repository.redis;
 
 import com.timecapsule.chatservice.db.entity.Chatroom;
-import com.timecapsule.chatservice.service.pubsub.RedisSubscriber;
+import com.timecapsule.chatservice.service.redis.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;

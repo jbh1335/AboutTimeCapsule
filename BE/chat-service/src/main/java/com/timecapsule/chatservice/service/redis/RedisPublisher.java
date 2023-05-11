@@ -1,4 +1,4 @@
-package com.timecapsule.chatservice.service.pubsub;
+package com.timecapsule.chatservice.service.redis;
 
 import com.timecapsule.chatservice.db.entity.ChatMessage;
 import lombok.RequiredArgsConstructor;
