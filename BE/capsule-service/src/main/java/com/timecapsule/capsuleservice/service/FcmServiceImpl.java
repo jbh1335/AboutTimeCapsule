@@ -1,28 +1,49 @@
 package com.timecapsule.capsuleservice.service;
 
 import com.google.firebase.messaging.*;
-import com.timecapsule.capsuleservice.db.entity.Capsule;
-import com.timecapsule.capsuleservice.db.entity.Member;
-import com.timecapsule.capsuleservice.db.entity.Memory;
+import com.timecapsule.capsuleservice.db.entity.*;
+import com.timecapsule.capsuleservice.db.repository.AlarmRepository;
+import com.timecapsule.capsuleservice.db.repository.MemberRepository;
+import com.timecapsule.capsuleservice.db.repository.MemoryRepository;
+import com.timecapsule.capsuleservice.dto.MessageDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service("fcmService")
+@RequiredArgsConstructor
 public class FcmServiceImpl implements FcmService {
+    private final AlarmRepository alarmRepository;
+    private final MemberRepository memberRepository;
 
     @Override
-    public void sendMessage(String targetToken, Notification notification, HashMap<String, String> dataMap) {
+    public void sendMessage(MessageDto messageDto) {
         System.out.println("service - sendMessageTo");
 
         Message message = Message.builder()
-                .setToken(targetToken)
-                .setNotification(notification)
-                .putAllData(dataMap)
+                .setToken(messageDto.getTargetToken())
+                .setNotification(Notification.builder()
+                        .setTitle(messageDto.getTitle())
+                        .setBody(messageDto.getBody())
+                        .build())
+                .putAllData(messageDto.getDataMap())
                 .build();
 
         try {
             FirebaseMessaging.getInstance().send(message);
+
+            Optional<Member> oMember = memberRepository.findById(Integer.parseInt(messageDto.getDataMap().get("memberId")));
+            Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+            int memoryId = (messageDto.getDataMap().get("memoryId").isEmpty()) ? 0 : Integer.parseInt(messageDto.getDataMap().get("memoryId"));
+
+            alarmRepository.save(Alarm.builder()
+                    .member(member)
+                    .content(messageDto.getBody())
+                    .categoryType(messageDto.getCategoryType())
+                    .memoryId(memoryId)
+                    .build());
             System.out.println("알림 전송 성공");
         } catch (FirebaseMessagingException e) {
             System.out.println("알림 전송 실패");
@@ -40,13 +61,15 @@ public class FcmServiceImpl implements FcmService {
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("capsuleId", String.valueOf(memory.getCapsule().getId()));
         dataMap.put("memoryId", String.valueOf(memory.getId()));
+        dataMap.put("memberId", String.valueOf(memory.getMember().getId()));
 
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
-
-        sendMessage(memory.getMember().getAlarmToken(), notification, dataMap);
+        sendMessage(MessageDto.builder()
+                .targetToken(memory.getMember().getAlarmToken())
+                .title(title)
+                .body(body)
+                .categoryType(CategoryType.valueOf("COMMENT"))
+                .dataMap(dataMap)
+                .build());
     }
 
     @Override
@@ -60,13 +83,15 @@ public class FcmServiceImpl implements FcmService {
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("capsuleId", String.valueOf(memory.getCapsule().getId()));
         dataMap.put("memoryId", String.valueOf(memory.getId()));
+        dataMap.put("memberId", String.valueOf(memory.getId()));
 
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
-
-        sendMessage(member.getAlarmToken(), notification, dataMap);
+        sendMessage(MessageDto.builder()
+                .targetToken(member.getAlarmToken())
+                .title(title)
+                .body(body)
+                .categoryType(CategoryType.valueOf("CAPSULE"))
+                .dataMap(dataMap)
+                .build());
     }
 
     @Override
@@ -78,12 +103,14 @@ public class FcmServiceImpl implements FcmService {
 
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("capsuleId", String.valueOf(capsule));
+        dataMap.put("memberId", String.valueOf(me.getId()));
 
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
-
-        sendMessage(me.getAlarmToken(), notification, dataMap);
+        sendMessage(MessageDto.builder()
+                .targetToken(me.getAlarmToken())
+                .title(title)
+                .body(body)
+                .categoryType(CategoryType.valueOf("CAPSULE"))
+                .dataMap(dataMap)
+                .build());
     }
 }
