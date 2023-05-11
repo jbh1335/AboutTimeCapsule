@@ -25,4 +25,8 @@ public class AlarmController {
         return alarmService.saveAlarmToken(alarmTokenReq);
     }
 
+    @PatchMapping("/token/delete/{memberId}")
+    public CommonRes deleteAlarmToken(@PathVariable("memberId") int memberId) {
+        return alarmService.deleteAlarmToken(memberId);
+    }
 }

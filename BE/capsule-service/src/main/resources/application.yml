@@ -65,7 +65,3 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
-
-firebase:
-  key:
-    path: src/main/resources/firebase/ServiceAccountKey.json

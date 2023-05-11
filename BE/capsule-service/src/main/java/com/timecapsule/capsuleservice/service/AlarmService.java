@@ -10,4 +10,5 @@ import java.util.List;
 public interface AlarmService {
     SuccessRes<List<AlarmRes>> getAlarmList(int memberId);
     CommonRes saveAlarmToken(AlarmTokenReq alarmTokenReq);
+    CommonRes deleteAlarmToken(int memberId);
 }
