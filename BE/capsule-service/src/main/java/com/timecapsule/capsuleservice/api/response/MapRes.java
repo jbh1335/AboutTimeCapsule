@@ -21,4 +21,5 @@ public class MapRes {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 }
