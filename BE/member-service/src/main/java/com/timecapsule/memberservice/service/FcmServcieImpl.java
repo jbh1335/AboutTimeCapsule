@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.timecapsule.memberservice.db.entity.Alarm;
+import com.timecapsule.memberservice.db.entity.Friend;
 import com.timecapsule.memberservice.db.entity.Member;
 import com.timecapsule.memberservice.db.repository.AlarmRepository;
 import com.timecapsule.memberservice.db.repository.MemberRepository;
@@ -46,5 +47,15 @@ public class FcmServcieImpl implements FcmService {
         } catch (FirebaseMessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void friendRequestNotification(Friend friend, Member sender, Member receiver) {
+        
+    }
+
+    @Override
+    public void acceptRequestNotification(Friend friend, Member requester, Member me) {
+
     }
 }
