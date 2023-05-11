@@ -11,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class FcmConfig {
@@ -22,7 +23,8 @@ public class FcmConfig {
 //        FileInputStream serviceAccount = new FileInputStream(firebaseSdkPath);
 
         ClassPathResource resource = new ClassPathResource("firebase/ServiceAccountKey.json");
-        FileInputStream serviceAccount = new FileInputStream(resource.getFile());
+//        FileInputStream serviceAccount = new FileInputStream(resource.getFile());
+        InputStream serviceAccount = resource.getInputStream();
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
