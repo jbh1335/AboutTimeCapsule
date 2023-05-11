@@ -24,7 +24,11 @@ import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.mypage.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 
 class MyPageMainFragment : Fragment() {
@@ -34,23 +38,18 @@ class MyPageMainFragment : Fragment() {
     private lateinit var myPageFriendRequestAdapter: MyPageFriendRequestAdapter
     private lateinit var myPageFriendThumbnailAdapter: MyPageFriendThumbnailAdapter
     private lateinit var viewModel: MyPageViewModel
-    suspend fun getCurrentUser() : Int {
-        return GlobalAplication.getInstance().getDataStore().getcurrentMemberId.first()
-    }
+
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getMyPageDataFromBack()
 
-        Log.d("FriendId" ," ${requireArguments().getInt("friendId")}")
         // 네비게이션 세팅
         setNavigation()
         // 페이지 이동
         redirectPage()
-        // 모든 친구 보기로 이동
-        redirectAllFriendsPage()
-
 
     }
 
@@ -63,11 +62,11 @@ class MyPageMainFragment : Fragment() {
         return binding.root
     }
     fun getMyPageDataFromBack() {
+
         val repository = MypageRepo()
         val myPageViewModelFactory = MyPageViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
-
-        viewModel.getMyPage(1)
+        viewModel.getMyPage(viewModel.friendId)
         viewModel.myPageList.observe(viewLifecycleOwner, Observer {
 
             // 상단 프로필 이미지 렌더링
@@ -84,6 +83,9 @@ class MyPageMainFragment : Fragment() {
             refuseFriendRequest()
 
             moveToFriendProfileFromFriendThumbnail()
+
+            // 모든 친구 보기로 이동
+            redirectAllFriendsPage()
         })
 
     }
@@ -119,8 +121,10 @@ class MyPageMainFragment : Fragment() {
 
     fun redirectAllFriendsPage() {
         binding.redirectAllFriendPageBtn.setOnClickListener {
-            val bundle = bundleOf("memberId" to 1)
-            navController.navigate(R.id.action_myPageMainFragment_to_myAllFriendsFragment, bundle)
+            CoroutineScope(Dispatchers.Main).launch {
+                viewModel.friendId = GlobalAplication.getInstance().getDataStore().getMyPageMemberId.first()
+            }
+            navController.navigate(R.id.action_myPageMainFragment_to_myAllFriendsFragment)
         }
     }
 
@@ -150,11 +154,11 @@ class MyPageMainFragment : Fragment() {
 
     fun moveToFriendProfileFromFriendThumbnail() {
         myPageFriendThumbnailAdapter.settoFriendProfileClickListener(object : MyPageFriendThumbnailAdapter.OnItemClickListener {
-
             override fun onItemClick(view: View, position: Int) {
                 val friendId = viewModel.myPageList.value?.friendDtoList?.get(position)?.friendMemberId
+                viewModel.friendId = friendId
                 Log.d("프래그먼트그거", "${friendId}")
-                viewModel.getMyPage(friendId)
+                viewModel.getMyPage(viewModel.friendId)
             }
         })
     }

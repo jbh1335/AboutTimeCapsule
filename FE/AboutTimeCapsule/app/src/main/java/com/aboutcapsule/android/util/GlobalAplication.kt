@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class GlobalAplication:Application() {
-    private lateinit var dataStore: DataStoreModule
 
     companion object {
         private lateinit var globalAplication: GlobalAplication
@@ -21,9 +20,9 @@ class GlobalAplication:Application() {
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "어바웃타임캡슐")
 
         globalAplication = this
-        dataStore = DataStoreModule(this)
+
     }
-    fun getDataStore() : DataStoreModule = dataStore
+
 
 
 

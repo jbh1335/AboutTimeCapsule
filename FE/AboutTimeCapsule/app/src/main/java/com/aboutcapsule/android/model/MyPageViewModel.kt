@@ -1,7 +1,6 @@
 package com.aboutcapsule.android.model
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,11 +11,9 @@ import com.aboutcapsule.android.data.mypage.GetMyPageRes
 import com.aboutcapsule.android.repository.mypage.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
-import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Response
 
@@ -25,11 +22,12 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     lateinit var friendList : MutableList<FriendDtoList>
     lateinit var friendRequestList : MutableList<FriendRequestDtoList>
     var allFriendList : MutableLiveData<MutableList<AllFriendRes>> = MutableLiveData()
+    var friendId :Int? = 0
     var isCurrentUser: Boolean = false
 
     fun getMyPage(memberId:Int?) {
         viewModelScope.launch {
-            Log.d("뷰모델겟마이페이지", "${memberId}")
+            friendId = memberId
             val response = repository.getMyPage(memberId)
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
@@ -101,7 +99,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
 
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
-                Log.d("뷰모델초반", "${jsonString}")
+
                 val jsonObject = JSONObject(jsonString)
                 val dataArray = jsonObject.getJSONArray("data")
                 var dataList = mutableListOf<AllFriendRes>()
@@ -114,7 +112,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                     dataList.add(AllFriendRes(friendId, friendMemberId, nickname, profileImageUrl))
                 }
                 allFriendList.value = dataList
-                Log.d("마이페이지 뷰모델", "여기야?")
+
             }else {
                 Log.e("모든친구불러오기실패", "${response.code()}, ${response.message()}")
             }

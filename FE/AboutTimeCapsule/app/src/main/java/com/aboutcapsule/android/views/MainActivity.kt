@@ -6,7 +6,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,6 +16,7 @@ import com.aboutcapsule.android.util.GlobalAplication
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
@@ -47,8 +47,11 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.myPageMainFragment -> {
-                    val bundle = bundleOf("friendId" to 2)
-                    navController.navigate(R.id.myPageMainFragment,bundle)
+                    CoroutineScope(Dispatchers.Main).launch{
+                        val currentUser = GlobalAplication.getInstance().getDataStore().getcurrentMemberId.first()
+                        GlobalAplication.getInstance().getDataStore().setMyPageMemberId(currentUser)
+                        navController.navigate(R.id.myPageMainFragment)
+                    }
                     true
                 }
                 else -> false
@@ -96,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             val memberId = 1
             GlobalAplication.getInstance().getDataStore().setCurrentUser(memberId)
+            GlobalAplication.getInstance().getDataStore().setMyPageMemberId(memberId)
         }
     }
 

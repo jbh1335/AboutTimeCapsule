@@ -48,11 +48,12 @@ class MyAllFriendsFragment : Fragment() {
 
     }
     fun getDataFromPreFragment() {
-        val friendId = requireArguments().getInt("memberId")
+
         val repository = MypageRepo()
         val myPageViewModelFactory = MyPageViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
-        viewModel.getMyAllFriendList(friendId)
+        viewModel.friendId = requireArguments().getInt("friendId")
+        viewModel.getMyAllFriendList(viewModel.friendId)
         viewModel.allFriendList.observe(viewLifecycleOwner, {
             getMyAllFriendData(it)
 
@@ -71,9 +72,8 @@ class MyAllFriendsFragment : Fragment() {
 
             override fun onItemClick(view: View, position: Int) {
                 val friendId = viewModel.allFriendList.value?.get(position)?.friendMemberId
-                Log.d("프래그먼트그거", "${friendId}")
-                var bundle = bundleOf("friendId" to  friendId)
-                navController.navigate(R.id.action_myAllFriendsFragment_to_myPageMainFragment, bundle)
+                viewModel.friendId = friendId
+                navController.navigate(R.id.action_myAllFriendsFragment_to_myPageMainFragment,)
             }
         })
     }
