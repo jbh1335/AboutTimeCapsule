@@ -1,11 +1,9 @@
 package com.aboutcapsule.android.util
 
-import android.util.Log
 import com.aboutcapsule.android.service.CapsuleService
 import com.aboutcapsule.android.service.MemberService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.reflect.Member
 
 class RetrofitManager {
     companion object {

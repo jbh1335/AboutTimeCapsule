@@ -60,9 +60,7 @@ class MainPageMainFragment : Fragment() {
 
         // 버튼 클릭시 페이지 전환
         redirectPages()
-
     }
-
 
     private fun setSection2View(){
         val section2DataList = getSection2datas()

@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.views.mainpage
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,7 @@ import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleListBinding
 
 
-class CapsuleListFragment : Fragment() {
+class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListner {
 
     lateinit var binding : FragmentCapsuleListBinding
     lateinit var navController: NavController
@@ -38,6 +39,11 @@ class CapsuleListFragment : Fragment() {
 
         redirectPage()
 
+    }
+
+    // 뷰페이저 페이지에서 넘어온 데이터
+    override fun onDataPass(data: Any) {
+        Log.d("데이터수신리스트" , "${data}")
     }
 
     // 000님을 기다리고 있어요 ( view )
@@ -106,4 +112,5 @@ class CapsuleListFragment : Fragment() {
             navController.navigate(R.id.action_mainPageMyCapsuleFragment_to_notificationMainFragment)
         }
     }
+
 }

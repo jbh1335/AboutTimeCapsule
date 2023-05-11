@@ -18,9 +18,9 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         viewModelScope.launch {
             val response = repository.myCapsuleList(memberId)
             if(response.isSuccessful){
-                Log.d("TAG","${response.body()?.string()}")
+                Log.d(TAG,"${response.body()?.string()}")
             }else {
-                Log.d("TAG","getMyCapsuleList : 응답 실패")
+                Log.d(TAG,"getMyCapsuleList : 응답 실패")
             }
         }
     }

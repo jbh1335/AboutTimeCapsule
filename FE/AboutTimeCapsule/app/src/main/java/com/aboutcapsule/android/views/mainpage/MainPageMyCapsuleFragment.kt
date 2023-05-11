@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMyCapsuleBinding
@@ -35,6 +36,7 @@ class MainPageMyCapsuleFragment : Fragment() {
         lateinit var binding : FragmentMainPageMyCapsuleBinding
         private lateinit var  viewPager : ViewPager2
         private lateinit var  tabLayout : TabLayout
+        private lateinit var pagerAdapter : PagerFragmentStateAdapter
         private lateinit var viewModel : CapsuleViewModel
     }
 
@@ -66,6 +68,7 @@ class MainPageMyCapsuleFragment : Fragment() {
     }
 
 
+
     // TODO : 내캡슐 or 친구의 캡슐 api 불러오기 ( 분기처리 완료 )
     private fun callingApi(){
 
@@ -80,6 +83,7 @@ class MainPageMyCapsuleFragment : Fragment() {
             "myCapsuleApi" -> {
                 Log.d("api", " 내 캡슐  ")
                 viewModel.getMyCapsuleList(1)
+//                sendDataToFragment() // 분기처리 값 넘겨줘서 각 프래그먼트에서 요청 쏘기 ?
             }
             "friendApi" -> {
                 Log.d("api", " 친구 캡슐  ")
@@ -87,20 +91,38 @@ class MainPageMyCapsuleFragment : Fragment() {
             }
         }
     }
-
+//
+    // 자식한테 데이터 보내주기 위한 커스텀 인터페이스 정의 및 데이터 연결
+    interface DataPassListner{
+        fun onDataPass(data: Any)
+    }
+    fun sendDataToFragment(data: Any) {
+        val capsuleFragment = pagerAdapter.fragments[0] as? CapsuleListFragment
+        capsuleFragment?.onDataPass(data)
+        val capsuleMapFragment = pagerAdapter.fragments[1] as? CapsuleMapFragment
+        capsuleMapFragment?.onDataPass(data)
+    }
 
     private fun setViewPager(){
         //       뷰페이저 ( 목록보기, 지도보기 )
-        val pagerAdapter = PagerFragmentStateAdapter(requireActivity())
+//        val pagerAdapter = PagerFragmentStateAdapter(requireActivity())
+        pagerAdapter = PagerFragmentStateAdapter(requireActivity())
 
         pagerAdapter.addFragment(CapsuleListFragment())
         pagerAdapter.addFragment(CapsuleMapFragment())
 
         viewPager.adapter = pagerAdapter
+//        dataPassListner = pagerAdapter
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+                if(position==0) {
+
+                    Log.d("값 가져 다니나 ", "test1")
+                }else{
+                    Log.d("값 가져 다니나 ", "test2")
+                }
             }
         })
 

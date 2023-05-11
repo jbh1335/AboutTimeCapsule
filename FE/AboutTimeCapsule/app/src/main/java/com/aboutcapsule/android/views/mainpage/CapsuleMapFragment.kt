@@ -3,6 +3,7 @@ package com.aboutcapsule.android.views.mainpage
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 
-class CapsuleMapFragment : Fragment() , OnMapReadyCallback {
+class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,MainPageMyCapsuleFragment.DataPassListner{
 
     companion object {
         lateinit var binding: FragmentCapsuleMapBinding
@@ -53,6 +54,11 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback {
     private fun setNavigation(){
         val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+    }
+
+    // 뷰페이저 프래그먼트에서 넘어온 데이터
+    override fun onDataPass(data: Any) {
+        Log.d("데이터수신맵","$data")
     }
 
 
