@@ -19,10 +19,9 @@ public class Alarm extends BaseEntity {
     private int capsuleId;
 
     @Builder
-    public Alarm(Member member, String content, CategoryType categoryType, int capsuleId) {
+    public Alarm(Member member, String content, CategoryType categoryType) {
         this.member = member;
         this.content = content;
         this.categoryType = categoryType;
-        this.capsuleId = capsuleId;
     }
 }

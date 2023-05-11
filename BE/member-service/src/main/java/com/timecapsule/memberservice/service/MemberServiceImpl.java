@@ -17,6 +17,7 @@ import java.util.*;
 @Service("memberService")
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
+    private final FcmService fcmService;
     private final MemberRepository memberRepository;
     private final FriendRepository friendRepository;
 
@@ -88,12 +89,13 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> oToMember = memberRepository.findById(toMemberId);
         Member toMember = oToMember.orElseThrow(() -> new IllegalArgumentException("toMember doesn't exist"));
 
-        int friendId = friendRepository.save(Friend.builder()
+        Friend friend = friendRepository.save(Friend.builder()
                 .fromMember(fromMember)
                 .toMember(toMember)
-                .build()).getId();
+                .build());
 
-        return new SuccessRes<>(true, "친구 요청을 완료했습니다.", friendId);
+        fcmService.friendRequestNotification(friend, fromMember, toMember);
+        return new SuccessRes<>(true, "친구 요청을 완료했습니다.", friend.getId());
     }
 
     @Override

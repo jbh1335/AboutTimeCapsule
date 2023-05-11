@@ -19,7 +19,6 @@ public class Member extends BaseEntity{
     private String nickname;
     @Column(length = 64)
     private String email;
-    @Column(length = 255)
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType; // 요청이 들어온 서드 파티 앱
@@ -27,6 +26,7 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private RoleType roleType = RoleType.USER;
+    private String alarmToken;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
@@ -39,6 +39,8 @@ public class Member extends BaseEntity{
     private List<Comment> commentList = new ArrayList<>();
     @OneToMany(mappedBy = "member")
     private List<Memory> memoryList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Alarm> alarmList = new ArrayList<>();
 
     public void updateNickname(String nickname){
         this.nickname = nickname;
