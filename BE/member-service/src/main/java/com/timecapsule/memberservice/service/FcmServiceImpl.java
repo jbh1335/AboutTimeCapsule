@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service("fcmService")
 @RequiredArgsConstructor
-public class FcmServcieImpl implements FcmService {
+public class FcmServiceImpl implements FcmService {
     private final AlarmRepository alarmRepository;
     private final MemberRepository memberRepository;
 
@@ -51,12 +51,21 @@ public class FcmServcieImpl implements FcmService {
     }
 
     @Override
-    public void friendRequestNotification(Friend friend, Member requester, Member me) {
-        String title = "어바웃타임캡슐 - 친구 요청";
-        String body = requester.getNickname() + "님이 나에게 친구를 요청했습니다.";
+    public void friendRequestNotification(Friend friend, Member me, String type) {
+        String title = "";
+        String body = "";
+
+        if(type.equals("친구요청")) {
+            title = "어바웃타임캡슐 - 친구 요청";
+            body = friend.getFromMember().getNickname() + "님이 나에게 친구를 요청했습니다.";
+        } else {
+            title = "어바웃타임캡슐 - 친구 수락";
+            body = friend.getToMember().getNickname() + "님이 친구 요청을 수락했습니다.";
+        }
 
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("memberId", String.valueOf(me.getId()));
+        dataMap.put("friendId", String.valueOf(friend.getId()));
 
         sendMessage(MessageDto.builder()
                 .targetToken(me.getAlarmToken())
@@ -65,10 +74,5 @@ public class FcmServcieImpl implements FcmService {
                 .categoryType(CategoryType.FRIEND)
                 .dataMap(dataMap)
                 .build());
-    }
-
-    @Override
-    public void acceptRequestNotification(Friend friend, Member accepter, Member me) {
-
     }
 }

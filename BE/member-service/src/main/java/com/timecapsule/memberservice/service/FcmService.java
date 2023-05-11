@@ -6,6 +6,5 @@ import com.timecapsule.memberservice.dto.MessageDto;
 
 public interface FcmService {
     void sendMessage(MessageDto messageDto);
-    void friendRequestNotification(Friend friend, Member sender, Member receiver);
-    void acceptRequestNotification(Friend friend, Member requester, Member me);
+    void friendRequestNotification(Friend friend, Member me, String type);
 }
