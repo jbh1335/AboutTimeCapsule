@@ -12,13 +12,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class Chatroom implements Serializable {
+    private static final long serialVersionUID = -7401006532253358108L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String id;
     @ManyToOne
-    @JoinColumn(name = "from_member_id", insertable=false, updatable=false)
+    @JoinColumn(name = "from_member_id")
     private Member fromMember;
     @ManyToOne
-    @JoinColumn(name = "to_member_id", insertable=false, updatable=false)
+    @JoinColumn(name = "to_member_id")
     private Member toMember;
 }
