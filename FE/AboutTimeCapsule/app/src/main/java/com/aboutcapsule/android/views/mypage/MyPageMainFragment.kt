@@ -5,11 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,10 +22,10 @@ import com.aboutcapsule.android.data.mypage.GetMyPageRes
 import com.aboutcapsule.android.databinding.FragmentMyPageMainBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
-import com.aboutcapsule.android.repository.mypage.MypageRepo
+import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
+import com.aboutcapsule.android.views.MainActivity
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 
 
@@ -52,6 +49,7 @@ class MyPageMainFragment : Fragment() {
         setNavigation()
         // 페이지 이동
         redirectPage()
+
 
         redirectAllFriendsPage()
     }
