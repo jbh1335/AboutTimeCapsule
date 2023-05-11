@@ -86,8 +86,12 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
     }
 
     fun redirectPage(){
+        // 분기처리 해서 그룹 or 개인 캡슐 페이지로 이동
+//        binding.articleRegistRegistbtn.setOnClickListener{
+//            navController.navigate(R.id.action_articleRegistFragment_to_capsuleMineFragment)
+//        }
         binding.articleRegistRegistbtn.setOnClickListener{
-            navController.navigate(R.id.action_articleRegistFragment_to_capsuleMineFragment)
+            navController.navigate(R.id.action_articleRegistFragment_to_capsuleGroupFragment)
         }
     }
 

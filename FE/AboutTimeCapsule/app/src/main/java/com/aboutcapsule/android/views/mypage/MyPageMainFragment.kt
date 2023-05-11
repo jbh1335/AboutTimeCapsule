@@ -47,6 +47,7 @@ class MyPageMainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getMyPageDataFromBack()
 
+        Log.d("FriendId" ," ${requireArguments().getInt("friendId")}")
         // 네비게이션 세팅
         setNavigation()
         // 페이지 이동
