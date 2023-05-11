@@ -35,13 +35,12 @@ public class FcmServiceImpl implements FcmService {
 
             Optional<Member> oMember = memberRepository.findById(Integer.parseInt(messageDto.getDataMap().get("memberId")));
             Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
-            int memoryId = (messageDto.getDataMap().containsKey("memoryId")) ? Integer.parseInt(messageDto.getDataMap().get("memoryId")) : 0;
 
             alarmRepository.save(Alarm.builder()
                     .member(member)
                     .content(messageDto.getBody())
                     .categoryType(messageDto.getCategoryType())
-                    .memoryId(memoryId)
+                    .capsuleId(Integer.parseInt(messageDto.getDataMap().get("capsuleId")))
                     .build());
         } catch (FirebaseMessagingException e) {
             throw new RuntimeException(e);
@@ -51,7 +50,7 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public void commentNotification(Memory memory, Member sender) {
         String title = "어바웃타임캡슐 - 댓글";
-        String body = sender.getNickname() + "님이 나의 추억에 댓글을 남겼습니다.";
+        String body = sender.getNickname() + "님이 당신의 [" + memory.getTitle() + "] 추억에 댓글을 남겼습니다.";
 
         HashMap<String, String> dataMap = new HashMap<>();
         dataMap.put("capsuleId", String.valueOf(memory.getCapsule().getId()));

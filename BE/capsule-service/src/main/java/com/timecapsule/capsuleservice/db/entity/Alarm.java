@@ -16,13 +16,13 @@ public class Alarm extends BaseEntity {
     private String content;
     @Enumerated(EnumType.STRING)
     private CategoryType categoryType;
-    private int memoryId;
+    private int capsuleId;
 
     @Builder
-    public Alarm(Member member, String content, CategoryType categoryType, int memoryId) {
+    public Alarm(Member member, String content, CategoryType categoryType, int capsuleId) {
         this.member = member;
         this.content = content;
         this.categoryType = categoryType;
-        this.memoryId = memoryId;
+        this.capsuleId = capsuleId;
     }
 }
