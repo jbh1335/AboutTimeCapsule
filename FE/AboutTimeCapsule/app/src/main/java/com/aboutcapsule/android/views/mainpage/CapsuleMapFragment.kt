@@ -1,5 +1,7 @@
 package com.aboutcapsule.android.views.mainpage
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,7 @@ import com.aboutcapsule.android.databinding.FragmentCapsuleMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
@@ -27,6 +30,7 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback {
         lateinit var binding: FragmentCapsuleMapBinding
         lateinit var navController: NavController
         private lateinit var mMap : GoogleMap
+        lateinit var markerOptions: MarkerOptions
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,9 +61,19 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
        mMap = map
 
-        val deajeonSS = LatLng(36.355038,127.298297)
-        map.addMarker(MarkerOptions().position(deajeonSS).title("대전 캠퍼스 "))
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(deajeonSS,16f))
+        markerOptions = MarkerOptions()
+        setCustomMarker()
+        val deajeonSS = LatLng(35.894332,127.9)
+
+        mMap.addMarker(markerOptions.position(deajeonSS).title("대전 캠퍼스 "))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(deajeonSS,6.8f))
+    }
+
+    fun setCustomMarker(){
+        var bitmapdraw : BitmapDrawable = resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
+        var bitmap = bitmapdraw.bitmap
+        var customMarker = Bitmap.createScaledBitmap(bitmap,90,120,false)
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
     }
 
     override fun onStart() {

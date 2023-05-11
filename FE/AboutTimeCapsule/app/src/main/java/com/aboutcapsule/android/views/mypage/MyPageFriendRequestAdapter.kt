@@ -4,13 +4,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
 import com.aboutcapsule.android.databinding.MypageFriendRequestRecyclerItemBinding
-import com.aboutcapsule.android.factory.MyPageViewModelFactory
-import com.aboutcapsule.android.model.MyPageViewModel
-import com.aboutcapsule.android.repository.mypage.MypageRepo
 import com.bumptech.glide.Glide
 
 

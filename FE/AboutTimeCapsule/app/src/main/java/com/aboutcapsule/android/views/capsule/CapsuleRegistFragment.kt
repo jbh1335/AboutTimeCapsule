@@ -1,5 +1,7 @@
 package com.aboutcapsule.android.views.capsule
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,6 +27,7 @@ import com.aboutcapsule.android.views.mainpage.CapsuleMapFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
@@ -35,6 +38,8 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
         lateinit var binding : FragmentCapsuleRegistBinding
         lateinit var navController: NavController
         private lateinit var mMap : GoogleMap
+        lateinit var markerOptions: MarkerOptions
+
 
         var radioBtn :String= ""
         var bottomNavFlag : Boolean = true
@@ -78,6 +83,7 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
 
         setNavigation()
     }
+
 
     // 네비게이션 세팅
     private fun setNavigation(){
@@ -136,10 +142,21 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         mMap = map
 
+        markerOptions = MarkerOptions()
+        setCustomMarker()
+
         val deajeonSS = LatLng(36.355038,127.298297)
-        map.addMarker(MarkerOptions().position(deajeonSS).title("대전 캠퍼스 "))
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(deajeonSS,16f))
+        mMap.addMarker(markerOptions.position(deajeonSS).title("대전 캠퍼스 "))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(deajeonSS,16f))
     }
+
+    fun setCustomMarker(){
+        var bitmapdraw : BitmapDrawable = resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
+        var bitmap = bitmapdraw.bitmap
+        var customMarker = Bitmap.createScaledBitmap(bitmap,90,120,false)
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
+    }
+
 
     override fun onStart() {
         super.onStart()

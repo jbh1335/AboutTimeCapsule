@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
 import com.aboutcapsule.android.util.GlobalAplication
+import com.aboutcapsule.android.util.PreferenceUtil
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    companion object{
+        lateinit var preferences: PreferenceUtil
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setCurrentUser()
@@ -32,6 +36,14 @@ class MainActivity : AppCompatActivity() {
 
         initFirebase()
 
+        bottomNav()
+
+        // sharedPreference
+        preferences = PreferenceUtil(applicationContext)
+
+    }
+
+    private fun bottomNav() {
         binding.navBottom.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.mainPageMainFragment -> {
@@ -57,7 +69,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
     }
 
     private fun initFirebase() {
