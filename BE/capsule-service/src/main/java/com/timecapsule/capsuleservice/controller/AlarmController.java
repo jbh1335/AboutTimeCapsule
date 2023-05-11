@@ -1,13 +1,12 @@
 package com.timecapsule.capsuleservice.controller;
 
+import com.timecapsule.capsuleservice.api.request.AlarmTokenReq;
 import com.timecapsule.capsuleservice.api.response.AlarmRes;
+import com.timecapsule.capsuleservice.api.response.CommonRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
 import com.timecapsule.capsuleservice.service.AlarmService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,4 +19,10 @@ public class AlarmController {
     public SuccessRes<List<AlarmRes>> getAlarmList(@PathVariable("memberId") int memberId) {
         return alarmService.getAlarmList(memberId);
     }
+
+    @PatchMapping("/token/regist")
+    public CommonRes saveAlarmToken(@RequestBody AlarmTokenReq alarmTokenReq) {
+        return alarmService.saveAlarmToken(alarmTokenReq);
+    }
+
 }
