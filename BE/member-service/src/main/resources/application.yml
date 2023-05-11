@@ -46,5 +46,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-
-
+firebase:
+  key:
+    path: src/main/resources/firebase/ServiceAccountKey.json
