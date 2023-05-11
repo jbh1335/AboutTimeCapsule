@@ -42,6 +42,8 @@ class MyPageMainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getMyPageDataFromBack()
+
+        Log.d("FriendId" ," ${requireArguments().getInt("friendId")}")
         // 네비게이션 세팅
         setNavigation()
         // 페이지 이동
@@ -176,11 +178,6 @@ class MyPageMainFragment : Fragment() {
                 viewModel.refuseFriendRequest(friendRequestId, 1)
             }
         })
-    }
-
-    fun getMyPageDataFromAllFriend() {
-        val bundle = requireArguments().getInt("friendId")
-
     }
 
 
