@@ -1,10 +1,7 @@
 package com.timecapsule.oauthservice.controller;
 
 import com.timecapsule.oauthservice.api.request.RefreshTokenReq;
-import com.timecapsule.oauthservice.api.response.AccessTokenRes;
-import com.timecapsule.oauthservice.api.response.CommonRes;
-import com.timecapsule.oauthservice.api.response.LoginRes;
-import com.timecapsule.oauthservice.api.response.SuccessRes;
+import com.timecapsule.oauthservice.api.response.*;
 import com.timecapsule.oauthservice.security.jwt.AuthorizationExtractor;
 import com.timecapsule.oauthservice.service.TokenService;
 import com.timecapsule.oauthservice.service.OauthService;
@@ -25,9 +22,10 @@ public class OauthController {
     private final TokenService tokenService;
 
     // 인가 코드로 로그인
-    @GetMapping("/login/{providerName}")
-    public SuccessRes<LoginRes> login(@PathVariable String providerName, @RequestParam String code) {
-        return oauthService.login(providerName, code);
+    @PostMapping("/login/{providerName}")
+    public SuccessRes<LoginRes> login(HttpServletRequest request, @PathVariable String providerName) {
+        String token = AuthorizationExtractor.extract(request);
+        return oauthService.login(providerName, token);
     }
 
     // Refresh Token으로 Access Token을 갱신
@@ -43,5 +41,10 @@ public class OauthController {
     public CommonRes logout(HttpServletRequest request) {
         String accessToken = AuthorizationExtractor.extract(request);
         return tokenService.logout(accessToken);
+    }
+
+    @GetMapping("/{providerName}/callback")
+    public SuccessRes<OauthTokenRes> getOauthToken(@PathVariable String providerName, @RequestParam String code) {
+        return oauthService.getOauthToken(providerName, code);
     }
 }

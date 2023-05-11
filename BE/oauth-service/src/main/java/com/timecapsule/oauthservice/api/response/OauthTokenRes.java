@@ -1,4 +1,4 @@
-package com.timecapsule.oauthservice.dto;
+package com.timecapsule.oauthservice.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class OauthTokenResDto {
+public class OauthTokenRes {
     @JsonProperty("access_token")
     private String accessToken;
 

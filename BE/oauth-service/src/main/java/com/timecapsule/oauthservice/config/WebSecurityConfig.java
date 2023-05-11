@@ -79,9 +79,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) { // 인증 예외 URL 설정
         web.ignoring()
                 // antMatchers : 권한관리 대상 설정
-                .antMatchers(HttpMethod.GET, "/api/oauth/login/**")
+                .antMatchers(HttpMethod.POST, "/api/oauth/login/**")
                 .antMatchers(HttpMethod.POST, "/api/oauth/token")
                 .antMatchers(HttpMethod.OPTIONS, "/**") //OPTIONS 메소드 허락
+                .antMatchers(HttpMethod.GET, "/api/oauth/**/callback")
                 .antMatchers("/favicon.ico");
     }
 }

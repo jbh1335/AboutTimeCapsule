@@ -1,11 +1,13 @@
 package com.timecapsule.oauthservice.service;
 
 import com.timecapsule.oauthservice.api.response.LoginRes;
-import com.timecapsule.oauthservice.dto.OauthTokenResDto;
+import com.timecapsule.oauthservice.api.response.OauthTokenRes;
 import com.timecapsule.oauthservice.api.response.SuccessRes;
 import com.timecapsule.oauthservice.config.redis.RedisUtil;
 import com.timecapsule.oauthservice.db.entity.Member;
 import com.timecapsule.oauthservice.db.repository.MemberRepository;
+import com.timecapsule.oauthservice.exception.CustomException;
+import com.timecapsule.oauthservice.exception.ErrorCode;
 import com.timecapsule.oauthservice.security.OauthAttributes;
 import com.timecapsule.oauthservice.security.jwt.JwtTokenProvider;
 import com.timecapsule.oauthservice.security.jwt.Token;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -39,13 +42,14 @@ public class OauthServiceImpl implements OauthService{
     private final RedisUtil redisUtil;
 
     @Transactional
-    public SuccessRes<LoginRes> login(String providerName, String code) {
+    public SuccessRes<LoginRes> login(String providerName, String token) {
+        if (token == null) throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS_TOKEN);
         // provider 이름을 통해 InMemoryProviderRepository에서 OauthProvider 가져오기
         ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
         log.info("{} 로그인 요청", provider.getClientName());
         log.info("provider : {}", provider);
 
-        Member member = getUserInfo(code, provider);
+        Member member = getUserInfo(token, provider);
 
         log.info("Member = {}", member);
 
@@ -70,12 +74,7 @@ public class OauthServiceImpl implements OauthService{
         return new SuccessRes<>(true, "로그인을 완료했습니다.", loginRes);
     }
 
-    private Member getUserInfo(String code, ClientRegistration provider) {
-        OauthTokenResDto token = getToken(code, provider);
-        if(token.getAccessToken() == null)
-            log.info("AccessToken 발급 실패");
-        else
-            log.info("AccessToken 발급 성공 : {}", token);
+    private Member getUserInfo(String token, ClientRegistration provider) {
         Map<String, Object> userAttributes = getUserAttributes(provider, token);
         Member extract = OauthAttributes.extract(provider.getClientName(), userAttributes);
         return saveOrUpdate(extract);
@@ -94,9 +93,11 @@ public class OauthServiceImpl implements OauthService{
         return findMember;
     }
 
-    private OauthTokenResDto getToken(String code, ClientRegistration provider) {
+    public SuccessRes<OauthTokenRes> getOauthToken(String providerName, String code) {
+        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 //        log.info("Authorization Code로 Oauth 서버에 Token 요청");
-        return WebClient.create()
+        return new SuccessRes<>(true, "Oauth Token이 발급되었습니다.",
+                WebClient.create()
                 .post()
                 .uri(provider.getProviderDetails().getTokenUri())
                 .headers(header -> {
@@ -105,8 +106,8 @@ public class OauthServiceImpl implements OauthService{
                 })
                 .bodyValue(tokenRequest(code, provider))
                 .retrieve()
-                .bodyToMono(OauthTokenResDto.class)
-                .block();
+                .bodyToMono(OauthTokenRes.class)
+                .block());
     }
 
     // 토큰을 받기 위한 HTTP Body 생성
@@ -120,13 +121,18 @@ public class OauthServiceImpl implements OauthService{
         return formData;
     }
 
-    private Map<String, Object> getUserAttributes(ClientRegistration provider, OauthTokenResDto tokenResponse) {
-        return WebClient.create()
-                .get()
-                .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
-                .headers(header -> header.setBearerAuth(tokenResponse.getAccessToken()))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .block();
+    private Map<String, Object> getUserAttributes(ClientRegistration provider, String token) {
+        try {
+            return (WebClient.create()
+                    .get()
+                    .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
+                    .headers(header -> header.setBearerAuth(token))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                    })
+                    .block());
+        } catch (WebClientResponseException we){
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS_TOKEN);
+        }
     }
 }

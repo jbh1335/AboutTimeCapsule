@@ -8,16 +8,16 @@ spring:
             client-id: _m8nkPSevg4N3fGEiDgq
             client-secret: CacOwjb4ma
             authorization-grant-type: authorization_code
-#            redirect-uri: "https://localhost:9002/api/oauth/login/naver"
-            redirect-uri: "https://k8b302.p.ssafy.io/api/oauth/login/naver"
+#            redirect-uri: "https://localhost:9002/api/oauth/naver/callback"
+            redirect-uri: "https://k8b302.p.ssafy.io/api/oauth/naver/callback"
             scope:
               - email
               - profile_image
             client-name: naver
           kakao:
             client-id: 344aa8ae1b69c829e695e47c8a7beb1e
-#            redirect-uri: "https://localhost:9002/api/oauth/login/kakao"
-            redirect-uri: "https://k8b302.p.ssafy.io/api/oauth/login/kakao"
+#            redirect-uri: "https://localhost:9002/api/oauth/kakao/callback"
+            redirect-uri: "https://k8b302.p.ssafy.io/api/oauth/kakao/callback"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope:
