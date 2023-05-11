@@ -9,6 +9,7 @@ import com.timecapsule.memberservice.dto.FriendDto;
 import com.timecapsule.memberservice.dto.FriendRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -257,4 +258,23 @@ public class MemberServiceImpl implements MemberService{
         friendList.sort(Comparator.comparing(Member::getNickname));
         return friendList;
     }
+
+    @Transactional
+    public CommonRes updateNickname(int memberId, String nickname){
+        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+
+        if(!memberRepository.existsByNickname(nickname)) {
+            findMember.updateNickname(nickname);
+            return new CommonRes(true, "회원 닉네임을 수정했습니다.");
+        } else {
+            return new CommonRes(false, "중복된 닉네임이 있어 수정하지 못했습니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public SuccessRes checkNicknameDuplicate(String nickname) {
+        boolean isExist = memberRepository.existsByNickname(nickname); // 중복된 닉네임이 있으면 true
+        return new SuccessRes(true, (isExist)? "중복된 닉네임이 있습니다." : "중복된 닉네임이 없습니다.", isExist);
+    }
+
 }

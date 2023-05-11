@@ -1,5 +1,7 @@
 package com.timecapsule.memberservice.db.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,19 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member extends BaseEntity{
     @Column(length = 64)
-    private String name;
-    @Column(length = 64, unique = true)
     private String nickname;
-    @Column(length = 64, unique = true)
+    @Column(length = 64)
     private String email;
     @Column(length = 255)
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
+    private ProviderType providerType; // 요청이 들어온 서드 파티 앱
+    private String providerId; // 서드 파티 앱의 PK
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private RoleType roleType = RoleType.USER;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
@@ -34,4 +40,7 @@ public class Member extends BaseEntity{
     @OneToMany(mappedBy = "member")
     private List<Memory> memoryList = new ArrayList<>();
 
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
 }
