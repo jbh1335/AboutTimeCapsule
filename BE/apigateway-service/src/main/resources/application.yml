@@ -39,20 +39,20 @@ spring:
               - OPTIONS
               - DELETE
       routes:
-        - id: member
-          uri: lb://MEMBER
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
           predicates:
             - Path=/api/member/**
           filters:
             - AuthorizationHeaderFilter
 
-        - id: aouth
-          uri: lb://OAUTH
+        - id: outh-service
+          uri: lb://OUTH-SERVICE
           predicates:
             - Path=/api/aouth/**
 
-        - id: capsule
-          uri: lb://CAPSULE
+        - id: capsule-service
+          uri: lb://CAPSULE-SERVICE
           predicates:
             - Path=/api/capsule/**
           filters:
