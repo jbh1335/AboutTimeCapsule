@@ -41,11 +41,6 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 
        private lateinit var mMap : GoogleMap
 
-       //권한
-       private val permission = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION
-           ,android.Manifest.permission.ACCESS_COARSE_LOCATION)
-       private val PERM_FLAG = 99
-
    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,9 +63,6 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         binding.registGroupMapFragment.getMapAsync(this)
 
         radioBtnListner()
-
-        // 지도 권한
-        getPermission()
 
         return binding.root
     }
@@ -140,35 +132,6 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 
     }
 
-    private fun getPermission(){
-        // 권한 요청
-        if(isPermitted()){
-            // 권한 허용 상태면 지도 띄워주기
-            startProcess()
-        }else{
-            // 권한 허용 상태 아니면 허용 체크
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                permission,
-                PERM_FLAG
-            )
-        }
-    }
-    // 권한 체크
-    private fun isPermitted() : Boolean {
-        for(perm in permission){
-            if(ContextCompat.checkSelfPermission(requireActivity(),perm) != PermissionChecker.PERMISSION_GRANTED){
-                return false
-            }
-        }
-        return false
-    }
-
-    // 권한 체크 후 허용 상태면 로직 스타트
-    private fun startProcess(){
-        binding.registGroupMapFragment.getMapAsync(this)
-    }
-
     // 지도 띄워주기
     // onCreateView에서 getMapAsync(this) 사용허가를 구하면 안드로이드가 메서드 실행
     override fun onMapReady(map: GoogleMap) {
@@ -177,30 +140,6 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         val deajeonSS = LatLng(36.355038,127.298297)
         map.addMarker(MarkerOptions().position(deajeonSS).title("대전 캠퍼스 "))
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(deajeonSS,16f))
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when(requestCode){
-            PERM_FLAG ->{
-                var check = true
-                for ( grant in grantResults){
-                    if(grant != PermissionChecker.PERMISSION_GRANTED){
-                        check=false
-                        break;
-                    }
-                }
-                if(check){
-                    startProcess()
-                }else{
-                    Toast.makeText(requireActivity(),"권한을 승인하여 앱을 사용해 보세요", Toast.LENGTH_SHORT).show()
-                    requireActivity().finish()
-                }
-            }
-        }
     }
 
     override fun onStart() {

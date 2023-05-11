@@ -54,7 +54,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
 
         private var btnFlag : Boolean = true   // 캡슐 등록버튼 view 용 변수
 
-        //클라이언트 변수 ( provider -> 배터리 소모 줄이고 정확도 높이게 도와줌 )
+        //클라이언트(사용자위치) 변수 ( provider -> 배터리 소모 줄이고 정확도 높이게 도와줌 )
         private lateinit var fusedLocationClient :FusedLocationProviderClient
         // LocationCallBack -> 좌표값 가져오고 응답값을 받아서 처리
         private lateinit var locationCallback : LocationCallback
@@ -119,6 +119,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         }
     }
 
+    // 페이지 이동
     fun redirectPage(){
         // 알림 페이지로 이동
         val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
@@ -145,8 +146,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         navController = navHostFragment.navController
     }
 
+    // 액티비티에서 툴바 가져오기
     private fun setToolbar() {
-        // 액티비티에서 툴바 가져오기
         val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
 
         // Navigation Component와 툴바 연결
@@ -180,7 +181,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         }
     }
 
-    // 권한 체크
+    // 사용자 위치 권한 체크
     private fun isPermitted() : Boolean {
         for(perm in permission){
             if(ContextCompat.checkSelfPermission(mainActivity,perm) !=PERMISSION_GRANTED){
