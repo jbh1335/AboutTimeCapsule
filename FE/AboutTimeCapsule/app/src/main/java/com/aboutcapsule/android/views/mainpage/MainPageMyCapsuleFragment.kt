@@ -11,12 +11,20 @@ import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMyCapsuleBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.factory.MyPageViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.model.MyPageViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.views.capsule.CapsuleRegistFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -27,6 +35,7 @@ class MainPageMyCapsuleFragment : Fragment() {
         lateinit var binding : FragmentMainPageMyCapsuleBinding
         private lateinit var  viewPager : ViewPager2
         private lateinit var  tabLayout : TabLayout
+        private lateinit var viewModel : CapsuleViewModel
     }
 
 
@@ -47,6 +56,8 @@ class MainPageMyCapsuleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setViewPager()
+
+        // 나의 캡슐 or 친구의 캡슐 불러오기
         callingApi()
 
         // 툴바 뒤로가기 버튼 세팅
@@ -58,14 +69,21 @@ class MainPageMyCapsuleFragment : Fragment() {
     // TODO : 내캡슐 or 친구의 캡슐 api 불러오기 ( 분기처리 완료 )
     private fun callingApi(){
 
+        val repository = CapsuleRepo()
+        val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+        viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+
+
         var calledApi = requireArguments().getString("apiName").toString()
 
         when(calledApi){
             "myCapsuleApi" -> {
                 Log.d("api", " 내 캡슐  ")
+                viewModel.getMyCapsuleList(1)
             }
             "friendApi" -> {
                 Log.d("api", " 친구 캡슐  ")
+                viewModel.getFriendCapsuleList(1)
             }
         }
     }
