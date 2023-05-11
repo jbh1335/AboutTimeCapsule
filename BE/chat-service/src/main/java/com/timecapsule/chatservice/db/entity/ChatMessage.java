@@ -1,5 +1,6 @@
 package com.timecapsule.chatservice.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.timecapsule.chatservice.dto.MessageType;
 import lombok.*;
 
@@ -13,18 +14,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class ChatMessage implements Serializable {
     private static final long serialVersionUID = 921452535326804170L;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @Enumerated(EnumType.STRING)
     private MessageType type;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "chatroom_id")
     private Chatroom chatroom;
-    private Integer sender;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member sender;
     private String content;
     private LocalDateTime createdDate;
 }
