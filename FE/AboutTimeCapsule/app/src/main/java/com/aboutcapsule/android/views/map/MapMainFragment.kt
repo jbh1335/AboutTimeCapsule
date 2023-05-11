@@ -2,23 +2,19 @@ package com.aboutcapsule.android.views.map
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
-import androidx.core.graphics.createBitmap
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
@@ -26,44 +22,49 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
-import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
 import com.aboutcapsule.android.databinding.FragmentMapMainBinding
 import com.aboutcapsule.android.views.MainActivity
-import com.aboutcapsule.android.views.capsule.CapsuleRegistFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 
 class MapMainFragment : Fragment() ,OnMapReadyCallback{
 
     companion object{
-        lateinit var mainActivity: MainActivity
         lateinit var binding : FragmentMapMainBinding
+        lateinit var mainActivity: MainActivity
         lateinit var navController: NavController
         private var bellFlag : Boolean = true // 상단 벨 제거
-
         private var btnFlag : Boolean = true   // 캡슐 등록버튼 view 용 변수
 
+        // ------------ 지도 ----------------
         //클라이언트(사용자위치) 변수 ( provider -> 배터리 소모 줄이고 정확도 높이게 도와줌 )
         private lateinit var fusedLocationClient :FusedLocationProviderClient
         // LocationCallBack -> 좌표값 가져오고 응답값을 받아서 처리
         private lateinit var locationCallback : LocationCallback
+        // 기본 위치
+        private val defaultLocation = LatLng(37.514644,126.979974) // 대전캠퍼스
+        // 권한 체크용 boolean 변수
+        private var locationPermissionGranted = false
+        // 카메라 위치
+        private lateinit var cameraPosition : CameraPosition
         // 구글맵 변수
         private lateinit var mMap:GoogleMap
-        //권한
-        private val permission = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION
-                                        ,android.Manifest.permission.ACCESS_COARSE_LOCATION)
-        private val PERM_FLAG = 99
+        // 사용자의 마지막 위치 가져오기
+        private var lastKnownLocation: Location? = null
+
+        private val TAG = MapMainFragment::class.java.simpleName
+        private const val DEFAULT_ZOOM = 15
+        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+
+        // Keys for storing activity state.
+        private const val KEY_CAMERA_POSITION = "카메라 위치"
+        private const val KEY_LOCATION = "위치정보"
     }
 
     // context 가져오기 ( 액티비티 )
@@ -76,20 +77,30 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_map_main,container,false)
+
+        // 마지막 위치 저장
+        if(savedInstanceState != null ){
+            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
+            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)!!
+        }
+       // 지도
         binding.mapFragment.onCreate(savedInstanceState)
         binding.mapFragment.getMapAsync(this)
 
-        if(isPermitted()){
-            startProcess()
-        }else{
-            // 권한요청
-            ActivityCompat.requestPermissions(mainActivity, permission, PERM_FLAG)
-        }
 
         // 상단 벨 숨기기
         bellToggle(bellFlag)
 
         return binding.root
+    }
+
+    // 활동이 일시 중지되었을 경우 저장해놓은 정보를 가져오기 위해 저장
+    override fun onSaveInstanceState(outState: Bundle) {
+        mMap?.let{
+            outState.putParcelable(KEY_CAMERA_POSITION,mMap.cameraPosition)
+            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
+        }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -181,97 +192,105 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback{
         }
     }
 
-    // 사용자 위치 권한 체크
-    private fun isPermitted() : Boolean {
-        for(perm in permission){
-            if(ContextCompat.checkSelfPermission(mainActivity,perm) !=PERMISSION_GRANTED){
-                return false
-            }
-        }
-        return false
-    }
-
-    // 권한 체크 후 허용 상태면 로직 스타트
-    private fun startProcess(){
-        binding.mapFragment.getMapAsync(this)
-    }
 
     // 지도 띄워주기
     // onCreateView에서 getMapAsync(this) 사용허가를 구하면 안드로이드가 메서드 실행
     override fun onMapReady(map: GoogleMap) {
-        mMap=map
+        // 사용자 위치
+        mMap = map
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
 
-        //좌표값 계속 갱신 주는 것을 등록 해주는 메서드
-        setUpdateLocationListener()
+        // 사용자 권한 얻기
+        getLocationPermission()
 
-        val point =LatLng(37.514644,126.979974)
-        map.addMarker(MarkerOptions().position(point).title("현위치"))
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(point,12f))
+        // 지도 UI 업데이트
+        updateLocationUI()
+
+        // 사용자의 위치,카메라 가져오기
+        getDeviceLocation()
+
     }
+
+    // 사용자 위치 정보 권한 체크
+    private fun getLocationPermission() {
+
+        if (ContextCompat.checkSelfPermission(mainActivity,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                mainActivity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+        }
+    }
+
+    // 사용자 위치 권한 콜백
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        locationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+        updateLocationUI()
+    }
+
+
     @SuppressLint("MissingPermission")
-    private fun setUpdateLocationListener(){
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY,1000).apply {
-        }.build()
+    private fun updateLocationUI() {
+        if (mMap == null) {
+            return
+        }
+        try {
+            if (locationPermissionGranted) {
+                mMap.isMyLocationEnabled = true
+                mMap.uiSettings.isMyLocationButtonEnabled = true
+            } else {
+                mMap.isMyLocationEnabled = false
+                mMap.uiSettings.isMyLocationButtonEnabled = false
+                lastKnownLocation = null
+                getLocationPermission()
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
 
-        locationCallback = object: LocationCallback(){
-            override fun onLocationResult(locationResult: LocationResult) {
-                //값이 있을때만 실행
-                locationResult?.let{
-                    for((i,location) in it.locations.withIndex()){
-                        Log.d("MapMainFragment","setUpdateLocationListner()")
-                        Log.d("MapMainFragment", "${i} ${location.latitude} ${location.longitude} ")
-                        setLastLocation(location)
-
+    // 사용자 위치 ,카메라 정보 얻기
+    @SuppressLint("MissingPermission")
+    private fun getDeviceLocation() {
+        // 사용자가 접근 할 수 없을 때도 마지막 위치 가져오기
+        try{
+            if(locationPermissionGranted){
+                val locationResult = fusedLocationClient.lastLocation
+                locationResult.addOnCompleteListener(mainActivity) { task ->
+                    if(task.isSuccessful){ // 위치 접근 성공
+                        lastKnownLocation = task.result
+                        if(lastKnownLocation != null){
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                LatLng(lastKnownLocation!!.latitude,
+                                lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                        }
+                    } else {
+                        Log.d(TAG, "접근이 어려워 기본 지정 위치로 출력 ")
+                        Log.e(TAG, "Exception: %s", task.exception)
+                        mMap.moveCamera(CameraUpdateFactory
+                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                        mMap.uiSettings?.isMyLocationButtonEnabled = false
                     }
                 }
             }
-        }
-        // 로케이션 요청함수 호출 ( locationRequest , locationCallback )
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback
-        , Looper.myLooper())
-    }
-
-    private fun setLastLocation(location: Location){
-        val myLocation = LatLng(location.latitude, location.longitude)
-        val marker = MarkerOptions()
-            .position(myLocation)
-            .title("I'm here ! ")
-        val cameraOption = CameraPosition.Builder()
-            .target(myLocation)
-            .zoom(15.0f)
-            .build()
-        val camera = CameraUpdateFactory.newCameraPosition(cameraOption)
-
-        mMap.clear()
-        mMap.addMarker(marker)
-        mMap.moveCamera(camera)
-
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when(requestCode){
-            PERM_FLAG ->{
-                var check = true
-                for ( grant in grantResults){
-                    if(grant != PERMISSION_GRANTED){
-                        check=false
-                        break;
-                    }
-                }
-                if(check){
-                    startProcess()
-                }else{
-                    Toast.makeText(mainActivity,"권한을 승인하여 앱을 사용해 보세요", Toast.LENGTH_SHORT).show()
-                    mainActivity.finish()
-                }
-            }
+        }catch (e: SecurityException) { // 에러 발생
+            Log.e("Exception: %s", e.message, e)
         }
     }
+
 
     override fun onStart() {
         super.onStart()
