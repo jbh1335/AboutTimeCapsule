@@ -1,4 +1,4 @@
-package com.timecapsule.chatservice.db.entity;
+package com.timecapsule.chatservice.dto;
 
 public enum ProviderType {
     GOOGLE,
