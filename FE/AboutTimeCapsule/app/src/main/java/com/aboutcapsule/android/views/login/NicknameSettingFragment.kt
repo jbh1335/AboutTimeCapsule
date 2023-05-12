@@ -4,18 +4,17 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentNicknameSettingBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.MypageRepo
-import org.w3c.dom.Text
 
 
 class NicknameSettingFragment : Fragment() {
@@ -25,6 +24,7 @@ class NicknameSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getDataFromBack()
+        checkNickname()
     }
 
     override fun onCreateView(
@@ -39,9 +39,6 @@ class NicknameSettingFragment : Fragment() {
         val repository = MypageRepo()
         val myPageViewModelFactory = MyPageViewModelFactory(repository)
         myPageViewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
-        myPageViewModel.checkNickname.observe(viewLifecycleOwner, {
-            checkNickname()
-        })
     }
 
     fun checkNickname() {

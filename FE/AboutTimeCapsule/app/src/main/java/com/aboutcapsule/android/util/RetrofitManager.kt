@@ -39,6 +39,7 @@ class RetrofitManager {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }
+
         val api: MemberService by lazy {
             retrofit.create(MemberService::class.java)
         }
