@@ -86,7 +86,17 @@ class LoginAcitivity : AppCompatActivity() {
                     Log.i("카카오로그인성공1", "카카오계정으로 로그인 성공 \n\n " +
                             "token: ${token.accessToken} \n\n " +
                             "me: ${user}")
-                    toMainActivity()
+                    viewModel.doLogin("naver", "Bearer ${token.accessToken}")
+                    val nickname = viewModel.loginInstance.value?.nickname
+                    if (nickname == null) {
+                        supportFragmentManager
+                            .beginTransaction()
+                            .add(R.id.loginFrame, NicknameSettingFragment())
+                            .commit()
+                    }else {
+                        toMainActivity()
+                    }
+
 
                 }
             }
