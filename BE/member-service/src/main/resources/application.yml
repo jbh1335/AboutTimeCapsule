@@ -5,10 +5,10 @@ server:
       charset: UTF-8
       enable: true
       force: true
-  ssl:
-    key-store-password: b302capsule
-    key-store: classpath:keystore.p12
-    key-store-type: PKCS12
+#  ssl:
+#    key-store-password: b302capsule
+#    key-store: classpath:keystore.p12
+#    key-store-type: PKCS12
 
 eureka:
   instance:
