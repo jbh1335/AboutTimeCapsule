@@ -17,6 +17,7 @@ import java.util.*;
 @Service("memberService")
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
+    private final FcmService fcmService;
     private final MemberRepository memberRepository;
     private final FriendRepository friendRepository;
 
@@ -88,12 +89,13 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> oToMember = memberRepository.findById(toMemberId);
         Member toMember = oToMember.orElseThrow(() -> new IllegalArgumentException("toMember doesn't exist"));
 
-        int friendId = friendRepository.save(Friend.builder()
+        Friend friend = friendRepository.save(Friend.builder()
                 .fromMember(fromMember)
                 .toMember(toMember)
-                .build()).getId();
+                .build());
 
-        return new SuccessRes<>(true, "친구 요청을 완료했습니다.", friendId);
+        fcmService.friendRequestNotification(friend, toMember, "친구요청");
+        return new SuccessRes<>(true, "친구 요청을 완료했습니다.", friend.getId());
     }
 
     @Override
@@ -118,8 +120,12 @@ public class MemberServiceImpl implements MemberService{
     public CommonRes acceptRequest(int friendId) {
         Optional<Friend> oFriend = friendRepository.findById(friendId);
         Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
-
         friendRepository.save(Friend.of(friend, true));
+
+        Optional<Member> oMember = memberRepository.findById(friend.getFromMember().getId());
+        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        fcmService.friendRequestNotification(friend, member, "친구요청수락");
+
         return new CommonRes(true, "친구 요청을 수락했습니다.");
     }
 

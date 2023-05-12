@@ -1,6 +1,5 @@
 package com.timecapsule.memberservice.db.entity;
 
 public enum RoleType {
-    USER,
-    ADMIM;
+    USER, ADMIN;
 }

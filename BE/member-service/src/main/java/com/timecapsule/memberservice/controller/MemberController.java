@@ -5,8 +5,6 @@ import com.timecapsule.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -63,15 +61,12 @@ public class MemberController {
     }
 
     @PutMapping ("/nickname/{memberId}/{nickname}")
-    public CommonRes updateNickname(@PathVariable int memberId, @PathVariable String nickname){
-        String encodedNickname = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
-        return memberService.updateNickname(memberId, encodedNickname);
+    public CommonRes updateNickname(@PathVariable int memberId, @PathVariable String nickname) {
+        return memberService.updateNickname(memberId, nickname);
     }
 
     @GetMapping("/nickname/{nickname}/exists")
     public SuccessRes checkNicknameDuplicate(@PathVariable String nickname){
-        String encodedNickname = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
-        return memberService.checkNicknameDuplicate(encodedNickname);
+        return memberService.checkNicknameDuplicate(nickname);
     }
-
 }
