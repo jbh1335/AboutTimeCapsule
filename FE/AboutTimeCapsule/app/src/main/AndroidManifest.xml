@@ -53,6 +53,17 @@
         <activity
             android:name=".views.login.LoginAcitivity"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".views.MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            android:exported="true">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
@@ -60,16 +71,6 @@
 <!--            </intent-filter>-->
         </activity>
 
-        <activity
-            android:name=".views.MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <!--  FileProvider       -->
         <provider

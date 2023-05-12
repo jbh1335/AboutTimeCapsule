@@ -8,6 +8,7 @@
         tools:context=".views.login.NicknameSettingFragment"
         android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:background="@color/white"
         >
         <ImageView
             android:layout_width="100dp"
@@ -23,6 +24,7 @@
 <!--            android:layout_marginTop="60dp"-->
 <!--            android:letterSpacing="-0.03"/>-->
         <EditText
+            android:id="@+id/nicknameEditText"
             android:gravity="center_horizontal"
             android:hint="닉네임을 입력해주세요"
             android:background="@drawable/editbtn_bold"
@@ -36,6 +38,7 @@
 
             />
         <TextView
+            android:id="@+id/checkNicknameResult"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""

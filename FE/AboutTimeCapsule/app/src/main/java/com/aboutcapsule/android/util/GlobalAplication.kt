@@ -9,21 +9,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class GlobalAplication:Application() {
-    private lateinit var dataStore: DataStoreModule
 
     companion object {
         private lateinit var globalAplication: GlobalAplication
+        lateinit var preferences: PreferenceUtil
         fun getInstance() : GlobalAplication = globalAplication
     }
     override fun onCreate() {
         super.onCreate()
         KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "어바웃타임캡슐")
-
+        preferences = PreferenceUtil(applicationContext)
         globalAplication = this
-        dataStore = DataStoreModule(this)
+
     }
-    fun getDataStore() : DataStoreModule = dataStore
+
 
 
 

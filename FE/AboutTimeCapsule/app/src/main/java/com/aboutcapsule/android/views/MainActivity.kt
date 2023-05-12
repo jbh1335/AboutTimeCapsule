@@ -25,12 +25,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    companion object{
-        lateinit var preferences: PreferenceUtil
-    }
+//    companion object{
+//        lateinit var preferences: PreferenceUtil
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setCurrentUser()
+
         initBinding()
         initNavigation()
 
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         bottomNav()
 
         // sharedPreference
-        preferences = PreferenceUtil(applicationContext)
+//        preferences = PreferenceUtil(applicationContext)
 
     }
 
@@ -101,13 +101,6 @@ class MainActivity : AppCompatActivity() {
             getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
         return super.dispatchTouchEvent(ev)
-    }
-
-    fun setCurrentUser() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val memberId = 1
-            GlobalAplication.getInstance().getDataStore().setCurrentUser(memberId)
-        }
     }
 
 }
