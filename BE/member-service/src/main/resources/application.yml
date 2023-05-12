@@ -13,7 +13,7 @@ server:
 
 eureka:
   instance:
-    hostname: k8b302.p.ssafy.io
+    hostname: https://k8b302.p.ssafy.io
 
   client:
     register-with-eureka: true
