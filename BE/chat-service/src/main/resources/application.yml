@@ -2,11 +2,14 @@ server:
   port: 9004
 
 eureka:
+  instance:
+    hostname: k8b302.p.ssafy.io
+
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://k8b302.p.ssafy.io:8761/eureka
+      defaultZone: https://k8b302.p.ssafy.io:8761/eureka
 
 spring:
   application:
