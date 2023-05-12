@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
@@ -20,6 +21,10 @@ interface MemberService {
 
     @DELETE("request/refuse/{friendId}")
     suspend fun refuseFriendRequest(@Path("friendId") friendId: Int?) : Response<ResponseBody>
+
+    @PUT("nickname/{nickname}/exists")
+    suspend fun checkNickname(@Path("nickname") nickname: String) : Response<ResponseBody>
+
 
 
 

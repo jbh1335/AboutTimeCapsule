@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.repository
 
 
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import com.aboutcapsule.android.util.RetrofitManager
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -17,6 +18,10 @@ class MypageRepo {
     }
     suspend fun refuseFriendRequest(friendId: Int?) : Response<ResponseBody> {
         return RetrofitManager.memberInstacne.api.refuseFriendRequest(friendId)
+    }
+
+    suspend fun checkNickname(nickname: String) : Response<ResponseBody> {
+        return RetrofitManager.memberInstacne.api.checkNickname(nickname)
     }
 
 }
