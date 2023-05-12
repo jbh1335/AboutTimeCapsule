@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 class GlobalAplication:Application() {
 
     companion object {
+        lateinit var preferences: PreferenceUtil
+
         private lateinit var globalAplication: GlobalAplication
         fun getInstance() : GlobalAplication = globalAplication
     }
@@ -20,7 +22,7 @@ class GlobalAplication:Application() {
         KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "어바웃타임캡슐")
         globalAplication = this
-
+        preferences = PreferenceUtil(applicationContext)
     }
 
 
