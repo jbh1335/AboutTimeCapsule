@@ -3,7 +3,6 @@ package com.timecapsule.chatservice.controller;
 import com.timecapsule.chatservice.api.request.ChatroomReq;
 import com.timecapsule.chatservice.api.response.ChatMessageRes;
 import com.timecapsule.chatservice.api.response.ChatroomRes;
-import com.timecapsule.chatservice.service.ChatService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +14,9 @@ import java.util.List;
 
 @Api("채팅방 API")
 @RequiredArgsConstructor
-@RestController("/api/chat")
-public class ChatController {
+@RestController
+@RequestMapping("/api/chat")
+public class ChatRoomController {
     private final ChatService chatService;
 
     @ApiOperation(value = "채팅방 생성하기", notes = "채팅방을 등록한다")

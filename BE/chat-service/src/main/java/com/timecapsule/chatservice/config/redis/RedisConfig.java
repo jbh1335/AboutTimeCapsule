@@ -1,6 +1,5 @@
-package com.timecapsule.chatservice.config;
+package com.timecapsule.chatservice.config.redis;
 
-import com.timecapsule.chatservice.service.redis.RedisSubscriber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,12 +28,13 @@ public class RedisConfig {
 
 
     @Bean
-    // Topic 공유를 위해 Channel Topic을 Bean으로 등록
+    // 단일 Topic 사용을 위한 Bean 설정
     public ChannelTopic channelTopic() {
         return new ChannelTopic("chatroom");
     }
 
     @Bean
+
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);
@@ -44,6 +44,7 @@ public class RedisConfig {
     }
 
     @Bean
+    // Application에서 사용할 redisTemplate 설정
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
@@ -53,8 +54,7 @@ public class RedisConfig {
     }
 
     @Bean
-    // pub, 발행된 메시지 처리를 위한 리스너들을 설정
-    // Redis Channel(Topic)로 부터 메시지를 받고, 주입된 리스너들에게 비동기적으로 dispatch 함
+    // redis message 처리하는 MessageListener 설정
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
             MessageListenerAdapter listenerAdapter,
@@ -67,9 +67,7 @@ public class RedisConfig {
     }
 
     @Bean
-    // sub
-    // RedisMessageListenerContainer로부터 메시지를 dispatch 받음
-    // Subscriber : 실제 메시지를 처리하는 비즈니스 로직이 담긴 Bean
+    // 실제 메시지를 처리하는 subscriber 설정
     public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
         return new MessageListenerAdapter(subscriber, "onMessage");
     }

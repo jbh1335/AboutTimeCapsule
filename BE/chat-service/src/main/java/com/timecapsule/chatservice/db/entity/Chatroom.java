@@ -3,6 +3,7 @@ package com.timecapsule.chatservice.db.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Getter
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Chatroom extends BaseEntity {
+public class Chatroom extends BaseEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "from_member_id")
     private Member fromMember;

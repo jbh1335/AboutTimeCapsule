@@ -1,7 +1,6 @@
 package com.timecapsule.chatservice.controller;
 
 import com.timecapsule.chatservice.api.request.MessageReq;
-import com.timecapsule.chatservice.service.RedisPubSubService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("메시지 API")
 @RequiredArgsConstructor
 @RestController
-public class RedisPubSubController {
+public class ChatMessageController {
     private final RedisPubSubService redisPubSubService;
 
     /**
