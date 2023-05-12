@@ -35,9 +35,7 @@ class MyPageMainFragment : Fragment() {
     private lateinit var navController: NavController
     private lateinit var myPageFriendRequestAdapter: MyPageFriendRequestAdapter
     private lateinit var viewModel: MyPageViewModel
-    suspend fun getCurrentUser() : Int {
-        return GlobalAplication.getInstance().getDataStore().getcurrentMemberId.first()
-    }
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
