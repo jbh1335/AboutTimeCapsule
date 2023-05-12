@@ -31,11 +31,9 @@
 
 <!--               boolean 값으로 보여주고 안보여주고 하기    -->
                 <ImageView
-                    android:id="@+id/capsule_list_lockimg"
+                    android:id="@+id/capsule_list_lockOrNewImg"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginLeft="77dp"
-                    android:background="@drawable/lockimg"
                     android:alpha="0.7"
                     />
 

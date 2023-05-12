@@ -1,5 +1,6 @@
 package com.aboutcapsule.android.views.map
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -13,6 +14,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,7 +28,6 @@ import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMapMainBinding
 import com.aboutcapsule.android.views.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -35,9 +36,8 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 
-class MapMainFragment : Fragment() ,OnMapReadyCallback , OnMyLocationButtonClickListener,OnMyLocationClickListener{
+class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback{
 
     companion object{
         lateinit var binding : FragmentMapMainBinding
@@ -59,10 +59,12 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback , OnMyLocationButtonClick
         private lateinit var mMap:GoogleMap
         // 사용자의 마지막 위치 가져오기
         private var lastKnownLocation: Location? = null
-
         private val TAG = MapMainFragment::class.java.simpleName
+
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1 // 위치 권한 체크용
+        private var permissionDenied = false
 
         private const val KEY_CAMERA_POSITION = "카메라 위치"
         private const val KEY_LOCATION = "위치정보"
@@ -96,13 +98,13 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback , OnMyLocationButtonClick
     }
 
     // 활동이 일시 중지되었을 경우 저장해놓은 정보를 가져오기 위해 저장
-    override fun onSaveInstanceState(outState: Bundle) {
-        mMap?.let{
-            outState.putParcelable(KEY_CAMERA_POSITION,mMap.cameraPosition)
-            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
-        }
-        super.onSaveInstanceState(outState)
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        mMap?.let{
+//            outState.putParcelable(KEY_CAMERA_POSITION,mMap.cameraPosition)
+//            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
+//        }
+//        super.onSaveInstanceState(outState)
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -198,12 +200,13 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback , OnMyLocationButtonClick
     // onCreateView에서 getMapAsync(this) 사용허가를 구하면 안드로이드가 메서드 실행
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
+        // 사용자 권한 얻기
+        getLocationPermission()
+
         // 사용자 위치
         mMap = map
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
 
-        // 사용자 권한 얻기
-        getLocationPermission()
 
         // 지도 UI 업데이트
         updateLocationUI()
@@ -212,23 +215,64 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback , OnMyLocationButtonClick
         getDeviceLocation()
 
         val latLng = LatLng(37.566168, 126.901609)
-        mMap.addMarker(MarkerOptions().position(latLng).title("여기"))
+//        mMap.addMarker(MarkerOptions().position(latLng).title("여기"))
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-        mMap.isMyLocationEnabled = true
-        mMap.setOnMyLocationButtonClickListener(this)
-        mMap.setOnMyLocationClickListener(this)
+//        mMap.isMyLocationEnabled = true
+        map.setOnMyLocationButtonClickListener(this)
+        map.setOnMyLocationClickListener(this)
+        enableMyLocation()
+    }
+
+
+    // 내 위치 권한 체크
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocation(){
+        if (ContextCompat.checkSelfPermission(
+                mainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                mainActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            mMap.isMyLocationEnabled = true
+            return
+        }
+
+        // 2. If if a permission rationale dialog should be shown
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                mainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) || ActivityCompat.shouldShowRequestPermissionRationale(
+                mainActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        ) {
+           Toast.makeText(mainActivity,"권한 허용이 필요합니다",Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 3. Otherwise, request permission
+        ActivityCompat.requestPermissions(
+            mainActivity,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
     }
 
     // 사용자 위치 정보 권한 체크
     private fun getLocationPermission() {
 
         if (ContextCompat.checkSelfPermission(mainActivity,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true
         } else {
             ActivityCompat.requestPermissions(
-                mainActivity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                mainActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
         }
     }
