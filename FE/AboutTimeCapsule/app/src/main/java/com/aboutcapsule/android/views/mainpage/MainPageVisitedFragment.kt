@@ -59,7 +59,7 @@ class MainPageVisitedFragment : Fragment() {
         //       뷰페이저 ( 목록보기, 지도보기 )
         val pagerAdapter = PagerFragmentStateAdapter(requireActivity())
 
-        pagerAdapter.addFragment(CapsuleVistiedFragment())
+        pagerAdapter.addFragment(MainPageVistiedCapsuleListFragment())
         pagerAdapter.addFragment(CapsuleMapFragment())
 
         viewPager.adapter = pagerAdapter

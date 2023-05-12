@@ -91,14 +91,6 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
                     setMeetView(it.openedCapsuleDtoList)
                 }
             }
-            "visitedApi"->{
-                Log.d("api","방문한 캡슐 ")
-                viewModel.getVisitedCapsuleList(1)
-                viewModel.visitedCapsuleList.observe(viewLifecycleOwner){
-                    Log.d("방문api리스트페이지","${it.mapInfoDtoList}")
-                }
-
-            }
         }
     }
 

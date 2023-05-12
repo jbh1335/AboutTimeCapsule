@@ -123,10 +123,9 @@ class MainPageMainFragment : Fragment() {
             navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
         }
 
-        // 나의 방문 캡슐 기록 ( 마이캡슐 페이지로 이동, 분기처리해서 api 불러오기 )
+        // 나의 방문 캡슐 기록
         binding.mainSection1Capsule3img.setOnClickListener{
-            val bundle = bundleOf("apiName" to "visitedApi")
-            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
+            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageVisitedFragment)
         }
 
         // 상단 툴바 알림페이지로 리다이렉트

@@ -7,9 +7,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitManager {
     companion object {
-        private const val BASE_URL = "http://k8b302.p.ssafy.io:"
+        private const val BASE_URL = "http://k8b302.p.ssafy.io:8000/"
         private const val memberPort = "api/member/"
-        private const val capsulePort = "9003/api/capsule/"
+        private const val capsulePort = "api/capsule/"
         private const val chatPort = ""
     }
         val getMemberRetrofit = Retrofit.Builder()

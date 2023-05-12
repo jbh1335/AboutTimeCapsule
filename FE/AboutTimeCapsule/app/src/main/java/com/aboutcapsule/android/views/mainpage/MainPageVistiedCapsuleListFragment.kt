@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleVistiedBinding
 
-class CapsuleVistiedFragment : Fragment() {
+class MainPageVistiedCapsuleListFragment : Fragment() {
 
     lateinit var binding : FragmentCapsuleVistiedBinding
     lateinit var navController: NavController

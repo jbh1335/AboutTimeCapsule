@@ -32,7 +32,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 
-class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
+class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
     MainPageMyCapsuleFragment.DataPassListner {
     private val TAG = "CapsuleMapFragment"
     companion object {
