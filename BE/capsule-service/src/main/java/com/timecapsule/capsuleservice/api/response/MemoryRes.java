@@ -1,5 +1,6 @@
 package com.timecapsule.capsuleservice.api.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.timecapsule.capsuleservice.db.entity.RangeType;
 import com.timecapsule.capsuleservice.dto.MemoryDetailDto;
 import lombok.Builder;
@@ -11,21 +12,24 @@ import java.util.List;
 @Getter
 public class MemoryRes {
     private String capsuleTitle;
-    private boolean isGroup;
+    @JsonProperty("isGroup")
+    private boolean group;
     private RangeType rangeType;
     private String address;
-    private boolean isFirstGroup;
-    private boolean isMine;
+    @JsonProperty("isFirstGroup")
+    private boolean firstGroup;
+    @JsonProperty("isMine")
+    private boolean mine;
     private List<MemoryDetailDto> memoryDetailDtoList;
 
     @Builder
     public MemoryRes(String capsuleTitle, boolean isGroup, RangeType rangeType, String address, boolean isFirstGroup, boolean isMine, List<MemoryDetailDto> memoryDetailDtoList) {
         this.capsuleTitle = capsuleTitle;
-        this.isGroup = isGroup;
+        this.group = isGroup;
         this.rangeType = rangeType;
         this.address = address;
-        this.isFirstGroup = isFirstGroup;
-        this.isMine = isMine;
+        this.firstGroup = isFirstGroup;
+        this.mine = isMine;
         this.memoryDetailDtoList = memoryDetailDtoList;
     }
 }

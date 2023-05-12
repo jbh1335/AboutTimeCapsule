@@ -1,23 +1,27 @@
 package com.timecapsule.capsuleservice.api.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class MapRes {
     private int capsuleId;
-    private boolean isLocked;
-    private boolean isMine;
-    private boolean isAllowedDistance;
+    @JsonProperty("isLocked")
+    private boolean locked;
+    @JsonProperty("isMine")
+    private boolean mine;
+    @JsonProperty("isAllowedDistance")
+    private boolean allowedDistance;
     private Double latitude;
     private Double longitude;
 
     @Builder
     public MapRes(int capsuleId, boolean isLocked, boolean isMine, boolean isAllowedDistance, Double latitude, Double longitude) {
         this.capsuleId = capsuleId;
-        this.isLocked = isLocked;
-        this.isMine = isMine;
-        this.isAllowedDistance = isAllowedDistance;
+        this.locked = isLocked;
+        this.mine = isMine;
+        this.allowedDistance = isAllowedDistance;
         this.latitude = latitude;
         this.longitude = longitude;
     }

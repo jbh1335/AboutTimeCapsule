@@ -1,5 +1,6 @@
 package com.timecapsule.capsuleservice.api.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,7 +9,8 @@ public class CapsuleDetailRes {
     private String memberNickname;
     private int distance;
     private String leftTime;
-    private boolean isLocked;
+    @JsonProperty("isLocked")
+    private boolean locked;
     private Double latitude;
     private Double longitude;
     private String address;
@@ -18,7 +20,7 @@ public class CapsuleDetailRes {
         this.memberNickname = memberNickname;
         this.distance = distance;
         this.leftTime = leftTime;
-        this.isLocked = isLocked;
+        this.locked = isLocked;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
