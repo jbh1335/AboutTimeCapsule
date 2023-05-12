@@ -3,6 +3,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.aboutcapsule.android.R
@@ -23,7 +24,7 @@ class LoginAcitivity : AppCompatActivity() {
     private var _binding: ActivityLoginBinding? = null
     private val binding get() = _binding!!
     lateinit var viewModel: OauthViewModel
-
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +34,6 @@ class LoginAcitivity : AppCompatActivity() {
         val repository = OauthRepo()
         val oauthViewModelFactory = OauthViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, oauthViewModelFactory).get(OauthViewModel::class.java)
-
         binding.kakaoLoginBtnLayout.setOnClickListener{
             kakaoLogin()
         }
@@ -42,23 +42,31 @@ class LoginAcitivity : AppCompatActivity() {
         }
     }
 
+
     private fun naverLogin() {
 
         val loginCallback = object : OAuthLoginCallback {
             override fun onSuccess() {
                 val accesstoken = NaverIdLoginSDK.getAccessToken()
                 Log.i("네이버로그인성공", "네이버로 로그인 성공 ${accesstoken}")
-                viewModel.doLogin("naver", "Bearer ${accesstoken}")
-                val nickname = viewModel.loginInstance.value?.nickname
-                if (nickname == null) {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .add(R.id.loginFrame, NicknameSettingFragment())
-                        .commit()
-                }else {
-                    toMainActivity()
-                }
 
+                viewModel.doLogin("naver", "Bearer ${accesstoken}")
+                viewModel.loginInstance.observe(this@LoginAcitivity
+                ) {
+                    val nickname = viewModel.loginInstance.value?.nickname
+                    Log.d("nickname", "${nickname}")
+                    val jwtToken = viewModel.loginInstance.value?.accessToken
+                    Log.d("jwtToken", "${jwtToken}")
+                    if (nickname.equals("null")) {
+                        GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
+                        supportFragmentManager
+                            .beginTransaction()
+                            .add(R.id.loginFrame, NicknameSettingFragment())
+                            .commit()
+                    } else {
+                        toMainActivity()
+                    }
+                }
 
 
             }
@@ -87,8 +95,11 @@ class LoginAcitivity : AppCompatActivity() {
                             "token: ${token.accessToken} \n\n " +
                             "me: ${user}")
                     viewModel.doLogin("naver", "Bearer ${token.accessToken}")
+
                     val nickname = viewModel.loginInstance.value?.nickname
+                    val jwtToken = viewModel.loginInstance.value?.accessToken
                     if (nickname == null) {
+                        GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
                         supportFragmentManager
                             .beginTransaction()
                             .add(R.id.loginFrame, NicknameSettingFragment())
@@ -133,6 +144,15 @@ class LoginAcitivity : AppCompatActivity() {
         val intent = Intent(this@LoginAcitivity, MainActivity::class.java)
         startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         this@LoginAcitivity.finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        //다이얼로그가 띄워져 있는 상태(showing)인 경우 dismiss() 호출
+        if (alertDialog != null && alertDialog!!.isShowing) {
+            alertDialog!!.dismiss()
+        }
     }
 
 

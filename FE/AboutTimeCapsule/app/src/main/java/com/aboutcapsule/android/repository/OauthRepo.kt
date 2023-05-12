@@ -6,7 +6,6 @@ import retrofit2.Response
 
 class OauthRepo {
     suspend fun doLogin(provider: String, accessToken: String): Response<ResponseBody> {
-
         return RetrofitManager.oauthInstance.api.doLogin(provider, accessToken)
     }
 }

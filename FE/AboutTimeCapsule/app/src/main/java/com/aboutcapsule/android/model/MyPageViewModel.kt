@@ -18,7 +18,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     var myPageList : MutableLiveData<GetMyPageRes> = MutableLiveData()
     lateinit var friendList : MutableList<FriendDtoList>
     lateinit var friendRequestList : MutableList<FriendRequestDtoList>
-    var isCurrentUser: Boolean = false
+    var checkNickname: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getMyPage(memberId:Int) {
         viewModelScope.launch {
@@ -84,6 +84,17 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                 Log.i("친구요청거절", "친구 요청거절 성공")
             } else {
                 Log.e("친구요청거절실패", "친구 요청거절 실패")
+            }
+        }
+    }
+    fun checkNickname(nickname: String) {
+        viewModelScope.launch {
+            val response = repository.checkNickname(nickname)
+            if (response.isSuccessful) {
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val nicknameBoolean = jsonObject.getJSONObject("data").toString().toBoolean()
+                checkNickname.value = nicknameBoolean
             }
         }
     }
