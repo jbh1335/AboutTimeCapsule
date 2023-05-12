@@ -5,11 +5,6 @@ server:
       charset: UTF-8
       force: true
 
-  ssl:
-    key-store-password: b302capsule
-    key-store: classpath:keystore.p12
-    key-store-type: PKCS12
-
 eureka:
   instance:
     hostname: k8b302.p.ssafy.io
