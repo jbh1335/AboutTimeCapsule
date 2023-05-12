@@ -19,8 +19,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-  # server
+    # server
     url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
     username: root
     password: b302capsule
@@ -48,10 +47,9 @@ spring:
       max-request-size: 10MB
 
   redis:
-    host: localhost
-#    host: k8b302.p.ssafy.io
+    host: k8b302.p.ssafy.io
     port: 6379
-#    password: b302capsule
+    password: b302capsule
 
 cloud:
   aws:
