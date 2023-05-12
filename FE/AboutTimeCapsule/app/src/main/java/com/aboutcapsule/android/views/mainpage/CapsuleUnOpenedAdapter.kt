@@ -3,12 +3,14 @@ package com.aboutcapsule.android.views.mainpage
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.capsule.UnopenedCapsuleDto
 import com.aboutcapsule.android.databinding.CapsuleListRecyclerItemBinding
 import com.bumptech.glide.Glide
 
-class CapsuleListAdapter()
-    : RecyclerView.Adapter<CapsuleListAdapter.ViewHolder>() {
-    var itemList = mutableListOf<CapsuleListData>()
+class CapsuleUnOpenedAdapter()
+    : RecyclerView.Adapter<CapsuleUnOpenedAdapter.ViewHolder>() {
+    var itemList = mutableListOf<UnopenedCapsuleDto>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = CapsuleListRecyclerItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -20,11 +22,14 @@ class CapsuleListAdapter()
     }
 
     inner class ViewHolder(val binding: CapsuleListRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(capsuleListData: CapsuleListData) {
-            Glide.with(itemView).load(capsuleListData.img).into(binding.capsuleListImg)
-            binding.capsuleListPlace.text=capsuleListData.place
-            Glide.with(itemView).load(capsuleListData.lockimg).into(binding.capsuleListLockimg)
-            binding.capsuleListTime.text=capsuleListData.time
+        fun bind(unopenedCapsuleDto: UnopenedCapsuleDto) {
+            if(!unopenedCapsuleDto.isLocked){
+                Glide.with(itemView).load(R.drawable.lockimg).into(binding.capsuleListLockOrNewImg)
+            }
+            Glide.with(itemView).load(R.drawable.redcapsule).into(binding.capsuleListImg)
+            binding.capsuleListPlace.text=unopenedCapsuleDto.address
+
+            binding.capsuleListTime.text=unopenedCapsuleDto.openDate.replace("-",".")
         }
     }
 

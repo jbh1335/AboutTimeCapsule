@@ -8,7 +8,7 @@ data class UnopenedCapsuleDto(
     var capsuleId : Int,
 
     @SerializedName("open_date")
-    var openDate : LocalDate,
+    var openDate : String,
 
     var address : String,
 

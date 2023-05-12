@@ -26,6 +26,7 @@ import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.repository.MypageRepo
+import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.capsule.CapsuleRegistFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -37,7 +38,6 @@ class MainPageMyCapsuleFragment : Fragment() {
         private lateinit var  viewPager : ViewPager2
         private lateinit var  tabLayout : TabLayout
         private lateinit var pagerAdapter : PagerFragmentStateAdapter
-        private lateinit var viewModel : CapsuleViewModel
     }
 
 
@@ -59,44 +59,40 @@ class MainPageMyCapsuleFragment : Fragment() {
 
         setViewPager()
 
-        // 나의 캡슐 or 친구의 캡슐 불러오기
-        callingApi()
+        // 나의 캡슐 or 친구의 캡슐 분기정보 뷰페이저 프래그먼트에 전달
+        setSendDataInfo()
 
         // 툴바 뒤로가기 버튼 세팅
         setToolbar()
 
     }
 
-
-
     // TODO : 내캡슐 or 친구의 캡슐 api 불러오기 ( 분기처리 완료 )
-    private fun callingApi(){
+    private fun setSendDataInfo(){
 
-        val repository = CapsuleRepo()
-        val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
-        viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+        var calledApiName = requireArguments().getString("apiName").toString()
 
-
-        var calledApi = requireArguments().getString("apiName").toString()
-
-        when(calledApi){
+        when(calledApiName){
             "myCapsuleApi" -> {
-                Log.d("api", " 내 캡슐  ")
-                viewModel.getMyCapsuleList(1)
-//                sendDataToFragment() // 분기처리 값 넘겨줘서 각 프래그먼트에서 요청 쏘기 ?
+                binding.whosCapsule.text="나의 캡슐"
+                sendDataToFragment("myCapsuleApi")
             }
             "friendApi" -> {
-                Log.d("api", " 친구 캡슐  ")
-                viewModel.getFriendCapsuleList(1)
+                binding.whosCapsule.text="친구의 캡슐"
+                sendDataToFragment("friendApi")
+            }
+            "visitedApi"->{
+                binding.whosCapsule.text="나의 방문 기록"
+                sendDataToFragment("visitedApi")
             }
         }
     }
-//
+
     // 자식한테 데이터 보내주기 위한 커스텀 인터페이스 정의 및 데이터 연결
     interface DataPassListner{
-        fun onDataPass(data: Any)
+        fun onDataPass(data: String)
     }
-    fun sendDataToFragment(data: Any) {
+    fun sendDataToFragment(data: String) {
         val capsuleFragment = pagerAdapter.fragments[0] as? CapsuleListFragment
         capsuleFragment?.onDataPass(data)
         val capsuleMapFragment = pagerAdapter.fragments[1] as? CapsuleMapFragment
@@ -105,24 +101,17 @@ class MainPageMyCapsuleFragment : Fragment() {
 
     private fun setViewPager(){
         //       뷰페이저 ( 목록보기, 지도보기 )
-//        val pagerAdapter = PagerFragmentStateAdapter(requireActivity())
+
         pagerAdapter = PagerFragmentStateAdapter(requireActivity())
 
         pagerAdapter.addFragment(CapsuleListFragment())
         pagerAdapter.addFragment(CapsuleMapFragment())
 
         viewPager.adapter = pagerAdapter
-//        dataPassListner = pagerAdapter
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if(position==0) {
-
-                    Log.d("값 가져 다니나 ", "test1")
-                }else{
-                    Log.d("값 가져 다니나 ", "test2")
-                }
             }
         })
 

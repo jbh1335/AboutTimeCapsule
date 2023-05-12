@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,7 +16,7 @@ class CapsuleVistiedFragment : Fragment() {
 
     lateinit var binding : FragmentCapsuleVistiedBinding
     lateinit var navController: NavController
-    lateinit var visitedAdapter : CapsuleListAdapter
+    lateinit var visitedAdapter : CapsuleUnOpenedAdapter
 
 
     override fun onCreateView(
@@ -43,10 +42,10 @@ class CapsuleVistiedFragment : Fragment() {
         var gridManager : GridLayoutManager
 
         val visitedDataList = getVisitedDatas()
-        visitedAdapter = CapsuleListAdapter()
+        visitedAdapter = CapsuleUnOpenedAdapter()
 
         gridManager =GridLayoutManager(context,3)
-        visitedAdapter.itemList = visitedDataList
+//        visitedAdapter.itemList = visitedDataList
         binding.capsuleVisitedRecyclerView.adapter =visitedAdapter
         binding.capsuleVisitedRecyclerView.layoutManager = gridManager
     }
