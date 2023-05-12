@@ -8,6 +8,7 @@
         tools:context=".views.login.NicknameSettingFragment"
         android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:background="@color/white"
         >
         <ImageView
             android:layout_width="100dp"

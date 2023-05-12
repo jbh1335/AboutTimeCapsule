@@ -8,6 +8,6 @@ import retrofit2.http.Path
 
 interface OauthService {
 
-    @GET("callback/{provider}")
+    @GET("login/{provider}")
     suspend fun doLogin (@Path("provider") provider:String, @Header("Authorization") accessToken:String) : Response<ResponseBody>
 }

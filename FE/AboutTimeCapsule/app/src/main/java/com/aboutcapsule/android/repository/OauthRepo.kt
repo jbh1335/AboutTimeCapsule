@@ -1,4 +1,4 @@
-package com.aboutcapsule.android.repository.oauth
+package com.aboutcapsule.android.repository
 
 import com.aboutcapsule.android.util.RetrofitManager
 import okhttp3.ResponseBody
