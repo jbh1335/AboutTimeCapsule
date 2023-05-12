@@ -1,17 +1,17 @@
 server:
   port: 8000
 
-  ssl:
-    key-store-password: b302capsule
-    key-store: classpath:keystore.p12
-    key-store-type: PKCS12
-
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: https://k8b302.p.ssafy.io:8761/eureka
+    ssl:
+      enabled: true
+      key-store-password: b302capsule
+      key-store: classpath:keystore.p12
+      key-store-type: PKCS12
 
 spring:
   application:
