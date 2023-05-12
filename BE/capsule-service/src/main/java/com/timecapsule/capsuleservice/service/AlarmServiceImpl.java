@@ -20,6 +20,7 @@ import java.util.Optional;
 @Service("alarmService")
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService{
+//    private final RedisService redisService;
     private final AlarmRepository alarmRepository;
     private final MemberRepository memberRepository;
 
@@ -44,6 +45,7 @@ public class AlarmServiceImpl implements AlarmService{
         Optional<Member> oMember = memberRepository.findById(alarmTokenReq.getMemberId());
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
+//        redisService.setData("alarm", member.getId(), alarmTokenReq.getToken());
         memberRepository.save(Member.of(member, alarmTokenReq.getToken()));
         return new CommonRes(true, "알림 토큰을 저장했습니다.");
     }
@@ -53,6 +55,7 @@ public class AlarmServiceImpl implements AlarmService{
         Optional<Member> oMember = memberRepository.findById(memberId);
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
+//        redisService.deleteData("alarm", memberId);
         memberRepository.save(Member.of(member, null));
         return new CommonRes(true, "알림 토큰을 삭제했습니다.");
     }
