@@ -1,11 +1,11 @@
 package com.aboutcapsule.android.views.mypage
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,12 +22,7 @@ import com.aboutcapsule.android.databinding.FragmentMyPageMainBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.MypageRepo
-import com.aboutcapsule.android.util.GlobalAplication
-
 import com.bumptech.glide.Glide
-
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 
 class MyPageMainFragment : Fragment() {
@@ -120,8 +115,6 @@ class MyPageMainFragment : Fragment() {
 
     fun redirectAllFriendsPage() {
         binding.redirectAllFriendPageBtn.setOnClickListener {
-
-            viewModel.friendId = GlobalAplication.getInstance().getDataStore().getMyPageMemberId.first()
 
             navController.navigate(R.id.action_myPageMainFragment_to_myAllFriendsFragment)
         }

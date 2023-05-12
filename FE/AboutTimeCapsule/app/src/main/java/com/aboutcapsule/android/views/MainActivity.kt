@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.myPageMainFragment -> {
                     CoroutineScope(Dispatchers.Main).launch{
                         val currentUser = GlobalAplication.getInstance().getDataStore().getcurrentMemberId.first()
-                        GlobalAplication.getInstance().getDataStore().setMyPageMemberId(currentUser)
                         navController.navigate(R.id.myPageMainFragment)
                     }
                     true
@@ -107,11 +106,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setCurrentUser() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val memberId = 1
-            GlobalAplication.getInstance().getDataStore().setCurrentUser(memberId)
-            GlobalAplication.getInstance().getDataStore().setMyPageMemberId(memberId)
-        }
+
     }
 
 }
