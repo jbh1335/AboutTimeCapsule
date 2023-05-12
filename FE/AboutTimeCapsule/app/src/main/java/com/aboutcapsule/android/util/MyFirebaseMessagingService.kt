@@ -11,8 +11,6 @@ class MyFirebaseMessagingService :FirebaseMessagingService(){
         super.onNewToken(token)
     }
 
-
-
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
     }
@@ -26,7 +24,6 @@ class MyFirebaseMessagingService :FirebaseMessagingService(){
             notificationManager.createNotificationChannel(channel)
         }
     }
-
 
     companion object {
         private const val CHANNEL_NAME = "AboutTimeCapsule"

@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_mainPageMainFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_to_mainPageVisitedFragment"
+            app:destination="@id/mainPageVisitedFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_self"
+            app:destination="@id/mainPageMainFragment" />
 
     </fragment>
     <fragment
@@ -26,6 +32,12 @@
         <action
             android:id="@+id/action_mapMainFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleRegistGroupFragment"
+            app:destination="@id/capsuleRegistGroupFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleRegistFragment"
+            app:destination="@id/capsuleRegistFragment" />
     </fragment>
 
     <fragment
@@ -41,25 +53,33 @@
         android:id="@+id/myPageMainFragment"
         android:name="com.aboutcapsule.android.views.mypage.MyPageMainFragment"
         android:label="fragment_my_page_main"
-        tools:layout="@layout/fragment_my_page_main" />
+        tools:layout="@layout/fragment_my_page_main" >
+        <action
+            android:id="@+id/action_myPageMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_myPageMainFragment_to_myAllFriendsFragment"
+            app:destination="@id/myAllFriendsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mainPageMyCapsuleFragment"
         android:name="com.aboutcapsule.android.views.mainpage.MainPageMyCapsuleFragment"
         android:label="fragment_my_page_my_capsule"
         tools:layout="@layout/fragment_main_page_my_capsule">
         <action
-            android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistFragment"
-            app:destination="@id/capsuleRegistFragment" />
-        <action
-            android:id="@+id/action_mainPageMyCapsuleFragment_to_capsuleRegistGroupFragment"
-            app:destination="@id/capsuleRegistGroupFragment" />
+            android:id="@+id/action_mainPageMyCapsuleFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/capsuleRegistFragment"
         android:name="com.aboutcapsule.android.views.capsule.CapsuleRegistFragment"
         android:label="fragment_capsule_regist"
-        tools:layout="@layout/fragment_capsule_regist"/>
+        tools:layout="@layout/fragment_capsule_regist">
+        <action
+            android:id="@+id/action_capsuleRegistFragment_to_articleRegistFragment"
+            app:destination="@id/articleRegistFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/capsuleRegistGroupFragment"
@@ -78,27 +98,61 @@
         android:id="@+id/capsuleFindFriendFragment"
         android:name="com.aboutcapsule.android.views.capsule.CapsuleFindFriendFragment"
         android:label="fragment_capsule_find_friend"
-        tools:layout="@layout/fragment_capsule_find_friend"/>
+        tools:layout="@layout/fragment_capsule_find_friend">
+        <action
+            android:id="@+id/action_capsuleFindFriendFragment_to_capsuleRegistGroupFragment"
+            app:destination="@id/capsuleRegistGroupFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/articleRegistFragment"
         android:name="com.aboutcapsule.android.views.capsule.ArticleRegistFragment"
         android:label="fragment_article_regist"
-        tools:layout="@layout/fragment_article_regist"/>
+        tools:layout="@layout/fragment_article_regist">
+        <action
+            android:id="@+id/action_articleRegistFragment_to_capsuleMineFragment"
+            app:destination="@id/capsuleMineFragment" />
+        <action
+            android:id="@+id/action_articleRegistFragment_to_capsuleGroupFragment"
+            app:destination="@id/capsuleGroupFragment" />
+    </fragment>
     <fragment
         android:id="@+id/notificationMainFragment"
         android:name="com.aboutcapsule.android.views.notification.NotificationMainFragment"
         android:label="fragment_notification_main"
         tools:layout="@layout/fragment_notification_main">
+       </fragment>
+    <fragment
+        android:id="@+id/mainPageVisitedFragment"
+        android:name="com.aboutcapsule.android.views.mainpage.MainPageVisitedFragment"
+        android:label="fragment_main_page_visited"
+        tools:layout="@layout/fragment_main_page_visited">
         <action
-            android:id="@+id/action_notificationMainFragment_to_mainPageMainFragment"
-            app:destination="@id/mainPageMainFragment" />
+            android:id="@+id/action_mainPageVisitedFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/capsuleMineFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleMineFragment"
+        android:label="fragment_capsule_mine"
+        tools:layout="@layout/fragment_capsule_mine">
         <action
-            android:id="@+id/action_notificationMainFragment_to_mapMainFragment"
-            app:destination="@id/mapMainFragment" />
+            android:id="@+id/action_capsuleMineFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myAllFriendsFragment"
+        android:name="com.aboutcapsule.android.views.mypage.MyAllFriendsFragment"
+        android:label="fragment_my_all_friends"
+        tools:layout="@layout/fragment_my_all_friends"/>
+    <fragment
+        android:id="@+id/capsuleGroupFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleGroupFragment"
+        android:label="fragment_capsule_group"
+        tools:layout="@layout/fragment_capsule_group">
         <action
-            android:id="@+id/action_notificationMainFragment_to_chatMainFragment"
-            app:destination="@id/chatMainFragment" />
+            android:id="@+id/action_capsuleGroupFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
     </fragment>
 
 </navigation>

@@ -5,7 +5,7 @@
     <!--    인터넷 사용 권한 설정-->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- 카카오 지도, 사용자 위치 접근 권한 설정 -->
+    <!-- 구글 지도, 사용자 위치 접근 권한 설정 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true"/>
@@ -54,16 +53,6 @@
         <activity
             android:name=".views.login.LoginAcitivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".views.MainActivity"
-            android:exported="true">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
@@ -71,12 +60,19 @@
 <!--            </intent-filter>-->
         </activity>
 
-        <!-- 카카오 지도 -->
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="${kakao_redirect_uri}" />
+        <activity
+            android:name=".views.MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <!--  Fileprovider       -->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+        <!--  FileProvider       -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.aboutcapsule.android.fileprovider"
@@ -93,6 +89,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+
+        <!-- 구글 지도  -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${google_api_key}"/>
 
     </application>
 

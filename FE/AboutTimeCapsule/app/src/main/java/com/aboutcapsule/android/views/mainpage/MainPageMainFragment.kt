@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -19,8 +20,13 @@ import com.aboutcapsule.android.views.notification.NotificationMainFragment
 
 class MainPageMainFragment : Fragment() {
 
-    lateinit var binding: FragmentMainPageMainBinding
-    lateinit var navController: NavController
+    companion object {
+        lateinit var binding: FragmentMainPageMainBinding
+        lateinit var navController: NavController
+        lateinit var section2adapter: Section2Adapter
+        lateinit var section3adapter: Section3Adapter
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,15 +51,37 @@ class MainPageMainFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
+        // 리사이클러뷰 세팅
+        setSection2View()
+        setSection3View()
+
+        // 리사이클러뷰 요소 클릭 시 이동
+        setSection2Click()
+
+        // 버튼 클릭시 페이지 전환
+        redirectPages()
+
+    }
+
+
+    private fun setSection2View(){
         val section2DataList = getSection2datas()
-        val section2adapter = Section2Adapter()
+        section2adapter = Section2Adapter()
         //       어댑터에 api로 받아온 데이터 넘겨주기
         section2adapter.itemList = section2DataList
         binding.section2RecyclerView.adapter = section2adapter
-        binding.section2RecyclerView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+    }
 
-        //      TODO: 내 주변의 타임캡슐 요소 하나 클릭시 이동 필요한 데이터 가지고 넘어가기 ( 위,경도 시간,유저이름,거리,댓글수?  )
+    private fun setSection3View(){
+        val section3DataList = getSection3datas()
+        section3adapter = Section3Adapter()
+        //       section3 어댑터의 itemList라는 곳에 데이터 넘겨주기
+        section3adapter.itemList = section3DataList
+        binding.section3RecyclerView.adapter = section3adapter
+    }
+
+    //      TODO: 내 주변의 타임캡슐 요소 하나 클릭시 이동 필요한 데이터 가지고 넘어가기 ( 위,경도 시간,유저이름,거리,댓글수?  )
+    private fun setSection2Click(){
         //            val intent = Intent(this.context,이동할 장소 )
         section2adapter.setOnItemClickListner(object : Section2Adapter.OnItemClickListner {
             override fun onItemClick(view: View, position: Int) {
@@ -63,19 +91,6 @@ class MainPageMainFragment : Fragment() {
                 dialog.show(parentFragmentManager, "customDialog")
             }
         })
-
-
-        val section3DataList = getSection3datas()
-        val section3adapter = Section3Adapter()
-        //       section3 어댑터의 itemList라는 곳에 데이터 넘겨주기
-        section3adapter.itemList = section3DataList
-        binding.section3RecyclerView.adapter = section3adapter
-        binding.section3RecyclerView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-        // 버튼 클릭시 페이지 전환
-        redirectPages()
-
     }
 
     //  물음표 버튼 토글 로직
@@ -93,20 +108,29 @@ class MainPageMainFragment : Fragment() {
 
     //    나의 캡슐 클릭시 페이지 이동
     private fun redirectPages() {
-        Log.d("페이지리다이렉트", "페이지리다이렉트메인페이지메인프래그먼트 ")
+        // 나의 캡슐 페이지로 이동 ( 마이캡슐 페이지로 이동, 분기처리해서 api 불러오기 )
         binding.mainSection1Capsule1img.setOnClickListener {
-            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment)
+            val bundle = bundleOf("apiName" to "myCapsuleApi" )
+            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
         }
 
+        // 친구의 캡슐 ( 마이캡슐 페이지로 이동 , 분기처리해서 api 불러오기 )
+        binding.mainSection1Capsule2img.setOnClickListener{
+            val bundle = bundleOf("apiName" to "friendApi")
+            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
+        }
+
+        // 나의 방문 캡슐 기록
+        binding.mainSection1Capsule3img.setOnClickListener{
+            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageVisitedFragment)
+        }
+
+        // 상단 툴바 알림페이지로 리다이렉트
         val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         notiBtn?.setOnClickListener{
             navController.navigate(R.id.action_mainPageMainFragment_to_notificationMainFragment)
         }
-
     }
-
-
-
 
     //   TODO: retrofit으로 내 주변의 타임캡슐 데이터 가져오기
     private fun getSection2datas(): MutableList<Section2Data> {
