@@ -38,12 +38,13 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/whosCapsule"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:layout_marginLeft="10dp"
             android:textSize="20sp"
-            android:text="나의 캡슐"/>
+            tools:text="나의 캡슐"/>
 
     </FrameLayout>
 </layout>
