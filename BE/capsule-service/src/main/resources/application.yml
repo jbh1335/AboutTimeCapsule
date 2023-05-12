@@ -12,6 +12,8 @@ server:
     key-store-type: PKCS12
 
 eureka:
+  instance:
+    hostname: k8b302.p.ssafy.io
   client:
     register-with-eureka: true
     fetch-registry: true
