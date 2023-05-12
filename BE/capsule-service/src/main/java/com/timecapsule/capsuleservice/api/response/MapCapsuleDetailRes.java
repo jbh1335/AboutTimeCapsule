@@ -1,5 +1,6 @@
 package com.timecapsule.capsuleservice.api.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,8 +11,10 @@ public class MapCapsuleDetailRes {
     private int capsuleId;
     private String memberNickname;
     private String leftTime;
-    private boolean isLocked;
-    private boolean isGroup;
+    @JsonProperty("isLocked")
+    private boolean locked;
+    @JsonProperty("isGroup")
+    private boolean group;
     private LocalDate openDate;
 
     @Builder
@@ -19,8 +22,8 @@ public class MapCapsuleDetailRes {
         this.capsuleId = capsuleId;
         this.memberNickname = memberNickname;
         this.leftTime = leftTime;
-        this.isLocked = isLocked;
-        this.isGroup = isGroup;
+        this.locked = isLocked;
+        this.group = isGroup;
         this.openDate = openDate;
     }
 }

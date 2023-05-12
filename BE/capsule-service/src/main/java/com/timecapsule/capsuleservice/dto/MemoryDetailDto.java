@@ -1,5 +1,6 @@
 package com.timecapsule.capsuleservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,8 +16,10 @@ public class MemoryDetailDto {
     private String[] imageUrl;
     private int commentCnt;
     private LocalDate createdDate;
-    private boolean isLocked;
-    private boolean isOpened;
+    @JsonProperty("isLocked")
+    private boolean locked;
+    @JsonProperty("isOpened")
+    private boolean opened;
 
     @Builder
     public MemoryDetailDto(int memoryId, String nickname, String memoryTitle, String profileImageUrl, String content, String[] imageUrl, int commentCnt, LocalDate createdDate, boolean isLocked, boolean isOpened) {
@@ -28,7 +31,7 @@ public class MemoryDetailDto {
         this.imageUrl = imageUrl;
         this.commentCnt = commentCnt;
         this.createdDate = createdDate;
-        this.isLocked = isLocked;
-        this.isOpened = isOpened;
+        this.locked = isLocked;
+        this.opened = isOpened;
     }
 }
