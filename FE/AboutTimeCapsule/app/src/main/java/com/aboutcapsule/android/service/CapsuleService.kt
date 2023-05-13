@@ -23,4 +23,6 @@ interface CapsuleService {
     @PATCH("modify/{capsuleId}/{rangeType}")
     suspend fun modifyCapsule (@Path("capsuleId") capsuleId: Int , @Path("rangeType") rangeType: String) : Response<ResponseBody>
 
+
+    // 테스트 
 }
