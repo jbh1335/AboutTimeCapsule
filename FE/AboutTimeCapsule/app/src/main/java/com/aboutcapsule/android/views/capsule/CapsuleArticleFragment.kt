@@ -14,7 +14,7 @@ import com.aboutcapsule.android.databinding.FragmentCapsuleMineBinding
 import com.aboutcapsule.android.views.mainpage.MainPageMainFragment
 
 
-class CapsuleMineFragment : Fragment() {
+class CapsuleArticleFragment : Fragment() {
 
     companion object{
         lateinit var binding: FragmentCapsuleMineBinding

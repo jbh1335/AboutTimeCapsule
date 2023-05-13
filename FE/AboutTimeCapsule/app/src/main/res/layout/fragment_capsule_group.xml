@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            tools:context=".views.capsule.CapsuleGroupFragment">
+            tools:context=".views.capsule.CapsuleBoardFragment">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -23,8 +23,7 @@
                 android:layout_marginBottom="8dp"
                 android:background="@color/white"
                 android:orientation="vertical">
-                
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:orientation="horizontal">
@@ -34,19 +33,27 @@
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
+                        android:visibility="gone"
                         android:src="@drawable/groupimg"/>
+                    <ImageView
+                        android:id="@+id/private_sign"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:visibility="gone"
+                        android:src="@drawable/privateimg"/>
                     <ImageView
                         android:id="@+id/memberlist_sign"
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="70dp"
                         android:src="@drawable/memberlistimg"/>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/delete_btn"
                         android:layout_width="50dp"
                         android:layout_height="18dp"
-                        android:layout_marginLeft="125dp"
+                        android:layout_marginLeft="245dp"
                         android:layout_marginTop="15dp"
                         android:background="@drawable/btn_radius_rectangle"
                         android:backgroundTint="@color/btnColor"
@@ -55,20 +62,18 @@
                         android:textColor="@color/white"
                         android:textSize="7sp" />
 
-                    <androidx.appcompat.widget.AppCompatButton
+                    <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/spinner_open_range"
                         android:layout_width="50dp"
-                        android:layout_height="20dp"
+                        android:layout_height="17dp"
                         android:layout_marginTop="15dp"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="300dp"
                         android:background="@drawable/btn_radius_rectangle"
-                        android:backgroundTint="@color/btnColor"
                         android:fontFamily="@font/onemobile"
-                        android:text="공개범위스피너"
                         android:textColor="@color/white"
                         android:textSize="7sp" />
 
-                </LinearLayout>
+                </FrameLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
