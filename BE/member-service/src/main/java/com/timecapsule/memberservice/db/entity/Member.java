@@ -26,7 +26,6 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private RoleType roleType = RoleType.USER;
-    private String alarmToken;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
