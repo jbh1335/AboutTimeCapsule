@@ -4,7 +4,6 @@ import com.google.firebase.messaging.*;
 import com.timecapsule.capsuleservice.db.entity.*;
 import com.timecapsule.capsuleservice.db.repository.AlarmRepository;
 import com.timecapsule.capsuleservice.db.repository.MemberRepository;
-import com.timecapsule.capsuleservice.db.repository.MemoryRepository;
 import com.timecapsule.capsuleservice.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import java.util.Optional;
 @Service("fcmService")
 @RequiredArgsConstructor
 public class FcmServiceImpl implements FcmService {
+    private final RedisService redisService;
     private final AlarmRepository alarmRepository;
     private final MemberRepository memberRepository;
 
@@ -57,9 +57,11 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("memoryId", String.valueOf(memory.getId()));
         dataMap.put("memberId", String.valueOf(memory.getMember().getId()));
 
-        if(memory.getMember().getAlarmToken() == null || memory.getMember().getAlarmToken().isEmpty()) return;
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", memory.getMember().getId()));
+        if(alarmToken.equals("null")) return;
+
         sendMessage(MessageDto.builder()
-                .targetToken(memory.getMember().getAlarmToken())
+                .targetToken(alarmToken)
                 .title(title)
                 .body(body)
                 .categoryType(CategoryType.valueOf("COMMENT"))
@@ -79,9 +81,11 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("memoryId", String.valueOf(memory.getId()));
         dataMap.put("memberId", String.valueOf(memory.getId()));
 
-        if(member.getAlarmToken() == null || member.getAlarmToken().isEmpty()) return;
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", member.getId()));
+        if(alarmToken.equals("null")) return;
+
         sendMessage(MessageDto.builder()
-                .targetToken(member.getAlarmToken())
+                .targetToken(alarmToken)
                 .title(title)
                 .body(body)
                 .categoryType(CategoryType.valueOf("CAPSULE"))
@@ -98,9 +102,11 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("capsuleId", String.valueOf(capsule.getId()));
         dataMap.put("memberId", String.valueOf(me.getId()));
 
-        if(me.getAlarmToken() == null || me.getAlarmToken().isEmpty()) return;
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", me.getId()));
+        if(alarmToken.equals("null")) return;
+
         sendMessage(MessageDto.builder()
-                .targetToken(me.getAlarmToken())
+                .targetToken(alarmToken)
                 .title(title)
                 .body(body)
                 .categoryType(CategoryType.valueOf("CAPSULE"))
