@@ -9,7 +9,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
@@ -20,7 +19,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws-stomp") // ws://localhost:9004/ws-stomp
-                .setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/stomp/chat") // ws://k8b302.p.ssafy.io/stomp/chat
+                .setAllowedOrigins("http://k8b302.p.ssafy.io").withSockJS();
     }
 }
