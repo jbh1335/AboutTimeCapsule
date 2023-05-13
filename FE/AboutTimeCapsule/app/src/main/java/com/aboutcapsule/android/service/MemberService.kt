@@ -22,8 +22,11 @@ interface MemberService {
     @DELETE("request/refuse/{friendId}")
     suspend fun refuseFriendRequest(@Path("friendId") friendId: Int?) : Response<ResponseBody>
 
-    @PUT("nickname/{nickname}/exists")
+    @GET("nickname/{nickname}/exists")
     suspend fun checkNickname(@Path("nickname") nickname: String) : Response<ResponseBody>
+
+    @PUT("nickname/{memberId}/{nickname}")
+    suspend fun modifyNickname(@Path("memberId") memberId : Int, @Path("nickname") nickname: String) : Response<ResponseBody>
 
 
 

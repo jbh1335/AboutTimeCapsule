@@ -14,7 +14,6 @@ class RetrofitManager {
         private const val capsulePort = "api/capsule/"
         private const val oauthPort = "api/oauth/"
         private const val chatPort = ""
-
     }
 
 //        val getMemberRetrofit = Retrofit.Builder()
