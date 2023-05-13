@@ -46,8 +46,6 @@ public class AlarmServiceImpl implements AlarmService{
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
         redisService.setData("alarm", member.getId(), alarmTokenReq.getToken());
-        System.out.println("토큰 값: " + redisService.getDataValue("alarm", 3));
-//        memberRepository.save(Member.of(member, alarmTokenReq.getToken()));
         return new CommonRes(true, "알림 토큰을 저장했습니다.");
     }
 
@@ -57,7 +55,6 @@ public class AlarmServiceImpl implements AlarmService{
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
         redisService.deleteData("alarm", memberId);
-//        memberRepository.save(Member.of(member, null));
         return new CommonRes(true, "알림 토큰을 삭제했습니다.");
     }
 }

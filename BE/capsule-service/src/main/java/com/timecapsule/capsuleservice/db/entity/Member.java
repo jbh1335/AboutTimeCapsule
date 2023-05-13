@@ -25,7 +25,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private RoleType roleType = RoleType.USER;
-    private String alarmToken;
     @OneToMany(mappedBy = "fromMember")
     private List<Friend> fromMemberList = new ArrayList<>();
     @OneToMany(mappedBy = "toMember")
@@ -40,9 +39,4 @@ public class Member extends BaseEntity {
     private List<Memory> memoryList = new ArrayList<>();
     @OneToMany(mappedBy = "member")
     private List<Alarm> alarmList = new ArrayList<>();
-
-    public static Member of(Member member, String alarmToken) {
-        member.setAlarmToken(alarmToken);
-        return member;
-    }
 }
