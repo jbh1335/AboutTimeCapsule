@@ -39,9 +39,6 @@ class MainPageMainFragment : Fragment() {
 
 //        물음표 버튼 토글버틀
         bannerToggle()
-
-
-
         return binding.root
     }
 

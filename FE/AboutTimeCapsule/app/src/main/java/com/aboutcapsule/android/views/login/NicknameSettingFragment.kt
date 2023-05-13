@@ -1,9 +1,8 @@
 package com.aboutcapsule.android.views.login
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +15,8 @@ import com.aboutcapsule.android.databinding.FragmentNicknameSettingBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.MypageRepo
+import com.aboutcapsule.android.util.GlobalAplication
+import com.aboutcapsule.android.views.MainActivity
 
 
 class NicknameSettingFragment : Fragment() {
@@ -48,15 +49,43 @@ class NicknameSettingFragment : Fragment() {
         binding.nicknameCheckBtn.setOnClickListener {
             myPageViewModel.checkNickname(binding.nicknameEditText.text.toString())
             myPageViewModel.checkNickname.observe(viewLifecycleOwner) {
-                if (it == true) {
+                if (it == false) {
                     binding.checkNicknameResult.text = "사용 가능한 닉네임입니다."
                     binding.checkNicknameResult.setTextColor(R.color.btnColor)
+                    GlobalAplication.preferences.setString("nickname", binding.nicknameEditText.text.toString())
                 } else {
                     binding.checkNicknameResult.text = "이미 존재하는 닉네임 입니다."
                     binding.checkNicknameResult.setTextColor(R.color.falseColor)
                 }
+                signUp(it)
+            }
         }
     }
+
+    fun signUp(checkNickname : Boolean) {
+        if(checkNickname == false) {
+            binding.signUpBtn.setOnClickListener {
+                Log.d("회원가입버튼", "회원가입버튼클릭중")
+                activity?.let {
+                    Log.d("프래그먼트", "클릭중")
+                    val tmpaccessToken = GlobalAplication.preferences.getString("tempAccessToken", "false")
+                    if (tmpaccessToken != "false") {
+                        val memberId = GlobalAplication.preferences.getInt("currentUser", -1)
+                        val nickname = GlobalAplication.preferences.getString("nickname", "false")
+                        myPageViewModel.modifyNickname(memberId, nickname)
+                        myPageViewModel.isModifyNickname.observe(viewLifecycleOwner) {
+                            GlobalAplication.preferences.setString("accessToken", tmpaccessToken)
+                            val intent = Intent(context, MainActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+
 
 //    fun checkNickname() {
 //        myPageViewModel.checkNickname.observe(viewLifecycleOwner) {
@@ -92,8 +121,6 @@ class NicknameSettingFragment : Fragment() {
 //                }
 //            })
 //        }
-
-        }
 
 
 }

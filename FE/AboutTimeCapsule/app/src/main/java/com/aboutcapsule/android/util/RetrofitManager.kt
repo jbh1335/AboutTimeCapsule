@@ -14,7 +14,6 @@ class RetrofitManager {
         private const val memberPort = "9001/api/member/"
         private const val capsulePort = "9003/api/capsule/"
         private const val oauthPort = "9002/api/oauth/"
-        private const val chatPort = "9004"
     }
 
 //        val getMemberRetrofit = Retrofit.Builder()
