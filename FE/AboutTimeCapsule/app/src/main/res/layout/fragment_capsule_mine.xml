@@ -172,14 +172,14 @@
                 android:id="@+id/write_comment"
                 android:layout_width="280dp"
                 android:layout_height="45dp"
-                android:layout_marginBottom="36dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/btn_mypage_radius_chat"
                 android:gravity="bottom"
                 android:hint="댓글을 입력하세요"
                 android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/regist_comment_btn"
-                app:layout_constraintHorizontal_bias="0.40"
+                app:layout_constraintHorizontal_bias="0.3"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -187,8 +187,8 @@
                 android:layout_width="50dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center"
-                android:layout_marginEnd="22dp"
-                android:layout_marginBottom="36dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/btn_radius"
                 android:backgroundTint="@color/btnColor"
                 android:fontFamily="@font/onemobile"

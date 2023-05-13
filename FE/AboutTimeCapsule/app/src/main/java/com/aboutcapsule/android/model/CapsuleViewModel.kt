@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aboutcapsule.android.data.capsule.GetCapsuleListRes
+import com.aboutcapsule.android.data.capsule.GetGroupMemberRes
 import com.aboutcapsule.android.data.capsule.GetVisitedListRes
+import com.aboutcapsule.android.data.capsule.GroupMemberDto
 import com.aboutcapsule.android.data.capsule.MapInfoDto
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
 import com.aboutcapsule.android.data.capsule.UnopenedCapsuleDto
@@ -20,11 +22,13 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var myCapsuleList : MutableLiveData<GetCapsuleListRes> = MutableLiveData()
     var friendCapsuleList : MutableLiveData<GetCapsuleListRes> = MutableLiveData()
     var visitedCapsuleList : MutableLiveData<GetVisitedListRes> = MutableLiveData()
+    var groupMemberList : MutableLiveData<GetGroupMemberRes> = MutableLiveData()
 
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
         lateinit var mapInfoDtoList : MutableList<MapInfoDto>
+        lateinit var groupMemberDtoList : MutableList<GroupMemberDto>
     }
 
     // 나의 캡슐 조회
@@ -203,4 +207,30 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         }
     }
 
+    // 그룹 멤버 조회
+    fun getGroupMemberList(capsuleId : Int){
+        viewModelScope.launch {
+            var response = repository.groupMemberList(capsuleId)
+            if(response.isSuccessful){
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val groupMemberDto = jsonObject.getJSONArray("data")
+                groupMemberDtoList = mutableListOf()
+                for(i in 0 until groupMemberDto.length()){
+                    val curr = groupMemberDto.getJSONObject(i)
+                    val memberId = curr.getInt("memberId")
+                    val nickname = curr.getString("nickname")
+                    val profileImageUrl = curr.getString("profileImageUrl")
+                    groupMemberDtoList.add(GroupMemberDto(memberId,nickname,profileImageUrl))
+                }
+
+                val getGroupMemberRes = GetGroupMemberRes(groupMemberDtoList)
+
+                groupMemberList.value = getGroupMemberRes
+
+                Log.d(TAG, "getGroupMemberList : 응답 성공 / $jsonObject ")
+            }
+            Log.d(TAG, "getGroupMemberList : 응답 실패/ ${response.message()}")
+        }
+    }
 }

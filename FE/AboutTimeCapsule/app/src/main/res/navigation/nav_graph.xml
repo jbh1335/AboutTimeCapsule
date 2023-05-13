@@ -156,6 +156,9 @@
         <action
             android:id="@+id/action_capsuleGroupFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_capsuleGroupFragment_to_articleRegistFragment"
+            app:destination="@id/articleRegistFragment" />
     </fragment>
 
     <fragment

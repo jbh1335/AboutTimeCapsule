@@ -23,6 +23,6 @@ interface CapsuleService {
     @PATCH("modify/{capsuleId}/{rangeType}")
     suspend fun modifyCapsule (@Path("capsuleId") capsuleId: Int , @Path("rangeType") rangeType: String) : Response<ResponseBody>
 
-
-    // 테스트 
+    @GET("group/{capsuleId}")
+    suspend fun findGroupMember(@Path("capsuleId") capsuleId:Int) : Response<ResponseBody>
 }

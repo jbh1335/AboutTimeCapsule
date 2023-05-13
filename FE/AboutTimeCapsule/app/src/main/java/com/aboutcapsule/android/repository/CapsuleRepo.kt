@@ -25,4 +25,8 @@ class CapsuleRepo {
     suspend fun capsuleModify(capsuleId : Int , rangeType : String) : Response<ResponseBody> {
         return RetrofitManager.capsuleInstance.api.modifyCapsule(capsuleId,rangeType)
     }
+
+    suspend fun groupMemberList(capsuleId : Int) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findGroupMember(capsuleId)
+    }
 }

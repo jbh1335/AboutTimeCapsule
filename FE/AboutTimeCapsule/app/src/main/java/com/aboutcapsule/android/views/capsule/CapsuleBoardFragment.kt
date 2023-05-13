@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.views.capsule
 
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +22,7 @@ import com.aboutcapsule.android.databinding.FragmentCapsuleGroupBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.util.SpinnerGroupAvailAdapter
 import com.aboutcapsule.android.views.mainpage.MainPageMainFragment
 import com.aboutcapsule.android.views.mainpage.MainPageVisitedCapsuleMapFragment
@@ -56,36 +59,100 @@ class CapsuleBoardFragment : Fragment() {
 
         setNavigation()
 
-        setSpinner()
-
         callingApi()
+
+        setSpinner()
 
         findGroupOrMe()
     }
 
+
     // 스피너 설정
     private fun setSpinner (){
-
-        var list = mutableListOf<String>("전체공개","그룹공개","공개범위 ▼") // 스피너 목록 placeholder 가장 마지막으로
-        var adapter = SpinnerGroupAvailAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,list) // 목록 연결 ,simple요거는 안드로이드가 제공하는 거
-        binding.spinnerOpenRange.adapter = adapter // 어댑터 연결
-        binding.spinnerOpenRange.setSelection(2) // 스피너 최초로 볼 수 있는 값 ( placeholder) 가장 마지막 idx로 넣어주면 됨
-        binding.spinnerOpenRange.dropDownVerticalOffset = dipToPixels(17f).toInt() // 드롭다운 내려오는 위치 ( 스피너 높이만큼 )
-        binding.spinnerOpenRange.onItemSelectedListener = object : // 스피너 목록 클릭 시
-            AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                if(binding.spinnerOpenRange.getItemAtPosition(position).equals("공개범위 ▼")){ // 플레이스 홀더 역할 클릭 시
-                    list.remove("공개범위 ▼") // placeholder 역할 제거해주기
-                }else{ // 스피너 목록 클릭 시
-                    var text =binding.spinnerOpenRange.getItemAtPosition(position)
-                    Log.d("스피너","$text")
+        val repository = CapsuleRepo()
+        val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+        var groupOrprivate = true // 그룹,개인 판별
+        if(groupOrprivate) { // 그룹 일 경우
+            var list =
+                mutableListOf<String>("전체공개", "그룹공개", "공개범위 ▼") // 스피너 목록 placeholder 가장 마지막으로
+            var adapter = SpinnerGroupAvailAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                list
+            ) // 목록 연결 ,simple요거는 안드로이드가 제공하는 거
+            binding.spinnerOpenRange.adapter = adapter // 어댑터 연결
+            binding.spinnerOpenRange.setSelection(2) // 스피너 최초로 볼 수 있는 값 ( placeholder) 가장 마지막 idx로 넣어주면 됨
+            binding.spinnerOpenRange.dropDownVerticalOffset =
+                dipToPixels(17f).toInt() // 드롭다운 내려오는 위치 ( 스피너 높이만큼 )
+            binding.spinnerOpenRange.onItemSelectedListener = object : // 스피너 목록 클릭 시
+                AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    p0: AdapterView<*>?,
+                    p1: View?,
+                    position: Int,
+                    p3: Long
+                ) {
+                    if (binding.spinnerOpenRange.getItemAtPosition(position)
+                            .equals("공개범위 ▼")
+                    ) { // 플레이스 홀더 역할 클릭 시
+                        list.remove("공개범위 ▼") // placeholder 역할 제거해주기
+                    } else { // 스피너 목록 클릭 시 ( 범위 설정 api )
+                        var text = binding.spinnerOpenRange.getItemAtPosition(position)
+                        Log.d("스피너", "$text")
+                        viewModel.modifyCapsule(1, replaceRange(text.toString()))  //  "수정할 캡슐 번호 , 범위 "
+                    }
+                }
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    //  아무것도 선택 안했을 경우
                 }
             }
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                //  아무것도 선택 안했을 경우
+        }else{ // 개인일 경우
+            var list =
+                mutableListOf<String>("전체공개", "친구만", "나만 보기" , "공개범위 ▼") // 스피너 목록 placeholder 가장 마지막으로
+            var adapter = SpinnerGroupAvailAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                list
+            ) // 목록 연결 ,simple요거는 안드로이드가 제공하는 거
+            binding.spinnerOpenRange.adapter = adapter // 어댑터 연결
+            binding.spinnerOpenRange.setSelection(3) // 스피너 최초로 볼 수 있는 값 ( placeholder) 가장 마지막 idx로 넣어주면 됨
+            binding.spinnerOpenRange.dropDownVerticalOffset =
+                dipToPixels(17f).toInt() // 드롭다운 내려오는 위치 ( 스피너 높이만큼 )
+            binding.spinnerOpenRange.onItemSelectedListener = object : // 스피너 목록 클릭 시
+                AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    p0: AdapterView<*>?,
+                    p1: View?,
+                    position: Int,
+                    p3: Long
+                ) {
+                    if (binding.spinnerOpenRange.getItemAtPosition(position)
+                            .equals("공개범위 ▼")
+                    ) { // 플레이스 홀더 역할 클릭 시
+                        list.remove("공개범위 ▼") // placeholder 역할 제거해주기
+                    } else { // 스피너 목록 클릭 시 ( 범위 설정 api )
+                        var text = binding.spinnerOpenRange.getItemAtPosition(position)
+                        Log.d("스피너", "$text")
+                        viewModel.modifyCapsule(1, replaceRange(text.toString())) //  "수정할 캡슐 번호 , 범위 "
+                    }
+                }
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    //  아무것도 선택 안했을 경우
+                }
             }
         }
     }
+    // 공개범위 (서버로 보내줄 형태로 변환 )
+    private fun replaceRange(range :String ): String{
+        if(range.equals("전체공개")) return "ALL"
+        else if(range.equals("친구만")) return "FREIND" // ?
+        else if(range.equals("나만 보기")) return "PRIVATE"
+        else if(range.equals("그룹공개")) return "GROUP"
+        else return "null"
+    }
+
+
     // 스피너 드롭다운 클릭 시 아래로 내려오는 크기
     private fun dipToPixels(dipValue : Float) : Float{
         return TypedValue.applyDimension(
@@ -100,7 +167,7 @@ class CapsuleBoardFragment : Fragment() {
         // 그룹 , 개인 일 경우
         val GorA_flag = " " // Group or alone
         val OorC_flag = " " // Open or close
-        if(GorA_flag.equals("그룹")){
+        if(GorA_flag.equals(" ")){
             // 그룹이면서 아직 봉인 했는지 안 했는지 체크
             if(OorC_flag == " 봉인 일 경우 "){
                 binding.groupSign.visibility=View.VISIBLE
@@ -134,7 +201,14 @@ class CapsuleBoardFragment : Fragment() {
         // 멤버 목록 클릭 시 , 다이얼로그 보여주기
         binding.memberlistSign.setOnClickListener{
             val dialog = CustomDialogMemberList()
+            GlobalAplication.preferences.setInt("memberlist_capsuleId",1); // 캡슐 아이디 넘겨주기
             dialog.show(parentFragmentManager, "customDialog")
+
+        }
+
+        // 하단 '+'버튼 클릭 시 (Floating Action Btn )
+        binding.fabBtn.setOnClickListener{
+            navController.navigate(R.id.action_capsuleGroupFragment_to_articleRegistFragment)
         }
     }
 
