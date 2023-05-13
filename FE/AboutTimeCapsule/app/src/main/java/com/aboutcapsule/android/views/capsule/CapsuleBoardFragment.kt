@@ -12,12 +12,17 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleGroupBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.util.SpinnerGroupAvailAdapter
 import com.aboutcapsule.android.views.mainpage.MainPageMainFragment
+import com.aboutcapsule.android.views.mainpage.MainPageVisitedCapsuleMapFragment
 import java.util.Calendar
 
 class CapsuleBoardFragment : Fragment() {
@@ -27,6 +32,8 @@ class CapsuleBoardFragment : Fragment() {
         lateinit var navController: NavController
 
         private var flag = false // 달력 visible 체크용
+
+        private lateinit var viewModel : CapsuleViewModel
     }
 
     override fun onCreateView(
@@ -52,6 +59,8 @@ class CapsuleBoardFragment : Fragment() {
         setSpinner()
 
         callingApi()
+
+        findGroupOrMe()
     }
 
     // 스피너 설정
@@ -70,7 +79,6 @@ class CapsuleBoardFragment : Fragment() {
                 }else{ // 스피너 목록 클릭 시
                     var text =binding.spinnerOpenRange.getItemAtPosition(position)
                     Log.d("스피너","$text")
-
                 }
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -135,10 +143,11 @@ class CapsuleBoardFragment : Fragment() {
 
         // 삭제 버튼 클릭 시
         binding.deleteBtn.setOnClickListener{
-
+            val repository = CapsuleRepo()
+            val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+            viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+            viewModel.removeCapsule(1) // 삭제후 리다이렉트 로직 작성 , "삭제할 캡슐 번호 "
         }
-
-
     }
 
     // 네비게이션 세팅

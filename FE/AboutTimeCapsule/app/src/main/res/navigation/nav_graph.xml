@@ -139,6 +139,9 @@
         <action
             android:id="@+id/action_capsuleMineFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_capsuleMineFragment_to_capsuleModifyFragment"
+            app:destination="@id/capsuleModifyFragment" />
     </fragment>
     <fragment
         android:id="@+id/myAllFriendsFragment"
@@ -154,5 +157,11 @@
             android:id="@+id/action_capsuleGroupFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/capsuleModifyFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleModifyFragment"
+        android:label="fragment_capsule_modify"
+        tools:layout="@layout/fragment_capsule_modify"/>
 
 </navigation>

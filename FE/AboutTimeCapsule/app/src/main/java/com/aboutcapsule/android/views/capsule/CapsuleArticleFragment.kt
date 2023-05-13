@@ -20,6 +20,7 @@ class CapsuleArticleFragment : Fragment() {
         lateinit var binding: FragmentCapsuleMineBinding
         lateinit var commentsAdapter: CommentsAdapter
         lateinit var navController: NavController
+
     }
 
     override fun onCreateView(
@@ -33,6 +34,8 @@ class CapsuleArticleFragment : Fragment() {
 
         redirectPage()
 
+        spinnerToggle()
+
         return binding.root
     }
 
@@ -41,6 +44,17 @@ class CapsuleArticleFragment : Fragment() {
 
         // 댓글 리사이클러뷰 세팅
         setCommentsRecycler()
+    }
+
+
+    // 스피너 토글 버튼
+    private fun spinnerToggle(){
+        binding.threeDots.setOnClickListener{
+            // 스피너 나오게
+
+            // 임시 Api 테스트용
+            navController.navigate(R.id.action_capsuleMineFragment_to_capsuleModifyFragment)
+        }
     }
 
     private fun redirectPage(){

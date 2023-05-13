@@ -17,4 +17,12 @@ class CapsuleRepo {
     suspend fun visitedCapsuleList(memberId : Int ) : Response<ResponseBody> {
         return RetrofitManager.capsuleInstance.api.findVisited(memberId)
     }
+
+    suspend fun capsuleRemove(capsuleId : Int ) : Response<ResponseBody> {
+        return RetrofitManager.capsuleInstance.api.removeCapsule(capsuleId)
+    }
+
+    suspend fun capsuleModify(capsuleId : Int , rangeType : String) : Response<ResponseBody> {
+        return RetrofitManager.capsuleInstance.api.modifyCapsule(capsuleId,rangeType)
+    }
 }

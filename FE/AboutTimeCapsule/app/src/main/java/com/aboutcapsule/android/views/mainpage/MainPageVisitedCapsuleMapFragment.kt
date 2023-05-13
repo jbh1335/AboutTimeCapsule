@@ -41,9 +41,11 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_visited_capsule_map,container,false)
 
         callingApi() // api 받아오기
+
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_visited_capsule_map,container,false)
+
 
         binding.visitedMapFragment.onCreate(savedInstanceState)
         binding.visitedMapFragment.getMapAsync(this)

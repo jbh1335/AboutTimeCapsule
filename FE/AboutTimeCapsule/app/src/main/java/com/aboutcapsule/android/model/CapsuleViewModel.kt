@@ -178,4 +178,29 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         }
     }
 
+    // 캡슐 삭제
+    fun removeCapsule(capsuleId : Int){
+        viewModelScope.launch {
+            var response = repository.capsuleRemove(capsuleId)
+            if(response.isSuccessful){
+                Log.d(TAG, "removeCapsule : 응답 성공 / ${response.body()?.string()} ")
+            }else{
+                Log.d(TAG, "removeCapsule : 응답 실패 / ${response.message()} ")
+            }
+        }
+    }
+
+    // 캡슐 공개범위 수정
+    fun modifyCapsule(capsuleId : Int , rangeType : String){
+        viewModelScope.launch {
+            var response = repository.capsuleModify(capsuleId,rangeType)
+            if(response.isSuccessful){
+                Log.d(TAG, "modifyCapsule : 응답 성공 / ${response.body()?.string()} ")
+            }else{
+                Log.d(TAG, "modifyCapsule : 응답 실패 / ${response.message()} ")
+            }
+
+        }
+    }
+
 }
