@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/myPageFriendRequestImg"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/lion_sample" />
+
+        <TextView
+            android:id="@+id/myPageFriendRequestNickname"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="궁동자전거도둑엄준식"
+            android:textColor="@color/cloudyColor"
+            android:textSize="12dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/friendRequestacceptBtn"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/btn_radius_skyblue"
+            android:text="승인"
+            android:textColor="@color/btnColor"
+            android:textSize="12dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/friendRequestRefuseBtn"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_radius_skyblue"
+            android:text="거절"
+            android:textColor="@color/btnColor"
+            android:textSize="12dp" />
+    </LinearLayout>
+</layout>

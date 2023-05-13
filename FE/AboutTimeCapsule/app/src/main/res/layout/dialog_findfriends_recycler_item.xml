@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/dialog_findfriend_item_img"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_radius"/>
+        <TextView
+            android:id="@+id/dialog_findfriend_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            android:text="닉네임"/>
+        <Button
+            android:id="@+id/friend_addBtn"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="100dp"
+            android:textSize="10sp"
+            android:backgroundTint="@color/skyblueBtnColor"
+            android:textColor="@color/btnColor"
+            android:text="친구추가"/>
+
+    </LinearLayout>
+</layout>
