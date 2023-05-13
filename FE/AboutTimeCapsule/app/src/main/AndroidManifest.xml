@@ -23,6 +23,9 @@
         </intent>
     </queries>
 
+    <!-- ARCore가 장치에서 작동하는지 확인 -->
+    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
+
     <application
         android:name=".util.GlobalAplication"
         android:allowBackup="true"
