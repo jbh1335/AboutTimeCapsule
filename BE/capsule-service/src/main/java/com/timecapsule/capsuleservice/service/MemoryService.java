@@ -10,6 +10,7 @@ public interface MemoryService {
     SuccessRes<Integer> registMemory(List<MultipartFile> multipartFileList, MemoryRegistReq memoryRegistReq);
     SuccessRes<MemoryRes> getMemory(MemoryReq memoryReq);
     CommonRes deleteMemory(int memoryId);
+    SuccessRes<ModifyMemoryRes> getModifyMemoryInfo(int memoryId);
     CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq);
     CommonRes registComment(CommentRegistReq commentRegistReq);
     SuccessRes<List<CommentRes>> getComment(int memoryId);

@@ -32,6 +32,11 @@ public class MemoryController {
         return memoryService.deleteMemory(memoryId);
     }
 
+    @GetMapping("/modify/info/{memoryId}")
+    public SuccessRes<ModifyMemoryRes> getModifyMemoryInfo(@PathVariable("memoryId") int memoryId) {
+        return memoryService.getModifyMemoryInfo(memoryId);
+    }
+
     @PatchMapping("/modify")
     public CommonRes modifyMemory(@RequestPart(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
                                   @RequestPart MemoryModifyReq memoryModifyReq) {

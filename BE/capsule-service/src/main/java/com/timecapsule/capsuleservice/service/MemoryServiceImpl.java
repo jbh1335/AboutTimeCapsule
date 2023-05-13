@@ -146,6 +146,21 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
+    public SuccessRes<ModifyMemoryRes> getModifyMemoryInfo(int memoryId) {
+        Optional<Memory> oMemory = memoryRepository.findById(memoryId);
+        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+
+        ModifyMemoryRes modifyMemoryRes = ModifyMemoryRes.builder()
+                .memoryId(memoryId)
+                .title(memory.getTitle())
+                .content(memory.getContent())
+                .imageUrl(memory.getImage().split("#"))
+                .build();
+
+        return new SuccessRes<>(true, "수정할 추억의 정보를 조회합니다.", modifyMemoryRes);
+    }
+
+    @Override
     public CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq) {
         Optional<Memory> oMemory = memoryRepository.findById(memoryModifyReq.getMemoryId());
         Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
