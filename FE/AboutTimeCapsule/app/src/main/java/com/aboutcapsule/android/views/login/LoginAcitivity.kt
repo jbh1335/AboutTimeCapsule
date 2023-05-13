@@ -34,12 +34,20 @@ class LoginAcitivity : AppCompatActivity() {
         val repository = OauthRepo()
         val oauthViewModelFactory = OauthViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, oauthViewModelFactory).get(OauthViewModel::class.java)
+
         binding.kakaoLoginBtnLayout.setOnClickListener{
             kakaoLogin()
         }
         binding.naverLoginBtn.setOnClickListener {
             naverLogin()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("onPouser?", "와우")
+        binding.kakaoLoginBtnLayout.setOnClickListener(null)
+        binding.naverLoginBtn.setOnClickListener(null)
     }
 
 
