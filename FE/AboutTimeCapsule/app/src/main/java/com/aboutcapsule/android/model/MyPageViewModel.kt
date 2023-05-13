@@ -59,6 +59,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                 }
                 val getMyPageRes: GetMyPageRes = GetMyPageRes(nickname, email, profileImageUrl, friendRequestCnt,friendCnt, friendList, friendRequestList)
                  myPageList.value = getMyPageRes
+
                 Log.i("myPageLoadSuccess", "마이페이지 데이터를 성공적으로 받았습니다.: ${dataObjects}}")
             }else {
                 Log.e("myPageLoadFail", "마이페이지를 불러오지 못했습니다.")

@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
+import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.notification.NotificationMainFragment
 
 class MainPageMainFragment : Fragment() {
@@ -57,9 +58,7 @@ class MainPageMainFragment : Fragment() {
 
         // 버튼 클릭시 페이지 전환
         redirectPages()
-
     }
-
 
     private fun setSection2View(){
         val section2DataList = getSection2datas()
@@ -108,11 +107,15 @@ class MainPageMainFragment : Fragment() {
         // 나의 캡슐 페이지로 이동 ( 마이캡슐 페이지로 이동, 분기처리해서 api 불러오기 )
         binding.mainSection1Capsule1img.setOnClickListener {
             val bundle = bundleOf("apiName" to "myCapsuleApi" )
+//            MainActivity.preferences.getEditor().remove("meOrFriend")
+//            MainActivity.preferences.setString("meOrFriend","myCapsuleApi")
             navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
         }
 
         // 친구의 캡슐 ( 마이캡슐 페이지로 이동 , 분기처리해서 api 불러오기 )
         binding.mainSection1Capsule2img.setOnClickListener{
+//            MainActivity.preferences.getEditor().remove("meOrFriend")
+//            MainActivity.preferences.setString("meOrFriend","friendApi")
             val bundle = bundleOf("apiName" to "friendApi")
             navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
         }
