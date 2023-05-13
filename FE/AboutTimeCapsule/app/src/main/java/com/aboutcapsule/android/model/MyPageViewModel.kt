@@ -21,6 +21,9 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     var myPageList : MutableLiveData<GetMyPageRes> = MutableLiveData()
     lateinit var friendList : MutableList<FriendDtoList>
     lateinit var friendRequestList : MutableList<FriendRequestDtoList>
+    var checkNickname: MutableLiveData<Boolean> = MutableLiveData()
+    var isModifyNickname: MutableLiveData<Boolean> = MutableLiveData()
+
     var allFriendList : MutableLiveData<MutableList<AllFriendRes>> = MutableLiveData()
     var friendId :Int? = 0
     var isCurrentUser: Boolean = false
@@ -64,6 +67,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                 val getMyPageRes = GetMyPageRes(nickname, email, profileImageUrl, friendRequestCnt,friendCnt, friendList, friendRequestList)
                  myPageList.value = getMyPageRes
 
+                Log.i("myPageLoadSuccess", "마이페이지 데이터를 성공적으로 받았습니다.: ${dataObjects}}")
             }else {
                 Log.e("myPageLoadFail", "마이페이지를 불러오지 못했습니다.")
             }
@@ -90,6 +94,33 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                 Log.i("친구요청거절", "친구 요청거절 성공")
             } else {
                 Log.e("친구요청거절실패", "친구 요청거절 실패")
+            }
+        }
+    }
+    fun checkNickname(nickname: String) {
+        viewModelScope.launch {
+            val response = repository.checkNickname(nickname)
+            Log.d("여긴 오니?", "ㅎㅇㄱ")
+            if (response.isSuccessful) {
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val nicknameBoolean = jsonObject.getString("data").toBoolean()
+                Log.d("닉네임체크", "${nicknameBoolean}")
+                checkNickname.value = nicknameBoolean
+            } else {
+                Log.e("에러창인데", "여기야?")
+            }
+        }
+    }
+    fun modifyNickname(memberId: Int, nickname: String) {
+        viewModelScope.launch {
+            val response = repository.modifyNickname(memberId, nickname)
+            if (response.isSuccessful) {
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val isModifyNicknameData = jsonObject.getString("success").toBoolean()
+                isModifyNickname.value = isModifyNicknameData
+                Log.d("닉네임변경요청api쏘는중", "${isModifyNicknameData}")
             }
         }
     }

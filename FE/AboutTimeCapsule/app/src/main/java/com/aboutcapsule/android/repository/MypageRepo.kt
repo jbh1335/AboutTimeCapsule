@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.repository
 
 
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import com.aboutcapsule.android.util.RetrofitManager
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -19,6 +20,13 @@ class MypageRepo {
     }
     suspend fun getMyAllFriend(memberId: Int?) : Response<ResponseBody> {
         return RetrofitManager.memberInstacne.api.getMyAllFriend(memberId)
+    }
+
+    suspend fun checkNickname(nickname: String) : Response<ResponseBody> {
+        return RetrofitManager.memberInstacne.api.checkNickname(nickname)
+    }
+    suspend fun modifyNickname(memberId: Int, nickname: String) : Response<ResponseBody> {
+        return RetrofitManager.memberInstacne.api.modifyNickname(memberId, nickname)
     }
 
 }

@@ -13,4 +13,8 @@ class CapsuleRepo {
     suspend fun friendCapsuleList(memberId : Int ) : Response<ResponseBody> {
         return RetrofitManager.capsuleInstance.api.findFriendCapsule(memberId)
     }
+
+    suspend fun visitedCapsuleList(memberId : Int ) : Response<ResponseBody> {
+        return RetrofitManager.capsuleInstance.api.findVisited(memberId)
+    }
 }

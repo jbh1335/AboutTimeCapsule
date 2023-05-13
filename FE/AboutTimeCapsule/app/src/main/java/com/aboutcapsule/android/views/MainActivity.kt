@@ -22,13 +22,20 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+//    companion object{
+//        lateinit var preferences: PreferenceUtil
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setCurrentUser()
+
         initBinding()
         initNavigation()
         initFirebase()
         bottomNav()
+
+        // sharedPreference
+//        preferences = PreferenceUtil(applicationContext)
+
     }
 
     private fun bottomNav() {
@@ -47,10 +54,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.myPageMainFragment -> {
-                    CoroutineScope(Dispatchers.Main).launch{
-                        val currentUser = GlobalAplication.getInstance()
-                        navController.navigate(R.id.myPageMainFragment)
-                    }
+                    val bundle = bundleOf("friendId" to 2)
+                    navController.navigate(R.id.myPageMainFragment,bundle)
                     true
                 }
                 else -> false

@@ -13,4 +13,7 @@ interface CapsuleService {
     @GET("friend/list/{memberId}")
     suspend fun findFriendCapsule (@Path("memberId") memberId : Int ) : Response<ResponseBody>
 
+    @GET("open/list/{memberId}")
+    suspend fun findVisited (@Path("memberId") memberId : Int ) : Response<ResponseBody>
+
 }

@@ -21,8 +21,10 @@ class GlobalAplication:Application() {
         super.onCreate()
         KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "어바웃타임캡슐")
-        globalAplication = this
         preferences = PreferenceUtil(applicationContext)
+        globalAplication = this
+        preferences.clear()
+
     }
 
 

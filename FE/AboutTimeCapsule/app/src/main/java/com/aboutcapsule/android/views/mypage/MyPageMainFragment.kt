@@ -36,6 +36,7 @@ class MyPageMainFragment : Fragment() {
 
 
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getMyPageDataFromBack()
@@ -45,6 +46,7 @@ class MyPageMainFragment : Fragment() {
         // 페이지 이동
         redirectPage()
 
+        redirectAllFriendsPage()
     }
 
     override fun onCreateView(
@@ -62,6 +64,7 @@ class MyPageMainFragment : Fragment() {
         viewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
         viewModel.getMyPage(viewModel.friendId)
         viewModel.myPageList.observe(viewLifecycleOwner, Observer {
+            Log.i("데이터왔다.", "${it.friendDtoList}")
 
             // 상단 프로필 이미지 렌더링
             getMyPageProfileInfo(it)
