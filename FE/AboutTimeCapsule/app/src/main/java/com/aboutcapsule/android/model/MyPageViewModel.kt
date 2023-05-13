@@ -109,10 +109,11 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
         viewModelScope.launch {
             val response = repository.modifyNickname(memberId, nickname)
             if (response.isSuccessful) {
-                val jsonString = response.body().toString()
+                val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
                 val isModifyNicknameData = jsonObject.getString("success").toBoolean()
                 isModifyNickname.value = isModifyNicknameData
+                Log.d("닉네임변경요청api쏘는중", "${isModifyNicknameData}")
             }
         }
     }

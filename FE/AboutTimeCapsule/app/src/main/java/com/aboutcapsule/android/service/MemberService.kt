@@ -25,7 +25,7 @@ interface MemberService {
     @GET("nickname/{nickname}/exists")
     suspend fun checkNickname(@Path("nickname") nickname: String) : Response<ResponseBody>
 
-    @GET("nickname/{memberId}/{nickname}")
+    @PUT("nickname/{memberId}/{nickname}")
     suspend fun modifyNickname(@Path("memberId") memberId : Int, @Path("nickname") nickname: String) : Response<ResponseBody>
 
 

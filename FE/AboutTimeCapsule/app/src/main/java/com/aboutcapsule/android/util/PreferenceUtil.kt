@@ -29,4 +29,9 @@ class PreferenceUtil(context:Context) {
        return editor
     }
 
+    fun clear() {
+        editor.clear()
+        editor.commit()
+    }
+
 }
