@@ -23,5 +23,8 @@ class MypageRepo {
     suspend fun checkNickname(nickname: String) : Response<ResponseBody> {
         return RetrofitManager.memberInstacne.api.checkNickname(nickname)
     }
+    suspend fun modifyNickname(memberId: Int, nickname: String) : Response<ResponseBody> {
+        return RetrofitManager.memberInstacne.api.modifyNickname(memberId, nickname)
+    }
 
 }

@@ -56,7 +56,9 @@ class LoginAcitivity : AppCompatActivity() {
                     val nickname = viewModel.loginInstance.value?.nickname
                     Log.d("nickname", "${nickname}")
                     val jwtToken = viewModel.loginInstance.value?.accessToken
+                    val refreshToken = viewModel.loginInstance.value?.refreshToken
                     Log.d("jwtToken", "${jwtToken}")
+                    GlobalAplication.preferences.setInt("currentUser", viewModel.loginInstance.value!!.id)
                     if (nickname.equals("null")) {
                         GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
                         supportFragmentManager
@@ -64,6 +66,8 @@ class LoginAcitivity : AppCompatActivity() {
                             .add(R.id.loginFrame, NicknameSettingFragment())
                             .commit()
                     } else {
+                        GlobalAplication.preferences.setString("accessToken", jwtToken!!)
+                        GlobalAplication.preferences.setString("refreshToken", refreshToken!!)
                         toMainActivity()
                     }
                 }
