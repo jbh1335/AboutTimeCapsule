@@ -94,25 +94,47 @@ class LoginAcitivity : AppCompatActivity() {
                 Log.i("카카오로그인실패1", "카카오계정으로 로그인 실패 : ${error}")
             } else if (token != null) {
                 UserApiClient.instance.me { user, error ->
+                    Log.i("카카오로그인성공1", "카카오계정으로 로그인 성공 \n\n " +
+                            "token: ${token.accessToken} \n\n " +
+                            "me: ${user}")
+                    viewModel.doLogin("kakao", "Bearer ${token.accessToken}")
+                    viewModel.loginInstance.observe(this@LoginAcitivity
+                    ) {
+                        val nickname = viewModel.loginInstance.value?.nickname
+                        Log.d("nickname", "${nickname}")
+                        val jwtToken = viewModel.loginInstance.value?.accessToken
+                        val refreshToken = viewModel.loginInstance.value?.refreshToken
+                        Log.d("jwtToken", "${jwtToken}")
+                        GlobalAplication.preferences.setInt("currentUser", viewModel.loginInstance.value!!.id)
+                        if (nickname.equals("null")) {
+                            GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
+                            supportFragmentManager
+                                .beginTransaction()
+                                .add(R.id.loginFrame, NicknameSettingFragment())
+                                .commit()
+                        } else {
+                            GlobalAplication.preferences.setString("accessToken", jwtToken!!)
+                            GlobalAplication.preferences.setString("refreshToken", refreshToken!!)
+                            toMainActivity()
+                        }
+                    }
 
                     Log.i("카카오로그인성공1", "카카오계정으로 로그인 성공 \n\n " +
                             "token: ${token.accessToken} \n\n " +
                             "me: ${user}")
-                    viewModel.doLogin("naver", "Bearer ${token.accessToken}")
-
-                    val nickname = viewModel.loginInstance.value?.nickname
-                    val jwtToken = viewModel.loginInstance.value?.accessToken
-                    if (nickname == null) {
-                        GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
-                        supportFragmentManager
-                            .beginTransaction()
-                            .add(R.id.loginFrame, NicknameSettingFragment())
-                            .commit()
-                    }else {
-                        toMainActivity()
-                    }
-
-
+//                    viewModel.doLogin("naver", "Bearer ${token.accessToken}")
+//
+//                    val nickname = viewModel.loginInstance.value?.nickname
+//                    val jwtToken = viewModel.loginInstance.value?.accessToken
+//                    if (nickname == null) {
+//                        GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
+//                        supportFragmentManager
+//                            .beginTransaction()
+//                            .add(R.id.loginFrame, NicknameSettingFragment())
+//                            .commit()
+//                    }else {
+//                        toMainActivity()
+//                    }
                 }
             }
         }
@@ -130,7 +152,7 @@ class LoginAcitivity : AppCompatActivity() {
                     UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
                 } else if (token != null) {
                     Log.i("카카오로그인성공2", "카카오톡으로 로그인 성공 ${token.accessToken}")
-                    toMainActivity()
+
                 }
             }
         } else {
