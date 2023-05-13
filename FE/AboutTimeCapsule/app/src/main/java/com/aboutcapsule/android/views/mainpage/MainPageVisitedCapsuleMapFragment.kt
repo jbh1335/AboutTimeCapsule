@@ -7,23 +7,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.data.capsule.MapInfoDto
-import com.aboutcapsule.android.databinding.FragmentCapsuleMapBinding
+import com.aboutcapsule.android.databinding.FragmentMainPageVisitedCapsuleMapBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
-import com.aboutcapsule.android.views.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -32,30 +26,27 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 
-class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
-    MainPageMyCapsuleFragment.DataPassListner {
-    private val TAG = "CapsuleMapFragment"
+class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
+    private val TAG = "VisitedCapsuleMapFragment"
     companion object {
-        lateinit var binding: FragmentCapsuleMapBinding
+        lateinit var binding: FragmentMainPageVisitedCapsuleMapBinding
         lateinit var navController: NavController
         private lateinit var mMap : GoogleMap
         lateinit var markerOptions: MarkerOptions
-
-        private lateinit var findHost : String // 분기처리 정보 넘겨받음 , api 판별용
-        private lateinit var viewModel : CapsuleViewModel
-
         lateinit var mapMarkers : MutableList<MapInfoDto>
+
+        private lateinit var viewModel : CapsuleViewModel
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_map,container,false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_visited_capsule_map,container,false)
 
         callingApi() // api 받아오기
 
-        binding.mainpageMapFragment.onCreate(savedInstanceState)
-        binding.mainpageMapFragment.getMapAsync(this)
+        binding.visitedMapFragment.onCreate(savedInstanceState)
+        binding.visitedMapFragment.getMapAsync(this)
 
         return binding.root
     }
@@ -65,10 +56,6 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
 
         setNavigation()
 
-
-//        findHost =  MainActivity.preferences.getString("meOrFriend","notKey")
-//        Log.d("캡슐맵프래그먼트" , findHost)
-
     }
 
     private fun setNavigation(){
@@ -76,37 +63,17 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
         navController = navHostFragment.navController
     }
 
-    // 뷰페이저 페이지에서 넘어온 데이터 받아서 api 통신 ( 나 , 친구 분기처리 )
-    override fun onDataPass(data: String) {
-        findHost = data
-    }
-
-    // onDataPass로 MainPageMyCapsuleFragment에서 넘겨받은 분기처리 정보 받은 후 api 통신
     private fun callingApi(){
 
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
-        viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+        viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
 
-        Log.d(TAG,"맵 $findHost")
-        when(findHost){
-            "myCapsuleApi" -> {
-                Log.d("api", " 내 캡슐  ")
-                viewModel.getMyCapsuleList(1)
-                viewModel.myCapsuleList.observe(viewLifecycleOwner){
-                    Log.d(TAG,"${it.mapInfoDtoList}")
+               viewModel.getVisitedCapsuleList(1)
+                viewModel.visitedCapsuleList.observe(viewLifecycleOwner) {
+                    Log.d(TAG, "${it.mapInfoDtoList}")
                     mapMarkers = it.mapInfoDtoList
                 }
-            }
-            "friendApi" -> {
-                Log.d("api", " 친구 캡슐  ")
-                viewModel.getFriendCapsuleList(1)
-                viewModel.friendCapsuleList.observe(viewLifecycleOwner){
-                    Log.d(TAG,"${it.mapInfoDtoList}")
-                    mapMarkers = it.mapInfoDtoList
-                }
-            }
-        }
     }
 
     // 지도 띄워주기
@@ -152,31 +119,31 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
 
     override fun onStart() {
         super.onStart()
-        binding.mainpageMapFragment.onStart()
+        binding.visitedMapFragment.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        binding.mainpageMapFragment.onStop()
+        binding.visitedMapFragment.onStop()
     }
 
     override fun onResume() {
         super.onResume()
-        binding.mainpageMapFragment.onResume()
+        binding.visitedMapFragment.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mainpageMapFragment.onPause()
+        binding.visitedMapFragment.onPause()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mainpageMapFragment.onLowMemory()
+        binding.visitedMapFragment.onLowMemory()
     }
 
     override fun onDestroy() {
-      binding.mainpageMapFragment.onDestroy()
+      binding.visitedMapFragment.onDestroy()
         super.onDestroy()
     }
 

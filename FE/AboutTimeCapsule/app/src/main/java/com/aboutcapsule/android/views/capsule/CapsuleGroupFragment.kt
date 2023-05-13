@@ -45,6 +45,8 @@ class CapsuleGroupFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setNavigation()
+
+        callingApi()
     }
 
     private fun redirectPage(){
@@ -59,6 +61,17 @@ class CapsuleGroupFragment : Fragment() {
             val dialog = CustomDialogMemberList()
             dialog.show(parentFragmentManager, "customDialog")
         }
+    }
+
+    // api 호출
+    private fun callingApi(){
+
+        // 삭제 버튼 클릭 시
+        binding.deleteBtn.setOnClickListener{
+
+        }
+
+
     }
 
     // 네비게이션 세팅
