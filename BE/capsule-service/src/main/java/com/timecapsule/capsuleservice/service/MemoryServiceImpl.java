@@ -64,7 +64,7 @@ public class MemoryServiceImpl implements MemoryService {
         Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
 
         boolean isFirstGroup = capsule.isGroup();
-        boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(memoryReq.getCapsuleId(), memoryReq.getMemberId());
+        boolean isCapsuleMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(memoryReq.getCapsuleId(), memoryReq.getMemberId());
 
         List<MemoryDetailDto> memoryDetailDtoList = new ArrayList<>();
         for(Memory memory : capsule.getMemoryList()) {
@@ -79,6 +79,7 @@ public class MemoryServiceImpl implements MemoryService {
             // 잠김 X, 오픈한 적 없는데 거리도 멀면 불가능 오픈X -> isOpened = false, isLocked = false
             // 잠김 O, 그냥 불가능 isOpened = false, isLocked = true
 
+            boolean isMemoryMine = (memoryReq.getMemberId() == memory.getId());
             boolean isOpened = memoryOpenMemberRepository.existsByMemoryIdAndMemberId(memory.getId(), memoryReq.getMemberId());
             boolean isNowOpened = false;
             boolean isLocked = false;
@@ -118,6 +119,7 @@ public class MemoryServiceImpl implements MemoryService {
                     .createdDate(memory.getCreatedDate().toLocalDate())
                     .isLocked(isLocked)
                     .isOpened(isNowOpened)
+                    .isMemoryMine(isMemoryMine)
                     .build());
         }
 
@@ -127,7 +129,7 @@ public class MemoryServiceImpl implements MemoryService {
                 .rangeType(capsule.getRangeType())
                 .address(capsule.getAddress())
                 .isFirstGroup(isFirstGroup)
-                .isMine(isMine)
+                .isCapsuleMine(isCapsuleMine)
                 .memoryDetailDtoList(memoryDetailDtoList)
                 .build();
 

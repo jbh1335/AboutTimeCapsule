@@ -6,7 +6,6 @@ import com.timecapsule.capsuleservice.dto.MemoryDetailDto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -18,18 +17,18 @@ public class MemoryRes {
     private String address;
     @JsonProperty("isFirstGroup")
     private boolean firstGroup;
-    @JsonProperty("isMine")
-    private boolean mine;
+    @JsonProperty("isCapsuleMine")
+    private boolean capsuleMine;
     private List<MemoryDetailDto> memoryDetailDtoList;
 
     @Builder
-    public MemoryRes(String capsuleTitle, boolean isGroup, RangeType rangeType, String address, boolean isFirstGroup, boolean isMine, List<MemoryDetailDto> memoryDetailDtoList) {
+    public MemoryRes(String capsuleTitle, boolean isGroup, RangeType rangeType, String address, boolean isFirstGroup, boolean isCapsuleMine, List<MemoryDetailDto> memoryDetailDtoList) {
         this.capsuleTitle = capsuleTitle;
         this.group = isGroup;
         this.rangeType = rangeType;
         this.address = address;
         this.firstGroup = isFirstGroup;
-        this.mine = isMine;
+        this.capsuleMine = isCapsuleMine;
         this.memoryDetailDtoList = memoryDetailDtoList;
     }
 }

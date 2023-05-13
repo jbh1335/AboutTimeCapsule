@@ -20,9 +20,11 @@ public class MemoryDetailDto {
     private boolean locked;
     @JsonProperty("isOpened")
     private boolean opened;
+    @JsonProperty("isMemoryMine")
+    private boolean memoryMine;
 
     @Builder
-    public MemoryDetailDto(int memoryId, String nickname, String memoryTitle, String profileImageUrl, String content, String[] imageUrl, int commentCnt, LocalDate createdDate, boolean isLocked, boolean isOpened) {
+    public MemoryDetailDto(int memoryId, String nickname, String memoryTitle, String profileImageUrl, String content, String[] imageUrl, int commentCnt, LocalDate createdDate, boolean isLocked, boolean isOpened, boolean isMemoryMine) {
         this.memoryId = memoryId;
         this.nickname = nickname;
         this.memoryTitle = memoryTitle;
@@ -33,5 +35,6 @@ public class MemoryDetailDto {
         this.createdDate = createdDate;
         this.locked = isLocked;
         this.opened = isOpened;
+        this.memoryMine = isMemoryMine;
     }
 }
