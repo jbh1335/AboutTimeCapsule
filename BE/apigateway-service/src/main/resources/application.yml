@@ -56,8 +56,8 @@ spring:
           filters:
 #            - AuthorizationHeaderFilter
 
-        - id: chat
-          uri: lb://CHAT
+        - id: chat-service
+          uri: lb://CHAT-SERVICE
           predicates:
             - Path=/api/chat/**
           filters:
