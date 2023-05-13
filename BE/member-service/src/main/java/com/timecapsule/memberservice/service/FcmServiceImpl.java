@@ -20,6 +20,7 @@ import java.util.Optional;
 @Service("fcmService")
 @RequiredArgsConstructor
 public class FcmServiceImpl implements FcmService {
+    private final RedisService redisService;
     private final AlarmRepository alarmRepository;
     private final MemberRepository memberRepository;
 
@@ -67,8 +68,11 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("memberId", String.valueOf(me.getId()));
         dataMap.put("friendId", String.valueOf(friend.getId()));
 
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", me.getId()));
+        if(alarmToken.equals("null")) return;
+
         sendMessage(MessageDto.builder()
-                .targetToken(me.getAlarmToken())
+                .targetToken(alarmToken)
                 .title(title)
                 .body(body)
                 .categoryType(CategoryType.FRIEND)

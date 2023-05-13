@@ -46,3 +46,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+  redis:
+    host: k8b302.p.ssafy.io
+    port: 6379
+    password: b302capsule
