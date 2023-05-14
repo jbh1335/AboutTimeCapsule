@@ -23,7 +23,13 @@ class GlobalAplication:Application() {
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "어바웃타임캡슐")
         preferences = PreferenceUtil(applicationContext)
         globalAplication = this
+        preferences.remove("friendId")
         preferences.clear()
+//        preferences.setInt("currentUser", 1)
+//        preferences.setInt("currentUserNickname", )
+
+
+
 
     }
 

@@ -9,13 +9,14 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
 interface MemberService {
-    @GET("mypage/{memberId}")
-    suspend fun getMyPage (@Path("memberId") memberId:Int?) : Response<ResponseBody>
+    @GET("mypage/{memberId}/{otherMemberId}")
+    suspend fun getMyPage (@Path("memberId") memberId:Int?, @Path("otherMemberId") otherMemberId: Int) : Response<ResponseBody>
 
     @PATCH("request/accept/{friendId}")
     suspend fun acceptFriendRequest(@Path("friendId") friendId:Int?) : Response<ResponseBody>
@@ -31,7 +32,8 @@ interface MemberService {
 
 
     @GET("friend/{memberId}")
-    suspend fun getMyAllFriend(@Path("memberId") memberid: Int?) : Response<ResponseBody>
+    suspend fun getMyAllFriend(@Path("memberId") memberId: Int?) : Response<ResponseBody>
+
 
 
 

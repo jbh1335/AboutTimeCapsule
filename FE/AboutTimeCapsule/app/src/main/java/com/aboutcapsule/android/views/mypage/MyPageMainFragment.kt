@@ -1,11 +1,12 @@
 package com.aboutcapsule.android.views.mypage
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.view.menu.MenuView.ItemView
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,37 +19,40 @@ import com.aboutcapsule.android.R
 import com.aboutcapsule.android.data.mypage.FriendDtoList
 import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
 import com.aboutcapsule.android.data.mypage.GetMyPageRes
+import com.aboutcapsule.android.data.mypage.GetOtherPeoplePageRes
 import com.aboutcapsule.android.databinding.FragmentMyPageMainBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.MypageRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import com.bumptech.glide.Glide
 
 
 class MyPageMainFragment : Fragment() {
-
     private lateinit var binding: FragmentMyPageMainBinding
     private lateinit var navController: NavController
     private lateinit var myPageFriendRequestAdapter: MyPageFriendRequestAdapter
     private lateinit var myPageFriendThumbnailAdapter: MyPageFriendThumbnailAdapter
     private lateinit var viewModel: MyPageViewModel
-
-
-
-
+    private val currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getMyPageDataFromBack()
-
+        var friendId: Int? = null
+        if (GlobalAplication.preferences.getInt("friendId", -1) == -1) {
+            friendId = currentUser
+        } else {
+            friendId = GlobalAplication.preferences.getInt("friendId", -1)
+        }
+        Log.d("friendId", "${friendId}")
+        getMyPageDataFromBack(currentUser, friendId!!)
         // 네비게이션 세팅
         setNavigation()
         // 페이지 이동
+        redirectAllFriendsPage()
         redirectPage()
 
-        redirectAllFriendsPage()
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,40 +61,43 @@ class MyPageMainFragment : Fragment() {
 
         return binding.root
     }
-    fun getMyPageDataFromBack() {
-
+    fun getMyPageDataFromBack(currentUser:Int , friendId: Int) {
         val repository = MypageRepo()
         val myPageViewModelFactory = MyPageViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
-        viewModel.getMyPage(viewModel.friendId)
+
+        viewModel.getMyPage(currentUser, friendId)
         viewModel.myPageList.observe(viewLifecycleOwner, Observer {
             Log.i("데이터왔다.", "${it.friendDtoList}")
-
             // 상단 프로필 이미지 렌더링
             getMyPageProfileInfo(it)
-
             // 중단 친구목록 이미지 렌더링
-            getMyPageFriendList(it.friendDtoList)
-
+            if (it.friendDtoList != null) {
+                getMyPageFriendList(it.friendDtoList)
+            }
             //하단 친구 요청 이미지 렌더링
-            getMyPageFriendRequestList(it.friendRequestDtoList)
-
-            acceptFriendRequest()
-
-            refuseFriendRequest()
-
-            moveToFriendProfileFromFriendThumbnail()
-
+            if (it.friendRequestDtoList != null) {
+                Log.d("friendRequestDtoList in frag", "${it.friendRequestDtoList}")
+                getMyPageFriendRequestList(it.friendRequestDtoList)
+                moveToFriendProfileFromMyPageFriendThumbnail()
+            }
             // 모든 친구 보기로 이동
-            redirectAllFriendsPage()
         })
+
+
 
     }
     // 유저 프로필정보 가져오기
     fun getMyPageProfileInfo(getMyPageRes: GetMyPageRes) {
-        binding.profileOptionBtn.visibility = View.GONE
-        binding.friendRequestBtn.visibility = View.GONE
-        binding.chattingBtn.visibility = View.GONE
+        if(currentUser == viewModel.friendId) {
+            binding.profileOptionBtn.visibility = View.GONE
+            binding.friendRequestBtn.visibility = View.GONE
+            binding.chattingBtn.visibility = View.GONE}
+         else {
+            binding.profileOptionBtn.visibility = View.VISIBLE
+            binding.friendRequestBtn.visibility = View.VISIBLE
+            binding.chattingBtn.visibility = View.VISIBLE
+        }
         Glide.with(this).load(getMyPageRes.profileImageUrl).into(binding.myPageProfilePicture)
         binding.myPageUserName.text = getMyPageRes.nickname
         binding.myPageUserMail.text = getMyPageRes.email
@@ -100,8 +107,6 @@ class MyPageMainFragment : Fragment() {
     fun sendFriendRequest() {
 
     }
-
-
     // 친구목록 썸네일들 띄워주기
     fun getMyPageFriendList(friendDtoList: MutableList<FriendDtoList>) {
         binding.friendListLength.text = "친구 ${friendDtoList.size}명"
@@ -111,19 +116,13 @@ class MyPageMainFragment : Fragment() {
         val layout = GridLayoutManager(requireContext(), 3)
         layout.orientation = LinearLayoutManager.VERTICAL
         binding.friendListThumbnailItem.layoutManager = layout
-
-
-
     }
 
     fun redirectAllFriendsPage() {
         binding.redirectAllFriendPageBtn.setOnClickListener {
-
             navController.navigate(R.id.action_myPageMainFragment_to_myAllFriendsFragment)
         }
     }
-
-
     // 네비게이션 세팅
     private fun setNavigation(){
         val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -139,32 +138,41 @@ class MyPageMainFragment : Fragment() {
 
     // 친구요청목록리스트띄워주기
     fun getMyPageFriendRequestList(friendRequestDtoList: MutableList<FriendRequestDtoList>) {
-        binding.friendRequestLength.text = friendRequestDtoList.size.toString()
-        myPageFriendRequestAdapter = MyPageFriendRequestAdapter()
-        myPageFriendRequestAdapter.itemList = friendRequestDtoList
-        binding.myPageFriendRequestView.adapter = myPageFriendRequestAdapter
-        binding.myPageFriendRequestView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-    }
 
-    fun moveToFriendProfileFromFriendThumbnail() {
+        if (currentUser.equals(viewModel.friendId)) {
+            binding.friendRequestNumText.visibility = View.VISIBLE
+            binding.myPageFriendRequestView.visibility = View.VISIBLE
+            binding.friendRequestLength.text = friendRequestDtoList.size.toString()
+            myPageFriendRequestAdapter = MyPageFriendRequestAdapter()
+            myPageFriendRequestAdapter.itemList = friendRequestDtoList
+            binding.myPageFriendRequestView.adapter = myPageFriendRequestAdapter
+            binding.myPageFriendRequestView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            acceptFriendRequest()
+            refuseFriendRequest()
+        } else {
+            binding.friendRequestNumText.visibility = View.GONE
+            binding.myPageFriendRequestView.visibility = View.GONE
+        }
+    }
+    fun moveToFriendProfileFromMyPageFriendThumbnail() {
         myPageFriendThumbnailAdapter.settoFriendProfileClickListener(object : MyPageFriendThumbnailAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val friendId = viewModel.myPageList.value?.friendDtoList?.get(position)?.friendMemberId
-                viewModel.friendId = friendId
+                GlobalAplication.preferences.setInt("friendId", friendId!!)
                 Log.d("프래그먼트그거", "${friendId}")
-                viewModel.getMyPage(viewModel.friendId)
+                viewModel.getMyPage(currentUser, friendId)
+
             }
         })
     }
 
     fun acceptFriendRequest() {
         myPageFriendRequestAdapter.setAcceptFriendRequestClickListener(object : MyPageFriendRequestAdapter.OnItemClickListener {
-
             override fun onItemClick(view: View, position: Int) {
                 val friendRequestId = viewModel.myPageList.value?.friendRequestDtoList?.get(position)?.friendId
                 val friendNickname = viewModel.myPageList.value?.friendRequestDtoList?.get(position)?.nickname
-                viewModel.friendAcceptRequest(friendRequestId,1)
+                viewModel.friendAcceptRequest(currentUser,friendRequestId!!)
             }
 
         })
@@ -173,8 +181,7 @@ class MyPageMainFragment : Fragment() {
         myPageFriendRequestAdapter.setRefuseFriendRequestClickListener(object : MyPageFriendRequestAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val friendRequestId = viewModel.myPageList.value?.friendRequestDtoList?.get(position)?.friendId
-                val friendNickname = viewModel.myPageList.value?.friendRequestDtoList?.get(position)?.nickname
-                viewModel.refuseFriendRequest(friendRequestId, 1)
+                viewModel.refuseFriendRequest(currentUser, friendRequestId!!)
             }
         })
     }

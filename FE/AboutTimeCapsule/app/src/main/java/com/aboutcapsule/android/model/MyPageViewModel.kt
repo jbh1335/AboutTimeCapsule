@@ -1,5 +1,6 @@
 package com.aboutcapsule.android.model
 
+import android.provider.Settings.Global
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.aboutcapsule.android.data.mypage.AllFriendRes
 import com.aboutcapsule.android.data.mypage.FriendDtoList
 import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
 import com.aboutcapsule.android.data.mypage.GetMyPageRes
+import com.aboutcapsule.android.data.mypage.GetOtherPeoplePageRes
 import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -23,15 +25,15 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     lateinit var friendRequestList : MutableList<FriendRequestDtoList>
     var checkNickname: MutableLiveData<Boolean> = MutableLiveData()
     var isModifyNickname: MutableLiveData<Boolean> = MutableLiveData()
-
     var allFriendList : MutableLiveData<MutableList<AllFriendRes>> = MutableLiveData()
     var friendId :Int? = 0
-    var isCurrentUser: Boolean = false
+    var otherPeopleList : MutableLiveData<GetOtherPeoplePageRes> = MutableLiveData()
 
-    fun getMyPage(memberId:Int?) {
+
+    fun getMyPage(currentUser:Int, memberId:Int?) {
         viewModelScope.launch {
             friendId = memberId
-            val response = repository.getMyPage(memberId)
+            val response = repository.getMyPage(currentUser, memberId!!)
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
@@ -64,6 +66,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                     val profileImageUrl = friendReqeustDtoListObject.getString("profileImageUrl")
                     friendRequestList.add(FriendRequestDtoList(friendId, friendMemeberId, nickname, profileImageUrl))
                 }
+                Log.d("friendRequestList in viewmodel", "${friendRequestList}")
                 val getMyPageRes = GetMyPageRes(nickname, email, profileImageUrl, friendRequestCnt,friendCnt, friendList, friendRequestList)
                  myPageList.value = getMyPageRes
 
@@ -73,11 +76,11 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
             }
         }
     }
-    fun friendAcceptRequest(friendId: Int?, memberId:Int) {
+    fun friendAcceptRequest(currentUser: Int, friendId: Int?) {
         viewModelScope.launch {
             val response = repository.acceptFriendRequest(friendId)
             if (response.isSuccessful) {
-                getMyPage(memberId)
+                getMyPage(currentUser, currentUser)
                 Log.i("친구요청", "친구 요청 성공 ${response.body()?.string()}")
             }else {
                 Log.e("친구요청실패", "친구 요청 실패")
@@ -86,11 +89,11 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
         }
 
     }
-    fun refuseFriendRequest(friendId: Int?, memberId:Int) {
+    fun refuseFriendRequest(currentUser: Int, friendId:Int) {
         viewModelScope.launch {
             val response = repository.refuseFriendRequest(friendId)
             if (response.isSuccessful) {
-                getMyPage(memberId)
+                getMyPage(currentUser, currentUser)
                 Log.i("친구요청거절", "친구 요청거절 성공")
             } else {
                 Log.e("친구요청거절실패", "친구 요청거절 실패")
@@ -126,11 +129,10 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     }
     fun getMyAllFriendList(memberId: Int?) {
         viewModelScope.launch {
+            Log.d("모든친구불러오기멤버아이디", "${memberId}")
             val response = repository.getMyAllFriend(memberId)
-
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
-
                 val jsonObject = JSONObject(jsonString)
                 val dataArray = jsonObject.getJSONArray("data")
                 var dataList = mutableListOf<AllFriendRes>()
@@ -142,6 +144,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                     val profileImageUrl = dataObject.getString("profileImageUrl")
                     dataList.add(AllFriendRes(friendId, friendMemberId, nickname, profileImageUrl))
                 }
+                Log.d("모든친구불러오기", "${dataList}")
                 allFriendList.value = dataList
 
             }else {
@@ -150,13 +153,6 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
         }
     }
 
-    fun jsonParsing(response : Response<ResponseBody>) :JSONObject {
-        val jsonString = response.body()?.string()
-        val jsonObject = JSONObject(jsonString)
-        return jsonObject
-
-
-    }
 
     protected val exceptionHandler = CoroutineExceptionHandler(){ i, exception ->
         Log.d("ERR ::::", "에러 발생.... ${exception.message}");

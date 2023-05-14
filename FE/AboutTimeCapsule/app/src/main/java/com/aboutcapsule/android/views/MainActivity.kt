@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -22,9 +23,6 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-//    companion object{
-//        lateinit var preferences: PreferenceUtil
-//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,8 +52,11 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.myPageMainFragment -> {
-                    val bundle = bundleOf("friendId" to 2)
-                    navController.navigate(R.id.myPageMainFragment,bundle)
+                    val currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
+                    if (currentUser != -1) {
+                        navController.navigate(R.id.myPageMainFragment)
+                    }
+
                     true
                 }
                 else -> false

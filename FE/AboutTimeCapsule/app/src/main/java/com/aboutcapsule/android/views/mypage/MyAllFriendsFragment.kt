@@ -18,7 +18,8 @@ import com.aboutcapsule.android.data.mypage.AllFriendRes
 import com.aboutcapsule.android.databinding.FragmentMyAllFriendsBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
-import com.aboutcapsule.android.repository.mypage.MypageRepo
+import com.aboutcapsule.android.repository.MypageRepo
+import com.aboutcapsule.android.util.GlobalAplication
 
 class MyAllFriendsFragment : Fragment() {
 
@@ -48,12 +49,11 @@ class MyAllFriendsFragment : Fragment() {
 
     }
     fun getDataFromPreFragment() {
-
         val repository = MypageRepo()
         val myPageViewModelFactory = MyPageViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, myPageViewModelFactory).get(MyPageViewModel::class.java)
-        viewModel.friendId = requireArguments().getInt("friendId")
-        viewModel.getMyAllFriendList(viewModel.friendId)
+        val friendId = GlobalAplication.preferences.getInt("friendId", -1)
+        viewModel.getMyAllFriendList(friendId)
         viewModel.allFriendList.observe(viewLifecycleOwner, {
             getMyAllFriendData(it)
 
@@ -72,8 +72,8 @@ class MyAllFriendsFragment : Fragment() {
 
             override fun onItemClick(view: View, position: Int) {
                 val friendId = viewModel.allFriendList.value?.get(position)?.friendMemberId
-                viewModel.friendId = friendId
-                navController.navigate(R.id.action_myAllFriendsFragment_to_myPageMainFragment,)
+                GlobalAplication.preferences.setInt("friendId", friendId!!)
+                navController.navigate(R.id.action_myAllFriendsFragment_to_myPageMainFragment)
             }
         })
     }
