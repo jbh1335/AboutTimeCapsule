@@ -7,6 +7,8 @@ import com.timecapsule.memberservice.db.repository.FriendRepository;
 import com.timecapsule.memberservice.db.repository.MemberRepository;
 import com.timecapsule.memberservice.dto.FriendDto;
 import com.timecapsule.memberservice.dto.FriendRequestDto;
+import com.timecapsule.memberservice.exception.CustomException;
+import com.timecapsule.memberservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +27,10 @@ public class MemberServiceImpl implements MemberService{
     public SuccessRes<MypageRes> getMypage(int memberId, int otherMemberId) {
         // 내가 나의 마이페이지 조회 -> memberId, otherMemberId 같음
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         Optional<Member> oOtherMember = memberRepository.findById(otherMemberId);
-        Member otherMember = oOtherMember.orElseThrow(() -> new IllegalArgumentException("otherMember doesn't exist"));
+        Member otherMember = oOtherMember.orElseThrow(() -> new CustomException(ErrorCode.OTHERMEMBER_NOT_FOUND));
 
         // 친구 O -> 친구 삭제
         // 친구 X
@@ -49,7 +51,7 @@ public class MemberServiceImpl implements MemberService{
             for(Member mem : friendList) {
                 if(mem.getId() == memberId) {
                     Optional<Friend> oFriend = friendRepository.findByMemberIds(memberId, otherMemberId);
-                    Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+                    Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
 
                     friendId = friend.getId();
                     state = "친구 삭제";
@@ -110,12 +112,12 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public SuccessRes<List<FriendRes>> getFriendList(int memberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<FriendRes> friendResList = new ArrayList<>();
         friendList(member).forEach(mem -> {
             Optional<Friend> oFriend = friendRepository.findByMemberIds(memberId, mem.getId());
-            Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+            Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
 
             friendResList.add(FriendRes.builder()
                     .friendId(friend.getId())
@@ -131,10 +133,10 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public SuccessRes<Integer> requestFriend(int fromMemberId, int toMemberId) {
         Optional<Member> oFromMember = memberRepository.findById(fromMemberId);
-        Member fromMember = oFromMember.orElseThrow(() -> new IllegalArgumentException("fromMember doesn't exist"));
+        Member fromMember = oFromMember.orElseThrow(() -> new CustomException(ErrorCode.FROMMEMBER_NOT_FOUND));
 
         Optional<Member> oToMember = memberRepository.findById(toMemberId);
-        Member toMember = oToMember.orElseThrow(() -> new IllegalArgumentException("toMember doesn't exist"));
+        Member toMember = oToMember.orElseThrow(() -> new CustomException(ErrorCode.TOMEMBER_NOT_FOUND));
 
         Friend friend = friendRepository.save(Friend.builder()
                 .fromMember(fromMember)
@@ -148,7 +150,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public CommonRes cancelRequest(int friendId) {
         Optional<Friend> oFriend = friendRepository.findById(friendId);
-        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+        Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
 
         friendRepository.deleteById(friend.getId());
         return new CommonRes(true, "친구 요청을 취소했습니다.");
@@ -157,7 +159,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public CommonRes refuseRequest(int friendId) {
         Optional<Friend> oFriend = friendRepository.findById(friendId);
-        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+        Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
 
         friendRepository.deleteById(friend.getId());
         return new CommonRes(true, "친구 요청을 거절했습니다.");
@@ -166,11 +168,11 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public CommonRes acceptRequest(int friendId) {
         Optional<Friend> oFriend = friendRepository.findById(friendId);
-        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+        Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
         friendRepository.save(Friend.of(friend, true));
 
         Optional<Member> oMember = memberRepository.findById(friend.getFromMember().getId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         fcmService.friendRequestNotification(friend, member, "친구요청수락");
 
         return new CommonRes(true, "친구 요청을 수락했습니다.");
@@ -179,7 +181,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public CommonRes deleteFriend(int friendId) {
         Optional<Friend> oFriend = friendRepository.findById(friendId);
-        Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+        Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
 
         friendRepository.deleteById(friend.getId());
         return new CommonRes(true, "친구 관계를 끊었습니다.");
@@ -188,10 +190,10 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public SuccessRes<OtherProfileRes> getOtherProfile(int memberId, int otherMemberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         Optional<Member> oOtherMember = memberRepository.findById(otherMemberId);
-        Member otherMember = oOtherMember.orElseThrow(() -> new IllegalArgumentException("otherMember doesn't exist"));
+        Member otherMember = oOtherMember.orElseThrow(() -> new CustomException(ErrorCode.OTHERMEMBER_NOT_FOUND));
 
         // 친구 O -> 친구 삭제
         // 친구 X
@@ -209,7 +211,7 @@ public class MemberServiceImpl implements MemberService{
         for(Member mem : otherFriendList) {
             if(mem.getId() == memberId) {
                 Optional<Friend> oFriend = friendRepository.findByMemberIds(memberId, otherMemberId);
-                Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+                Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
 
                 friendId = friend.getId();
                 state = "친구 삭제";
@@ -314,7 +316,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Transactional
     public CommonRes updateNickname(int memberId, String nickname){
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         if(!memberRepository.existsByNickname(nickname)) {
             findMember.updateNickname(nickname);
