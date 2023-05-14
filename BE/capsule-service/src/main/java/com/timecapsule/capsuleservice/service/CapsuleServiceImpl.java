@@ -64,7 +64,12 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
 
-        CapsuleListRes capsuleListRes = getCapsuleList(memberId, member, "my", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
+        CapsuleDto capsuleDto = getCapsuleList(memberId, member, "my", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList, null);
+        CapsuleListRes capsuleListRes = CapsuleListRes.builder()
+                .unopenedCapsuleDtoList(capsuleDto.getUnopenedCapsuleDtoList())
+                .openedCapsuleDtoList(capsuleDto.getOpenedCapsuleDtoList())
+                .mapInfoDtoList(capsuleDto.getMapInfoDtoList())
+                .build();
         return new SuccessRes<>(true, "나의 캡슐 목록을 조회합니다.", capsuleListRes);
     }
 
@@ -76,15 +81,16 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
+        List<Integer> capsuleIdList = new ArrayList<>();
 
         for(Member myFriend : friendList(member)) {
-            CapsuleListRes newCapsuleList = getCapsuleList(memberId, myFriend, "friend", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList);
+            CapsuleDto capsuleDto = getCapsuleList(memberId, myFriend, "friend", unopenedCapsuleDtoList, openedCapsuleDtoList, mapInfoDtoList, capsuleIdList);
 
-            unopenedCapsuleDtoList = newCapsuleList.getUnopenedCapsuleDtoList();
-            openedCapsuleDtoList = newCapsuleList.getOpenedCapsuleDtoList();
-            mapInfoDtoList = newCapsuleList.getMapInfoDtoList();
+            unopenedCapsuleDtoList = capsuleDto.getUnopenedCapsuleDtoList();
+            openedCapsuleDtoList = capsuleDto.getOpenedCapsuleDtoList();
+            mapInfoDtoList = capsuleDto.getMapInfoDtoList();
+            capsuleIdList = capsuleDto.getCapsuleIdList();
         }
-
 
         CapsuleListRes capsuleListRes = CapsuleListRes.builder()
                 .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
@@ -95,17 +101,21 @@ public class CapsuleServiceImpl implements CapsuleService {
         return new SuccessRes<>(true, "친구의 캡슐 목록을 조회합니다.", capsuleListRes);
     }
 
-    private CapsuleListRes getCapsuleList(int myId, Member member, String who,
+    private CapsuleDto getCapsuleList(int myId, Member member, String who,
                                           List<UnopenedCapsuleDto> unopenedCapsuleDtoList,
                                           List<OpenedCapsuleDto> openedCapsuleDtoList,
-                                          List<MapInfoDto> mapInfoDtoList) {
+                                          List<MapInfoDto> mapInfoDtoList, List<Integer> capsuleIdList) {
 
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
             int capsuleId = capsule.getId();
 
             if(capsule.isDeleted()) continue;
-            if(who.equals("friend") && capsule.getRangeType().equals("PRIVATE")) continue;
+            if(who.equals("friend")) {
+                if(capsuleIdList.contains(capsuleId)) continue;
+                if(capsule.getRangeType().equals("PRIVATE")) continue;
+                capsuleIdList.add(capsuleId);
+            }
 
             // 캡슐에 대한 열람 기록이 있는지 확인
             boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, myId);
@@ -153,10 +163,11 @@ public class CapsuleServiceImpl implements CapsuleService {
         Collections.sort(unopenedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
         Collections.sort(openedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
 
-        return CapsuleListRes.builder()
+        return CapsuleDto.builder()
                 .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
                 .openedCapsuleDtoList(openedCapsuleDtoList)
                 .mapInfoDtoList(mapInfoDtoList)
+                .capsuleIdList(capsuleIdList)
                 .build();
     }
 
@@ -167,11 +178,14 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
+        List<Integer> capsuleIdList = new ArrayList<>();
 
         for(MemoryOpenMember memoryOpenMember : member.getMemoryOpenMemberList()) {
             Capsule capsule = memoryOpenMember.getCapsule();
             if(capsule.isDeleted()) continue;
+            if(capsuleIdList.contains(capsule.getId())) continue;
             int capsuleId = capsule.getId();
+            capsuleIdList.add(capsuleId);
 
             List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
             int memorySize = memoryList.size();
