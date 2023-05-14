@@ -6,10 +6,10 @@ import com.timecapsule.capsuleservice.api.response.CommonRes;
 import com.timecapsule.capsuleservice.api.response.SuccessRes;
 import com.timecapsule.capsuleservice.db.entity.Alarm;
 import com.timecapsule.capsuleservice.db.entity.Member;
-import com.timecapsule.capsuleservice.db.entity.Memory;
 import com.timecapsule.capsuleservice.db.repository.AlarmRepository;
 import com.timecapsule.capsuleservice.db.repository.MemberRepository;
-import com.timecapsule.capsuleservice.db.repository.MemoryRepository;
+import com.timecapsule.capsuleservice.exception.CustomException;
+import com.timecapsule.capsuleservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +43,7 @@ public class AlarmServiceImpl implements AlarmService{
     @Override
     public CommonRes saveAlarmToken(AlarmTokenReq alarmTokenReq) {
         Optional<Member> oMember = memberRepository.findById(alarmTokenReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         redisService.setData("alarm", member.getId(), alarmTokenReq.getToken());
         return new CommonRes(true, "알림 토큰을 저장했습니다.");
@@ -52,7 +52,7 @@ public class AlarmServiceImpl implements AlarmService{
     @Override
     public CommonRes deleteAlarmToken(int memberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         redisService.deleteData("alarm", memberId);
         return new CommonRes(true, "알림 토큰을 삭제했습니다.");

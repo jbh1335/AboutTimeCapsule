@@ -5,6 +5,8 @@ import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.*;
 import com.timecapsule.capsuleservice.db.repository.*;
 import com.timecapsule.capsuleservice.dto.*;
+import com.timecapsule.capsuleservice.exception.CustomException;
+import com.timecapsule.capsuleservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +45,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         Member sender = new Member();
         for(Integer id : capsuleRegistReq.getMemberIdList()) {
             Optional<Member> oMember = memberRepository.findById(id);
-            Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+            Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
             if(count == 0) sender = member;
             capsuleMemberRepository.save(CapsuleMember.builder().member(member).capsule(newCapsule).build());
@@ -58,7 +60,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public SuccessRes<CapsuleListRes> getMyCapsule(int memberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
@@ -76,7 +78,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public SuccessRes<CapsuleListRes> getFriendCapsule(int memberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
@@ -174,7 +176,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public SuccessRes<OpenedCapsuleListRes> getOpenCapsule(int memberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
         List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
@@ -225,7 +227,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public CommonRes deleteCapsule(int capsuleId) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+        Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
 
         for(Memory memory : capsule.getMemoryList()) {
             memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
@@ -240,7 +242,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public CommonRes modifyCapsuleRange(int capsuleId, RangeType rangeType) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+        Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
 
         capsuleRepository.save(Capsule.of(capsule, rangeType));
         return new CommonRes(true, "캡슐의 공개 범위를 변경했습니다.");
@@ -251,7 +253,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         // 전체 공개로 설정한 모르는 사람들의 캡슐 조회 (내꺼, 친구 X)
         // 오픈 기간 지났고 내가 열람한 적 없는 주변 1km 이내에 있는 모든 캡슐 조회
         Optional<Member> oMember = memberRepository.findById(aroundCapsuleReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<AroundCapsuleRes> aroundCapsuleResList = new ArrayList<>();
         List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
@@ -289,7 +291,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+        Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
 
         List<GroupMemberRes> groupMemberResList = new ArrayList<>();
         for(CapsuleMember capsuleMember : capsule.getCapsuleMemberList()) {
@@ -320,7 +322,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public SuccessRes<List<MapRes>> getMapCapsule(CapsuleDetailReq capsuleDetailReq) {
         Optional<Member> oMember = memberRepository.findById(capsuleDetailReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<MapRes> mapResList = new ArrayList<>();
         List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude());
@@ -397,7 +399,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     public SuccessRes<List<FriendRes>> getFriendList(int memberId) {
         Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<FriendRes> friendResList = new ArrayList<>();
         friendList(member).forEach(friend -> friendResList.add(FriendRes.builder()
@@ -411,7 +413,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     private Object capsuleDetail(CapsuleDetailReq capsuleDetailReq, String what) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleDetailReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+        Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
 
         String leftTime = "";
         String memberNickname = capsule.getCapsuleMemberList().get(0).getMember().getNickname();
