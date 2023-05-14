@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleGroupBinding
@@ -46,7 +47,6 @@ class CapsuleBoardFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_group,container,false)
 
-
         getCalendarDate()
 
         redirectPage()
@@ -73,9 +73,8 @@ class CapsuleBoardFragment : Fragment() {
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
         var groupOrprivate = true // 그룹,개인 판별
-        if(groupOrprivate) { // 그룹 일 경우
-            var list =
-                mutableListOf<String>("전체공개", "그룹공개", "공개범위 ▼") // 스피너 목록 placeholder 가장 마지막으로
+        if(!groupOrprivate) { // 그룹 일 경우
+            var list = mutableListOf<String>("전체공개", "그룹공개", "공개범위 ▼") // 스피너 목록 placeholder 가장 마지막으로
             var adapter = SpinnerGroupAvailAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -83,19 +82,10 @@ class CapsuleBoardFragment : Fragment() {
             ) // 목록 연결 ,simple요거는 안드로이드가 제공하는 거
             binding.spinnerOpenRange.adapter = adapter // 어댑터 연결
             binding.spinnerOpenRange.setSelection(2) // 스피너 최초로 볼 수 있는 값 ( placeholder) 가장 마지막 idx로 넣어주면 됨
-            binding.spinnerOpenRange.dropDownVerticalOffset =
-                dipToPixels(17f).toInt() // 드롭다운 내려오는 위치 ( 스피너 높이만큼 )
+            binding.spinnerOpenRange.dropDownVerticalOffset = dipToPixels(17f).toInt() // 드롭다운 내려오는 위치 ( 스피너 높이만큼 )
             binding.spinnerOpenRange.onItemSelectedListener = object : // 스피너 목록 클릭 시
-                AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    p0: AdapterView<*>?,
-                    p1: View?,
-                    position: Int,
-                    p3: Long
-                ) {
-                    if (binding.spinnerOpenRange.getItemAtPosition(position)
-                            .equals("공개범위 ▼")
-                    ) { // 플레이스 홀더 역할 클릭 시
+                AdapterView.OnItemSelectedListener { override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                    if (list.size==3 &&binding.spinnerOpenRange.getItemAtPosition(2).equals("공개범위 ▼")) { // 플레이스 홀더 역할 클릭 시
                         list.remove("공개범위 ▼") // placeholder 역할 제거해주기
                     } else { // 스피너 목록 클릭 시 ( 범위 설정 api )
                         var text = binding.spinnerOpenRange.getItemAtPosition(position)
@@ -127,8 +117,7 @@ class CapsuleBoardFragment : Fragment() {
                     position: Int,
                     p3: Long
                 ) {
-                    if (binding.spinnerOpenRange.getItemAtPosition(position)
-                            .equals("공개범위 ▼")
+                    if (list.size==4 && binding.spinnerOpenRange.getItemAtPosition(3).equals("공개범위 ▼")
                     ) { // 플레이스 홀더 역할 클릭 시
                         list.remove("공개범위 ▼") // placeholder 역할 제거해주기
                     } else { // 스피너 목록 클릭 시 ( 범위 설정 api )

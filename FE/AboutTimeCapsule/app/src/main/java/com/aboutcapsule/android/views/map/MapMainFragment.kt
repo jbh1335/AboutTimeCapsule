@@ -4,7 +4,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,8 +19,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
@@ -26,7 +31,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMapMainBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.views.MainActivity
+import com.aboutcapsule.android.views.mainpage.CapsuleListFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -36,6 +45,7 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
 
 class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback{
 
@@ -46,7 +56,14 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         private var bellFlag : Boolean = true // 상단 벨 제거
         private var btnFlag : Boolean = true   // 캡슐 등록버튼 view 용 변수
 
-        // ------------ 지도 ----------------
+        // ------ viewModel -----
+        private lateinit var viewModel : CapsuleViewModel
+
+        // ----------- gps ----------
+        var mLocationManager : LocationManager ?= null
+        var mLocationListener : LocationListener ?= null
+
+        // ------------ 지도 ---------------
         //클라이언트(사용자위치) 변수 ( provider -> 배터리 소모 줄이고 정확도 높이게 도와줌 )
         private lateinit var fusedLocationClient :FusedLocationProviderClient
         // 기본 위치
@@ -59,6 +76,9 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         private lateinit var mMap:GoogleMap
         // 사용자의 마지막 위치 가져오기
         private var lastKnownLocation: Location? = null
+        // Location 값으로 서버에 넘겨주기 위한 데이터
+//        private var apiKnownLocation: Location = (lastKnownLocation ?: null) as Location
+
         private val TAG = MapMainFragment::class.java.simpleName
 
         private const val DEFAULT_ZOOM = 15
@@ -92,19 +112,19 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         binding.mapFragment.getMapAsync(this)
 
         // 상단 벨 숨기기
-        bellToggle(bellFlag)
+        bellToggle(true)
 
         return binding.root
     }
 
     // 활동이 일시 중지되었을 경우 저장해놓은 정보를 가져오기 위해 저장
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        mMap?.let{
-//            outState.putParcelable(KEY_CAMERA_POSITION,mMap.cameraPosition)
-//            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
-//        }
-//        super.onSaveInstanceState(outState)
-//    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        mMap?.let{
+            outState.putParcelable(KEY_CAMERA_POSITION,mMap.cameraPosition)
+            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
+        }
+        super.onSaveInstanceState(outState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -126,10 +146,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
-            bellFlag=false
         }else{
             bell?.visibility = View.VISIBLE
-            bellFlag=true
         }
     }
 
@@ -143,14 +161,24 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
 
         // 개인 캡슐 클릭 시
         binding.capsuleRegistAloneBtn.setOnClickListener {
+            var bundle = bundleOf( "lat" to "${lastKnownLocation?.latitude}" , "lng" to "${lastKnownLocation?.longitude}" )
             navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistFragment)
         }
 
         // 그룹 캡슐 클릭 시
         binding.capsuleRegistGroupBtn.setOnClickListener{
-            navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistGroupFragment)
-        }
 
+            val geocoder = Geocoder(mainActivity)
+
+            val lat : Double = lastKnownLocation?.latitude!!
+            val lng : Double = lastKnownLocation?.longitude!!
+
+            val address = geocoder.getFromLocation(lat,lng,1)
+            Log.d("주소","$address")
+
+            var bundle = bundleOf( "lat" to "${lastKnownLocation?.latitude}", "lng" to "${lastKnownLocation?.longitude}")
+            navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistGroupFragment,bundle)
+        }
 
     }
 
@@ -207,6 +235,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         mMap = map
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
 
+        Log.d("사용자 위치 : 위도 / 전역변수 ", "${lastKnownLocation?.latitude}")
+        Log.d("사용자 위치 : 경도 / 전역변수 ", "${lastKnownLocation?.longitude}")
 
         // 지도 UI 업데이트
         updateLocationUI()
@@ -214,7 +244,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         // 사용자의 위치,카메라 가져오기
         getDeviceLocation()
 
-        val latLng = LatLng(37.566168, 126.901609)
+
 //        mMap.addMarker(MarkerOptions().position(latLng).title("여기"))
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
 //        mMap.isMyLocationEnabled = true
@@ -223,6 +253,13 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         enableMyLocation()
     }
 
+//    private fun callingApi(){
+//        val repository = CapsuleRepo()
+//        val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+//        viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+//        viewModel.getAroundCapsuleList(1,apiKnownLocation.latitude,apiKnownLocation.longitude)
+//
+//    }
 
     // 내 위치 권한 체크
     @SuppressLint("MissingPermission")
@@ -382,10 +419,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
     override fun onDestroy() {
         binding.mapFragment.onDestroy()
 
-        btnFlag=true
-
         // 상단 벨 다시 살리기
-        bellToggle(bellFlag)
+        bellToggle(false)
 
         super.onDestroy()
     }

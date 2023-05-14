@@ -1,10 +1,15 @@
 package com.aboutcapsule.android.repository
 
+import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.util.RetrofitManager
 import okhttp3.ResponseBody
 import retrofit2.Response
 
 class CapsuleRepo {
+
+    suspend fun capsuleAdd(postRegistCapsuleReq: PostRegistCapsuleReq) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.addCapsule(postRegistCapsuleReq)
+    }
 
     suspend fun myCapsuleList(memberId : Int) : Response<ResponseBody> {
         return RetrofitManager.capsuleInstance.api.findMyCapsule(memberId)
@@ -29,4 +34,14 @@ class CapsuleRepo {
     suspend fun groupMemberList(capsuleId : Int) : Response<ResponseBody>{
         return RetrofitManager.capsuleInstance.api.findGroupMember(capsuleId)
     }
+
+    suspend fun aroundCapsule(memberId: Int, latitude : Double , longitude : Double ) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findAroundCapsule(memberId,latitude,longitude)
+    }
+
+    suspend fun myFriendList(memberId : Int) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findFriendList(memberId)
+    }
+
+
 }

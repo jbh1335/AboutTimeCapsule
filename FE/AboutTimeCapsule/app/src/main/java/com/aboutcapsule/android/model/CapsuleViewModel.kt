@@ -4,18 +4,21 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aboutcapsule.android.data.capsule.AroundCapsuleDto
+import com.aboutcapsule.android.data.capsule.FriendDto
+import com.aboutcapsule.android.data.capsule.GetFriendListRes
+import com.aboutcapsule.android.data.capsule.GetAroundCapsuleListRes
 import com.aboutcapsule.android.data.capsule.GetCapsuleListRes
 import com.aboutcapsule.android.data.capsule.GetGroupMemberRes
 import com.aboutcapsule.android.data.capsule.GetVisitedListRes
 import com.aboutcapsule.android.data.capsule.GroupMemberDto
 import com.aboutcapsule.android.data.capsule.MapInfoDto
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
+import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.data.capsule.UnopenedCapsuleDto
 import com.aboutcapsule.android.repository.CapsuleRepo
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
-import java.lang.Exception
 
 class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     private var TAG = "CapsuleViewModel"
@@ -23,12 +26,29 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var friendCapsuleList : MutableLiveData<GetCapsuleListRes> = MutableLiveData()
     var visitedCapsuleList : MutableLiveData<GetVisitedListRes> = MutableLiveData()
     var groupMemberList : MutableLiveData<GetGroupMemberRes> = MutableLiveData()
+    var aroundCapsuleList : MutableLiveData<GetAroundCapsuleListRes> = MutableLiveData()
+    var friendList : MutableLiveData<GetFriendListRes> = MutableLiveData()
 
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
         lateinit var mapInfoDtoList : MutableList<MapInfoDto>
         lateinit var groupMemberDtoList : MutableList<GroupMemberDto>
+        lateinit var aroundCapsuleDtoList: MutableList<AroundCapsuleDto>
+        lateinit var myfriendDtoList : MutableList<FriendDto>
+    }
+
+    // 캡슐 등록
+    fun addCapsule(postRegistCapsuleReq: PostRegistCapsuleReq){
+        viewModelScope.launch {
+            val response = repository.capsuleAdd(postRegistCapsuleReq)
+            if(response.isSuccessful){
+                Log.d(TAG,"addCapsule : 응답 성공 / ${response.message()}")
+            }else{
+                Log.d(TAG,"addCapsule : 응답 실패 / ${response.message()}" )
+
+            }
+        }
     }
 
     // 나의 캡슐 조회
@@ -233,4 +253,61 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
             Log.d(TAG, "getGroupMemberList : 응답 실패/ ${response.message()}")
         }
     }
+
+    // 1km 이내 캡슐 조회
+    fun getAroundCapsuleList(capsuleId: Int, latitude : Double, longitude : Double){
+            viewModelScope.launch {
+                var response = repository.aroundCapsule(capsuleId,latitude,longitude)
+                if(response.isSuccessful){
+                    val jsonString = response.body()?.string()
+                    val jsonObject = JSONObject(jsonString)
+                    val aroundCapsuleDto = jsonObject.getJSONArray("data")
+                    aroundCapsuleDtoList = mutableListOf()
+                    for(i in 0 until aroundCapsuleDto.length()){
+                        val curr = aroundCapsuleDto.getJSONObject(i)
+                        val capsuleId = curr.getInt("capsuleId")
+                        val memberNickname = curr.getString("memberNickname")
+                        val address = curr.getString("address")
+                        aroundCapsuleDtoList.add(AroundCapsuleDto(capsuleId,memberNickname,address))
+                    }
+
+                    val getAroundCapsuleListRes = GetAroundCapsuleListRes(aroundCapsuleDtoList)
+
+                    aroundCapsuleList.value = getAroundCapsuleListRes
+
+                    Log.d(TAG, "getAroundCapsuleList : 응답 성공 / $jsonObject ")
+                }
+                Log.d(TAG, "getAroundCapsuleList : 응답 실패/ ${response.message()}")
+
+            }
+    }
+
+    // 친구 목록 조회
+    fun getMyFriendList(memberId :Int){
+        viewModelScope.launch {
+            var response =repository.myFriendList(memberId)
+            if(response.isSuccessful){
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val friendDto = jsonObject.getJSONArray("data")
+                myfriendDtoList = mutableListOf()
+                for(i in 0 until friendDto.length()){
+                    val curr = friendDto.getJSONObject(i)
+                    val memberId = curr.getInt("memberId")
+                    val nickname = curr.getString("nickname")
+                    val profileImageUrl = curr.getString("profileImageUrl")
+                    myfriendDtoList.add(FriendDto(memberId,nickname, profileImageUrl))
+                }
+
+                 val getMyFriendListRes = GetFriendListRes(myfriendDtoList)
+
+                friendList.value = getMyFriendListRes
+
+                Log.d(TAG, "getMyFriendList : 응답 성공 / $jsonObject ")
+            }else{
+                Log.d(TAG, "getMyFriendList : 응답 실패/ ${response.message()}")
+            }
+        }
+    }
+
 }

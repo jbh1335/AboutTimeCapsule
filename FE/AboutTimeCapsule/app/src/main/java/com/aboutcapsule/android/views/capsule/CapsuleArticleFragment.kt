@@ -19,6 +19,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleMineBinding
@@ -56,6 +57,8 @@ class CapsuleArticleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
 
         // 댓글 리사이클러뷰 세팅
         setCommentsRecycler()
@@ -142,9 +145,7 @@ class CapsuleArticleFragment : Fragment() {
             val tmp = CommentsData(img,name,date,commnet)
             itemList.add(tmp)
         }
-
         return itemList
-
     }
 
 
