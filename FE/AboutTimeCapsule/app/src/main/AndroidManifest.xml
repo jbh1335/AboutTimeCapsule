@@ -23,6 +23,11 @@
         </intent>
     </queries>
 
+    <!-- Sceneform requires OpenGL ES 3.0 or later. -->
+    <uses-feature
+        android:glEsVersion="0x00030000"
+        android:required="true" />
+
     <!-- ARCore가 장치에서 작동하는지 확인 -->
     <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
 
@@ -57,22 +62,22 @@
             android:name=".views.login.LoginAcitivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
 
         <activity
             android:name=".views.MainActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
 
@@ -98,6 +103,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_api_key}"/>
+
+        <!-- AR CORE -->
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="required" />
 
     </application>
 

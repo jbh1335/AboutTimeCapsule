@@ -113,6 +113,6 @@ dependencies {
 
     // ARCore 관련
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.15.0'
-    implementation 'com.google.ar.sceneform:core:1.15.0'
+    implementation 'com.google.ar.sceneform:core:1.17.1'
 
 }
