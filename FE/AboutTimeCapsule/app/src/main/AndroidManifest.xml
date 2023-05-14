@@ -90,10 +90,6 @@
             </intent-filter>
         </service>
 
-        <!-- 포그라운드 위치 정보 -->
-        <service android:name=".util.MyNavigationService"
-            android:foregroundServiceType="location"/>
-        
         <!-- 구글 지도  -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -22,6 +22,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleRegistGroupBinding
+import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -42,6 +43,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
        private var isGroup : Boolean = true
        private var lat : Double = 0.0
        private var lng : Double = 0.0
+       private lateinit var address : String
 
        private var memberNameList : ArrayList<String>? = null
        private var memberIdList : ArrayList<Int>? = null
@@ -100,8 +102,10 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         }
     }
     private fun getBundleData(){
-        lat = requireArguments().getDouble("lat")
-        lng = requireArguments().getDouble("lng")
+        // 친구 찾기 페이지 가버리면 날라가서 shared로 받음
+        lat = GlobalAplication.preferences.getString("lat","-1").toDouble()
+        lng = GlobalAplication.preferences.getString("lng","-1").toDouble()
+        address = GlobalAplication.preferences.getString("address","null")
     }
 
     // TODO : (그룹캡슐) 캡슐 생성버튼 클릭 시 , 캡슐생성 api 보내고 페이지 이동
@@ -110,9 +114,9 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         memberIdList = arguments?.getIntegerArrayList("memberIdList") // 멤버 아이디
         lat // 위도
         lng // 경도
-
+        address
         Log.d("APi_edittext","$text")
-
+        Log.d("APi_address" , "$address")
 
         binding.capsuleRegistGruopRegistbtn.setOnClickListener {
 //            if (text.isEmpty() || text.length < 11) {
@@ -127,7 +131,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
             Log.d("APi_submit","$lat")
             Log.d("APi_submit","$lng")
             Log.d("APi_submit","$isGroup")
-                navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
+            Log.d("APi_submit","$address")
+            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
 //            }
         }
     }
@@ -222,6 +227,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
     }
 
     override fun onDestroy() {
+
+        bottomNavToggle(false)
 
         binding.registGroupMapFragment.onDestroy()
         super.onDestroy()
