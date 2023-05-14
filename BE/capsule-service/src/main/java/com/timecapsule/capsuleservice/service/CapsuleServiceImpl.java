@@ -17,6 +17,7 @@ import java.util.*;
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
+    private final RedisService redisService;
     private final DistanceService distanceService;
     private final FcmService fcmService;
     private final CapsuleRepository capsuleRepository;
@@ -385,13 +386,18 @@ public class CapsuleServiceImpl implements CapsuleService {
         SuccessRes<CapsuleListRes> friendCapsule = getFriendCapsule(memberId);
         SuccessRes<OpenedCapsuleListRes> openCapsule = getOpenCapsule(memberId);
 
+        boolean isNewAlarm = true;
+        String newAlarm = String.valueOf(redisService.getDataValue("alarm_new", memberId));
+        if(newAlarm.equals("null") || newAlarm.equals("false")) isNewAlarm = false;
+
         CapsuleCountRes capsuleCountRes = CapsuleCountRes.builder()
                 .myCapsuleCnt(myCapsule.getData().getMapInfoDtoList().size())
                 .friendCapsuleCnt(friendCapsule.getData().getMapInfoDtoList().size())
                 .openCapsuleCnt(openCapsule.getData().getMapInfoDtoList().size())
+                .isNewAlarm(isNewAlarm)
                 .build();
 
-        return new SuccessRes<>(true, "나의 캡슐, 친구의 캡슐, 나의 방문 기록의 개수를 조회합니다.", capsuleCountRes);
+        return new SuccessRes<>(true, "나의 캡슐, 친구의 캡슐, 나의 방문 기록의 개수, 새로운 알림 여부를 조회합니다.", capsuleCountRes);
     }
 
     @Override
