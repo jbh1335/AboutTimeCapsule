@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.view.menu.MenuView.ItemView
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,7 +17,6 @@ import com.aboutcapsule.android.R
 import com.aboutcapsule.android.data.mypage.FriendDtoList
 import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
 import com.aboutcapsule.android.data.mypage.GetMyPageRes
-import com.aboutcapsule.android.data.mypage.GetOtherPeoplePageRes
 import com.aboutcapsule.android.databinding.FragmentMyPageMainBinding
 import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.MyPageViewModel
@@ -52,13 +49,14 @@ class MyPageMainFragment : Fragment() {
         redirectAllFriendsPage()
         redirectPage()
 
+
+
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_page_main, container, false)
-
         return binding.root
     }
     fun getMyPageDataFromBack(currentUser:Int , friendId: Int) {
@@ -97,7 +95,11 @@ class MyPageMainFragment : Fragment() {
             binding.profileOptionBtn.visibility = View.VISIBLE
             binding.friendRequestBtn.visibility = View.VISIBLE
             binding.chattingBtn.visibility = View.VISIBLE
+            binding.friendRequestBtn.text = viewModel.myPageList.value?.state
+            sendFriendRequest()
+
         }
+
         Glide.with(this).load(getMyPageRes.profileImageUrl).into(binding.myPageProfilePicture)
         binding.myPageUserName.text = getMyPageRes.nickname
         binding.myPageUserMail.text = getMyPageRes.email
@@ -105,7 +107,24 @@ class MyPageMainFragment : Fragment() {
 
     // 친구 요청 보내기
     fun sendFriendRequest() {
-
+        val requestBtn = binding.friendRequestBtn
+        requestBtn.setOnClickListener {
+            Log.d("친구요청클릭리스너", "${requestBtn.text}")
+            when(requestBtn.text) {
+                "친구 요청" -> {
+                    viewModel.sendFriendRequest(currentUser, viewModel.friendId!!)
+                }
+                "친구 삭제" -> {
+                    viewModel.deleteFriend(viewModel.friendReqId!!)
+                }
+                "요청 승인" -> {
+                    viewModel.friendAcceptRequest(currentUser, viewModel.friendReqId)
+                }
+                "요청 삭제" -> {
+                    viewModel.refuseFriendRequest(currentUser, viewModel.friendReqId)
+                }
+            }
+        }
     }
     // 친구목록 썸네일들 띄워주기
     fun getMyPageFriendList(friendDtoList: MutableList<FriendDtoList>) {

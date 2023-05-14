@@ -30,5 +30,13 @@ class MypageRepo {
         return RetrofitManager.memberInstacne.api.modifyNickname(memberId, nickname)
     }
 
+    suspend fun sendFriendRequest(fromMemberId: Int, toMemberId: Int) : Response<ResponseBody> {
+        return RetrofitManager.memberInstacne.api.sendFriendRequest(fromMemberId, toMemberId)
+    }
+
+    suspend fun deleteFriend(friendId: Int) : Response<ResponseBody> {
+        return RetrofitManager.memberInstacne.api.deleteFriend(friendId)
+    }
+
 
 }

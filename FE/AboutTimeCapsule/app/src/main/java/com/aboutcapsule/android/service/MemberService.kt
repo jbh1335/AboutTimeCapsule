@@ -34,6 +34,18 @@ interface MemberService {
     @GET("friend/{memberId}")
     suspend fun getMyAllFriend(@Path("memberId") memberId: Int?) : Response<ResponseBody>
 
+    @POST("request/{fromMemberId}/{toMemberId}")
+    suspend fun sendFriendRequest
+                (@Path("fromMemberId") fromMemberId: Int, @Path("toMemberId") toMemberId: Int)
+    : Response<ResponseBody>
+
+    @DELETE("friend/delete/{friendId}")
+    suspend fun deleteFriend(@Path("friendId") friendId: Int) : Response<ResponseBody>
+
+    @GET("search/{memberId}/{nickname}")
+    suspend fun findFriend(@Path("memberId") memberId: Int, @Path("nickname") nickname: String)
+    : Response<ResponseBody>
+
 
 
 

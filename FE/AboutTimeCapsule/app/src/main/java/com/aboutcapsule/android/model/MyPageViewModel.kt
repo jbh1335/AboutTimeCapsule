@@ -1,6 +1,5 @@
 package com.aboutcapsule.android.model
 
-import android.provider.Settings.Global
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,17 +8,14 @@ import com.aboutcapsule.android.data.mypage.AllFriendRes
 import com.aboutcapsule.android.data.mypage.FriendDtoList
 import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
 import com.aboutcapsule.android.data.mypage.GetMyPageRes
-import com.aboutcapsule.android.data.mypage.GetOtherPeoplePageRes
 import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
 import org.json.JSONObject
-import retrofit2.Response
 
 class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
+    var currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
     var myPageList : MutableLiveData<GetMyPageRes> = MutableLiveData()
     lateinit var friendList : MutableList<FriendDtoList>
     lateinit var friendRequestList : MutableList<FriendRequestDtoList>
@@ -27,7 +23,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     var isModifyNickname: MutableLiveData<Boolean> = MutableLiveData()
     var allFriendList : MutableLiveData<MutableList<AllFriendRes>> = MutableLiveData()
     var friendId :Int? = 0
-    var otherPeopleList : MutableLiveData<GetOtherPeoplePageRes> = MutableLiveData()
+    var friendReqId: Int = 0
 
 
     fun getMyPage(currentUser:Int, memberId:Int?) {
@@ -38,7 +34,10 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                 val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
                 val dataObjects = jsonObject.getJSONObject("data")
-
+                val friendDataId = dataObjects.getInt("friendId")
+                val otherMemberId = dataObjects.getInt("otherMemberId")
+                friendReqId = friendDataId
+                val state = dataObjects.getString("state")
                 val nickname = dataObjects.getString("nickname")
                 val email = dataObjects.getString("email")
                 val profileImageUrl = dataObjects.getString("profileImageUrl")
@@ -67,7 +66,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
                     friendRequestList.add(FriendRequestDtoList(friendId, friendMemeberId, nickname, profileImageUrl))
                 }
                 Log.d("friendRequestList in viewmodel", "${friendRequestList}")
-                val getMyPageRes = GetMyPageRes(nickname, email, profileImageUrl, friendRequestCnt,friendCnt, friendList, friendRequestList)
+                val getMyPageRes = GetMyPageRes(friendDataId, otherMemberId, state,nickname, email, profileImageUrl, friendRequestCnt,friendCnt, friendList, friendRequestList)
                  myPageList.value = getMyPageRes
 
                 Log.i("myPageLoadSuccess", "마이페이지 데이터를 성공적으로 받았습니다.: ${dataObjects}}")
@@ -76,11 +75,11 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
             }
         }
     }
-    fun friendAcceptRequest(currentUser: Int, friendId: Int?) {
+    fun friendAcceptRequest(currentUser: Int, friendReqId: Int?) {
         viewModelScope.launch {
-            val response = repository.acceptFriendRequest(friendId)
+            val response = repository.acceptFriendRequest(friendReqId)
             if (response.isSuccessful) {
-                getMyPage(currentUser, currentUser)
+                getMyPage(currentUser, friendId)
                 Log.i("친구요청", "친구 요청 성공 ${response.body()?.string()}")
             }else {
                 Log.e("친구요청실패", "친구 요청 실패")
@@ -89,11 +88,11 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
         }
 
     }
-    fun refuseFriendRequest(currentUser: Int, friendId:Int) {
+    fun refuseFriendRequest(currentUser: Int, friendReqId:Int) {
         viewModelScope.launch {
-            val response = repository.refuseFriendRequest(friendId)
+            val response = repository.refuseFriendRequest(friendReqId)
             if (response.isSuccessful) {
-                getMyPage(currentUser, currentUser)
+                getMyPage(currentUser, friendId)
                 Log.i("친구요청거절", "친구 요청거절 성공")
             } else {
                 Log.e("친구요청거절실패", "친구 요청거절 실패")
@@ -149,6 +148,26 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
 
             }else {
                 Log.e("모든친구불러오기실패", "${response.code()}, ${response.message()}")
+            }
+        }
+    }
+
+    fun sendFriendRequest(fromMemberId: Int, toMemberId: Int) {
+        viewModelScope.launch {
+            val response = repository.sendFriendRequest(fromMemberId, toMemberId)
+            if (response.isSuccessful) {
+                getMyPage(fromMemberId, toMemberId)
+            }
+        }
+    }
+
+    fun deleteFriend(friendReqId: Int) {
+        viewModelScope.launch {
+            val response = repository.deleteFriend(friendReqId)
+            Log.d("친구삭제", "${response.message()}")
+            Log.d("friendReqId", "${friendReqId}")
+            if (response.isSuccessful) {
+                getMyPage(currentUser, friendId)
             }
         }
     }

@@ -53,9 +53,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.myPageMainFragment -> {
                     val currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
-                    if (currentUser != -1) {
-                        navController.navigate(R.id.myPageMainFragment)
-                    }
+                    GlobalAplication.preferences.setInt("friendId", currentUser)
+                    navController.navigate(R.id.myPageMainFragment)
 
                     true
                 }
