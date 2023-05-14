@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class CapsuleDetailRes {
+    private int capsuleId;
     private String memberNickname;
     private int distance;
     private String leftTime;
@@ -16,7 +17,8 @@ public class CapsuleDetailRes {
     private String address;
 
     @Builder
-    public CapsuleDetailRes(String memberNickname, int distance, String leftTime, boolean isLocked, Double latitude, Double longitude, String address) {
+    public CapsuleDetailRes(int capsuleId, String memberNickname, int distance, String leftTime, boolean isLocked, Double latitude, Double longitude, String address) {
+        this.capsuleId = capsuleId;
         this.memberNickname = memberNickname;
         this.distance = distance;
         this.leftTime = leftTime;

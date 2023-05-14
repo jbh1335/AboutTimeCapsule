@@ -11,14 +11,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.ws.rs.Path;
 import java.util.List;
 
-//@Api(value = "캡슐 API", tags = {"Capsule"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/capsule")
 public class CapsuleController {
     private final CapsuleService capsuleService;
 
-//    @ApiOperation(value = "캡슐 등록", notes = "나의 캡슐 등록하기")
     @PostMapping("/regist")
     public SuccessRes<Integer> registCapsule(@RequestBody CapsuleRegistReq capsuleRegistReq) {
         return capsuleService.registCapsule(capsuleRegistReq);

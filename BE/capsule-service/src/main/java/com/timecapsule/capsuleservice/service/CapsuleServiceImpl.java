@@ -429,6 +429,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         if(what.equals("getCapsuleDetail")) {
             return CapsuleDetailRes.builder()
+                    .capsuleId(capsule.getId())
                     .memberNickname(memberNickname)
                     .distance(distance)
                     .leftTime(leftTime)
