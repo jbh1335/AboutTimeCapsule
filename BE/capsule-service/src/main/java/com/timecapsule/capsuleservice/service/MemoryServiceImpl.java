@@ -5,6 +5,8 @@ import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.*;
 import com.timecapsule.capsuleservice.db.repository.*;
 import com.timecapsule.capsuleservice.dto.MemoryDetailDto;
+import com.timecapsule.capsuleservice.exception.CustomException;
+import com.timecapsule.capsuleservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,10 +33,10 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public SuccessRes<Integer> registMemory(List<MultipartFile> multipartFileList, MemoryRegistReq memoryRegistReq) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(memoryRegistReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+        Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
 
         Optional<Member> oMember = memberRepository.findById(memoryRegistReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         String image = "";
         if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
@@ -61,7 +63,7 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public SuccessRes<MemoryRes> getMemory(MemoryReq memoryReq) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(memoryReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+        Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
 
         boolean isFirstGroup = capsule.isGroup();
         boolean isCapsuleMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(memoryReq.getCapsuleId(), memoryReq.getMemberId());
@@ -97,7 +99,7 @@ public class MemoryServiceImpl implements MemoryService {
                         isNowOpened = true;
 
                         Optional<Member> oMember = memberRepository.findById(memoryReq.getMemberId());
-                        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+                        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
                         memoryOpenMemberRepository.save(MemoryOpenMember.builder()
                                 .capsule(capsule)
@@ -139,7 +141,7 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public CommonRes deleteMemory(int memoryId) {
         Optional<Memory> oMemory = memoryRepository.findById(memoryId);
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+        Memory memory = oMemory.orElseThrow(() -> new CustomException(ErrorCode.MEMORY_NOT_FOUND));
 
         memory.getCommentList().forEach(comment -> commentRepository.save(Comment.of(comment, true)));
         memoryRepository.save(Memory.of(memory, true));
@@ -150,7 +152,7 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public SuccessRes<ModifyMemoryRes> getModifyMemoryInfo(int memoryId) {
         Optional<Memory> oMemory = memoryRepository.findById(memoryId);
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+        Memory memory = oMemory.orElseThrow(() -> new CustomException(ErrorCode.MEMORY_NOT_FOUND));
 
         ModifyMemoryRes modifyMemoryRes = ModifyMemoryRes.builder()
                 .memoryId(memoryId)
@@ -165,7 +167,7 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public CommonRes modifyMemory(List<MultipartFile> multipartFileList, MemoryModifyReq memoryModifyReq) {
         Optional<Memory> oMemory = memoryRepository.findById(memoryModifyReq.getMemoryId());
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+        Memory memory = oMemory.orElseThrow(() -> new CustomException(ErrorCode.MEMORY_NOT_FOUND));
 
         String image = memory.getImage();
         if(!multipartFileList.get(0).isEmpty()) image = awsS3Service.uploadFile(multipartFileList);
@@ -177,10 +179,10 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public CommonRes registComment(CommentRegistReq commentRegistReq) {
         Optional<Member> oMember = memberRepository.findById(commentRegistReq.getMemberId());
-        Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         Optional<Memory> oMemory = memoryRepository.findById(commentRegistReq.getMemoryId());
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+        Memory memory = oMemory.orElseThrow(() -> new CustomException(ErrorCode.MEMORY_NOT_FOUND));
 
         commentRepository.save(Comment.builder()
                 .member(member)
@@ -197,7 +199,7 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public SuccessRes<List<CommentRes>> getComment(int memoryId) {
         Optional<Memory> oMemory = memoryRepository.findById(memoryId);
-        Memory memory = oMemory.orElseThrow(() -> new IllegalArgumentException("memory doesn't exist"));
+        Memory memory = oMemory.orElseThrow(() -> new CustomException(ErrorCode.MEMORY_NOT_FOUND));
 
         List<CommentRes> commentResList = new ArrayList<>();
         for(Comment comment : memory.getCommentList()) {
@@ -221,7 +223,7 @@ public class MemoryServiceImpl implements MemoryService {
     @Override
     public CommonRes setGroupFirstOpenDate(GroupOpenDateReq groupOpenDateReq) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(groupOpenDateReq.getCapsuleId());
-        Capsule capsule = oCapsule.orElseThrow(() -> new IllegalArgumentException("capsule doesn't exist"));
+        Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
 
         boolean isLocked = (groupOpenDateReq.getOpenDate() != null && LocalDate.now().isBefore(groupOpenDateReq.getOpenDate()));
         capsule.getMemoryList().forEach(memory -> memoryRepository.save(Memory.of(memory, groupOpenDateReq.getOpenDate(), isLocked)));
