@@ -11,6 +11,8 @@ import com.timecapsule.memberservice.db.entity.Member;
 import com.timecapsule.memberservice.db.repository.AlarmRepository;
 import com.timecapsule.memberservice.db.repository.MemberRepository;
 import com.timecapsule.memberservice.dto.MessageDto;
+import com.timecapsule.memberservice.exception.CustomException;
+import com.timecapsule.memberservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +41,7 @@ public class FcmServiceImpl implements FcmService {
             FirebaseMessaging.getInstance().send(message);
 
             Optional<Member> oMember = memberRepository.findById(Integer.parseInt(messageDto.getDataMap().get("memberId")));
-            Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
+            Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
             alarmRepository.save(Alarm.builder()
                     .member(member)
