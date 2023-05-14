@@ -49,12 +49,6 @@ public class MemberController {
         return memberService.deleteFriend(friendId);
     }
 
-    @GetMapping("/other/profile/{memberId}/{otherMemberId}")
-    public SuccessRes<OtherProfileRes> getOtherProfile(@PathVariable("memberId") int memberId,
-                                                       @PathVariable("otherMemberId") int otherMemberId) {
-        return memberService.getOtherProfile(memberId, otherMemberId);
-    }
-
     @GetMapping("/search/{memberId}/{nickname}")
     public SuccessRes<List<SearchMemberRes>> searchMember(@PathVariable("memberId") int memberId,
                                                     @PathVariable("nickname") String nickname) {

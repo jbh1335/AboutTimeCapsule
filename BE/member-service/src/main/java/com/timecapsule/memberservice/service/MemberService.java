@@ -12,7 +12,6 @@ public interface MemberService {
     CommonRes refuseRequest(int friendId);
     CommonRes acceptRequest(int friendId);
     CommonRes deleteFriend(int friendId);
-    SuccessRes<OtherProfileRes> getOtherProfile(int memberId, int otherMemberId);
     SuccessRes<List<SearchMemberRes>> searchMember(int memberId, String nickname);
     CommonRes updateNickname(int fromMemberId, String nickname);
     SuccessRes checkNicknameDuplicate(String nickname);

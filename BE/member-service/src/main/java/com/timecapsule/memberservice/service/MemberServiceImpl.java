@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 
@@ -138,6 +139,9 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> oToMember = memberRepository.findById(toMemberId);
         Member toMember = oToMember.orElseThrow(() -> new CustomException(ErrorCode.TOMEMBER_NOT_FOUND));
 
+        Optional<Friend> oFriend = friendRepository.findByMemberIds(fromMemberId, toMemberId);
+        Friend friendRequest = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_ALREADY_EXISTS));
+
         Friend friend = friendRepository.save(Friend.builder()
                 .fromMember(fromMember)
                 .toMember(toMember)
@@ -185,74 +189,6 @@ public class MemberServiceImpl implements MemberService{
 
         friendRepository.deleteById(friend.getId());
         return new CommonRes(true, "친구 관계를 끊었습니다.");
-    }
-
-    @Override
-    public SuccessRes<OtherProfileRes> getOtherProfile(int memberId, int otherMemberId) {
-        Optional<Member> oMember = memberRepository.findById(memberId);
-        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
-        Optional<Member> oOtherMember = memberRepository.findById(otherMemberId);
-        Member otherMember = oOtherMember.orElseThrow(() -> new CustomException(ErrorCode.OTHERMEMBER_NOT_FOUND));
-
-        // 친구 O -> 친구 삭제
-        // 친구 X
-        // 1) 아무 사이도 X -> 친구 요청
-        // 2) 내가 요청을 받음 -> 요청 승인
-        // 3) 내가 요청을 보냄 -> 요청 취소
-
-        String state = "친구 요청";
-        int friendId = 0;
-        List<FriendDto> friendDtoList = new ArrayList<>();
-        List<Member> otherFriendList = friendList(otherMember);
-        int friendCnt = otherFriendList.size();
-
-        boolean isFriend = false;
-        for(Member mem : otherFriendList) {
-            if(mem.getId() == memberId) {
-                Optional<Friend> oFriend = friendRepository.findByMemberIds(memberId, otherMemberId);
-                Friend friend = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_NOT_FOUND));
-
-                friendId = friend.getId();
-                state = "친구 삭제";
-                isFriend = true;
-                break;
-            }
-        }
-
-        if(!isFriend) {
-            Optional<Friend> oFriend1 = friendRepository.findByIsAcceptedFalseAndFromMemberIdAndToMemberId(memberId, otherMemberId);
-            if(oFriend1.isPresent()) {
-                state = "요청 취소";
-                friendId = oFriend1.get().getId();
-            }
-
-            Optional<Friend> oFriend2 = friendRepository.findByIsAcceptedFalseAndFromMemberIdAndToMemberId(otherMemberId, memberId);
-            if(oFriend2.isPresent()) {
-                state = "요청 승인";
-                friendId = oFriend2.get().getId();
-            }
-        }
-
-        if(friendCnt > 6) otherFriendList.subList(0, 6).clear();
-        otherFriendList.forEach(friend -> friendDtoList.add(FriendDto.builder()
-                .friendMemberId(friend.getId())
-                .nickname(friend.getNickname())
-                .profileImageUrl(friend.getProfileImageUrl())
-                .build()));
-
-        OtherProfileRes otherProfileRes = OtherProfileRes.builder()
-                .friendId(friendId)
-                .memberId(otherMemberId)
-                .state(state)
-                .nickname(member.getNickname())
-                .email(member.getEmail())
-                .profileImageUrl(member.getProfileImageUrl())
-                .friendCnt(friendCnt)
-                .friendDtoList(friendDtoList)
-                .build();
-
-        return new SuccessRes<>(true, "다른 사람의 프로필을 조회합니다.", otherProfileRes);
     }
 
     @Override
