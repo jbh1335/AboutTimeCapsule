@@ -22,42 +22,89 @@ public class MemberServiceImpl implements MemberService{
     private final FriendRepository friendRepository;
 
     @Override
-    public SuccessRes<MypageRes> getMypage(int memberId) {
+    public SuccessRes<MypageRes> getMypage(int memberId, int otherMemberId) {
+        // 내가 나의 마이페이지 조회 -> memberId, otherMemberId 같음
         Optional<Member> oMember = memberRepository.findById(memberId);
         Member member = oMember.orElseThrow(() -> new IllegalArgumentException("member doesn't exist"));
 
+        Optional<Member> oOtherMember = memberRepository.findById(otherMemberId);
+        Member otherMember = oOtherMember.orElseThrow(() -> new IllegalArgumentException("otherMember doesn't exist"));
+
+        // 친구 O -> 친구 삭제
+        // 친구 X
+        // 1) 아무 사이도 X -> 친구 요청
+        // 2) 내가 요청을 받음 -> 요청 승인
+        // 3) 내가 요청을 보냄 -> 요청 취소
+
         List<FriendDto> friendDtoList = new ArrayList<>();
         List<FriendRequestDto> friendRequestDtoList = new ArrayList<>();
-        List<Member> myFriendList = friendList(member);
-        int friendCnt = myFriendList.size();
+        List<Member> friendList = friendList(otherMember);
+        int friendCnt = friendList.size();
 
-        if(friendCnt > 6) myFriendList.subList(0, 6).clear();
-        myFriendList.forEach(friend -> friendDtoList.add(FriendDto.builder()
+        // 다른 사람의 마이페이지 조회
+        String state = "친구 요청";
+        int friendId = 0;
+        boolean isFriend = false;
+        if(memberId != otherMemberId) {
+            for(Member mem : friendList) {
+                if(mem.getId() == memberId) {
+                    Optional<Friend> oFriend = friendRepository.findByMemberIds(memberId, otherMemberId);
+                    Friend friend = oFriend.orElseThrow(() -> new IllegalArgumentException("friend doesn't exist"));
+
+                    friendId = friend.getId();
+                    state = "친구 삭제";
+                    isFriend = true;
+                    break;
+                }
+            }
+
+            if(!isFriend) {
+                Optional<Friend> oFriend1 = friendRepository.findByIsAcceptedFalseAndFromMemberIdAndToMemberId(memberId, otherMemberId);
+                if(oFriend1.isPresent()) {
+                    state = "요청 취소";
+                    friendId = oFriend1.get().getId();
+                }
+
+                Optional<Friend> oFriend2 = friendRepository.findByIsAcceptedFalseAndFromMemberIdAndToMemberId(otherMemberId, memberId);
+                if(oFriend2.isPresent()) {
+                    state = "요청 승인";
+                    friendId = oFriend2.get().getId();
+                }
+            }
+        } else {
+            state = "본인 마이페이지를 조회합니다.";
+            member.getToMemberList().forEach(friend -> {
+                if(!friend.isAccepted()) friendRequestDtoList.add(FriendRequestDto.builder()
+                        .friendId(friend.getId())
+                        .friendMemberId(friend.getFromMember().getId())
+                        .nickname(friend.getFromMember().getNickname())
+                        .profileImageUrl(friend.getFromMember().getProfileImageUrl())
+                        .build());
+            });
+        }
+
+        if(friendCnt > 6) friendList.subList(0, 6).clear();
+        friendList.forEach(friend -> friendDtoList.add(FriendDto.builder()
                 .friendMemberId(friend.getId())
                 .nickname(friend.getNickname())
                 .profileImageUrl(friend.getProfileImageUrl())
                 .build()));
 
-        member.getToMemberList().forEach(friend -> {
-            if(!friend.isAccepted()) friendRequestDtoList.add(FriendRequestDto.builder()
-                    .friendId(friend.getId())
-                    .friendMemberId(friend.getFromMember().getId())
-                    .nickname(friend.getFromMember().getNickname())
-                    .profileImageUrl(friend.getFromMember().getProfileImageUrl())
-                    .build());
-        });
 
         MypageRes mypageRes = MypageRes.builder()
-                .nickname(member.getNickname())
-                .email(member.getEmail())
-                .profileImageUrl(member.getProfileImageUrl())
+                .friendId(friendId)
+                .otherMemberId(otherMemberId)
+                .state(state)
+                .nickname(otherMember.getNickname())
+                .email(otherMember.getEmail())
+                .profileImageUrl(otherMember.getProfileImageUrl())
                 .friendCnt(friendCnt)
                 .friendRequestCnt(friendRequestDtoList.size())
                 .friendDtoList(friendDtoList)
                 .friendRequestDtoList(friendRequestDtoList)
                 .build();
 
-        return new SuccessRes<>(true, "나의 마이페이지 정보를 조회합니다.", mypageRes);
+        return new SuccessRes<>(true, "마이페이지 정보를 조회합니다.", mypageRes);
     }
 
     @Override

@@ -9,6 +9,9 @@ import java.util.List;
 
 @Getter
 public class MypageRes {
+    private int friendId;
+    private int otherMemberId;
+    private String state;
     private String nickname;
     private String email;
     private String profileImageUrl;
@@ -18,7 +21,10 @@ public class MypageRes {
     private List<FriendRequestDto> friendRequestDtoList;
 
     @Builder
-    public MypageRes(String nickname, String email, String profileImageUrl, int friendCnt, int friendRequestCnt, List<FriendDto> friendDtoList, List<FriendRequestDto> friendRequestDtoList) {
+    public MypageRes(int friendId, int otherMemberId, String state, String nickname, String email, String profileImageUrl, int friendCnt, int friendRequestCnt, List<FriendDto> friendDtoList, List<FriendRequestDto> friendRequestDtoList) {
+        this.friendId = friendId;
+        this.otherMemberId = otherMemberId;
+        this.state = state;
         this.nickname = nickname;
         this.email = email;
         this.profileImageUrl = profileImageUrl;

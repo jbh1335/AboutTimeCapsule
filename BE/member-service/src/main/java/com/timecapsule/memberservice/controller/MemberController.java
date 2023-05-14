@@ -12,9 +12,10 @@ import java.util.List;
 @RequestMapping("/api/member")
 public class MemberController {
     private final MemberService memberService;
-    @GetMapping("/mypage/{memberId}")
-    public SuccessRes<MypageRes> getMypage(@PathVariable("memberId") int memberId) {
-        return memberService.getMypage(memberId);
+    @GetMapping("/mypage/{memberId}/{otherMemberId}")
+    public SuccessRes<MypageRes> getMypage(@PathVariable("memberId") int memberId,
+                                           @PathVariable("otherMemberId") int otherMemberId) {
+        return memberService.getMypage(memberId, otherMemberId);
     }
 
     @GetMapping("/friend/{memberId}")
