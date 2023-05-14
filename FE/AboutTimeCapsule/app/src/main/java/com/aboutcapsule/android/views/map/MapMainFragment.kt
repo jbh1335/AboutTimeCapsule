@@ -151,7 +151,10 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistGroupFragment)
         }
 
-
+        // AR 카메라 클릭 시
+        binding.cameraBtn.setOnClickListener{
+            navController.navigate(R.id.action_mapMainFragment_to_arFragment)
+        }
     }
 
     // 네비게이션 세팅

@@ -38,6 +38,9 @@
         <action
             android:id="@+id/action_mapMainFragment_to_capsuleRegistFragment"
             app:destination="@id/capsuleRegistFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_arFragment"
+            app:destination="@id/arFragment" />
     </fragment>
 
     <fragment
@@ -154,5 +157,10 @@
             android:id="@+id/action_capsuleGroupFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/arFragment"
+        android:name="com.aboutcapsule.android.views.ar.ArFragment"
+        android:label="ArFragment"
+        tools:layout="@layout/fragment_ar"/>
 
 </navigation>
