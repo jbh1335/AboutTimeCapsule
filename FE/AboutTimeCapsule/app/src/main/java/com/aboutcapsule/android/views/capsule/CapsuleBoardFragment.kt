@@ -203,7 +203,6 @@ class CapsuleBoardFragment : Fragment() {
             val dialog = CustomDialogMemberList()
             GlobalAplication.preferences.setInt("memberlist_capsuleId",1); // 캡슐 아이디 넘겨주기
             dialog.show(parentFragmentManager, "customDialog")
-
         }
 
         // 하단 '+'버튼 클릭 시 (Floating Action Btn )

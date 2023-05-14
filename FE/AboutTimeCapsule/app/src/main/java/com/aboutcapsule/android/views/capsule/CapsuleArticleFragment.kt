@@ -63,34 +63,34 @@ class CapsuleArticleFragment : Fragment() {
 
 
     // 팝업메뉴 세팅 (수정하기 ,삭제하기 )
-    private fun setPopUpMenu(){
-        binding.threeDots.setOnClickListener{
-         var popupMenu = PopupMenu(context, binding.threeDots)
-//            val popupMenu = PopupMenu(context, binding.threeDots, Gravity.NO_GRAVITY,R.style.articlePopupMenu,0)
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-                when(menuItem.itemId){
-                    R.id.menu_delete ->{
-                        true
-                    }
-                    R.id.menu_modify ->{
-                        true
-                    }
-                    else -> false
-                }
-            }
-            popupMenu.show()
-//            val customeStyle = R.style.articlePopupMenu
-//            if(customeStyle!=0){ // 팝업 커스텀 메뉴 존재하면 ( 혹시 몰라 유효성 처리 )
-//                val contextThemeWrapper = ContextThemeWrapper(context,customeStyle)
-//                popupMenu.menu.setGroupDividerEnabled(true)
-//            popupMenu.menuInflater.inflate(contextThemeWrapper,R.menu.article_popup_menu)
-//                popupMenu.menuInflater = MenuInflater(contextThemeWrapper)
+//    private fun setPopUpMenu(){
+//        binding.threeDots.setOnClickListener{
+//         var popupMenu = PopupMenu(context, binding.threeDots)
+////            val popupMenu = PopupMenu(context, binding.threeDots, Gravity.NO_GRAVITY,R.style.articlePopupMenu,0)
+//            popupMenu.setOnMenuItemClickListener { menuItem ->
+//                when(menuItem.itemId){
+//                    R.id.menu_delete ->{
+//                        true
+//                    }
+//                    R.id.menu_modify ->{
+//                        true
+//                    }
+//                    else -> false
+//                }
 //            }
-//            val popupStyle = com.nhn.android.oauth.R.attr.popupMenuStyle
-//            val popupStyleRes = if (popupStyle != 0) R.style.articlePopupMenu else popupStyle
-//            val popup = PopupMenu(context, binding.threeDots,Gravity.NO_GRAVITY,0,popupStyleRes)
-        }
-    }
+//            popupMenu.show()
+////            val customeStyle = R.style.articlePopupMenu
+////            if(customeStyle!=0){ // 팝업 커스텀 메뉴 존재하면 ( 혹시 몰라 유효성 처리 )
+////                val contextThemeWrapper = ContextThemeWrapper(context,customeStyle)
+////                popupMenu.menu.setGroupDividerEnabled(true)
+////            popupMenu.menuInflater.inflate(contextThemeWrapper,R.menu.article_popup_menu)
+////                popupMenu.menuInflater = MenuInflater(contextThemeWrapper)
+////            }
+////            val popupStyle = com.nhn.android.oauth.R.attr.popupMenuStyle
+////            val popupStyleRes = if (popupStyle != 0) R.style.articlePopupMenu else popupStyle
+////            val popup = PopupMenu(context, binding.threeDots,Gravity.NO_GRAVITY,0,popupStyleRes)
+//        }
+//    }
 
     private fun bottomDialog(){
         binding.threeDots.setOnClickListener{

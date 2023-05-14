@@ -198,6 +198,14 @@
                 app:tint="@color/white"
                 android:src="@drawable/plusimg"
                 />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/board_comments_recylcer_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                tools:listitem="@layout/article_recycler_item"/>
         </LinearLayout>
     </ScrollView>
 </layout>
