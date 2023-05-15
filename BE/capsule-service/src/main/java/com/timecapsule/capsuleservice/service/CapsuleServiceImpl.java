@@ -8,8 +8,19 @@ import com.timecapsule.capsuleservice.dto.*;
 import com.timecapsule.capsuleservice.exception.CustomException;
 import com.timecapsule.capsuleservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -19,6 +30,8 @@ import java.util.*;
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
+    @Value("${kakao.localMap.key}")
+    private String key;
     private final RedisService redisService;
     private final DistanceService distanceService;
     private final FcmService fcmService;
@@ -31,13 +44,16 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq) {
+        String buildingName = getKakaoAddress(String.valueOf(capsuleRegistReq.getLongitude()), String.valueOf(capsuleRegistReq.getLatitude()));
+        String address = (buildingName.equals("")) ? capsuleRegistReq.getAddress() : buildingName;
+
         Capsule capsule = Capsule.builder()
                 .title(capsuleRegistReq.getTitle())
                 .rangeType(capsuleRegistReq.getRangeType())
                 .isGroup(capsuleRegistReq.isGroup())
                 .latitude(capsuleRegistReq.getLatitude())
                 .longitude(capsuleRegistReq.getLongitude())
-                .address(capsuleRegistReq.getAddress())
+                .address(address)
                 .build();
 
         Capsule newCapsule = capsuleRepository.save(capsule);
@@ -56,6 +72,39 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         return new SuccessRes<>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
+    }
+
+    private String getKakaoAddress(String longitude, String latitude) {
+        String url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x="+longitude+"&y="+latitude;
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "KakaoAK " + key);
+
+            MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+            parameters.add("x", longitude);
+            parameters.add("y", latitude);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(headers), String.class);
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(result.getBody());
+
+            JSONObject meta = (JSONObject) jsonObject.get("meta");
+            long totalCount = (long) meta.get("total_count");
+            if(totalCount <= 0) return "";
+
+            JSONArray documents = (JSONArray) jsonObject.get("documents");
+            JSONObject address = (JSONObject) documents.get(0);
+            JSONObject roadAddress = (JSONObject) address.get("road_address");
+            if(roadAddress == null) return "";
+
+            String buildingName = (String) roadAddress.get("building_name");
+            return buildingName;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -109,6 +158,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                                           List<OpenedCapsuleDto> openedCapsuleDtoList,
                                           List<MapInfoDto> mapInfoDtoList, List<Integer> capsuleIdList) {
 
+
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
             int capsuleId = capsule.getId();
@@ -116,7 +166,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(capsule.isDeleted()) continue;
             if(who.equals("friend")) {
                 if(capsuleIdList.contains(capsuleId)) continue;
-                if(capsule.getRangeType().equals("PRIVATE")) continue;
+                if(capsule.getRangeType().equals(RangeType.PRIVATE)) continue;
                 capsuleIdList.add(capsuleId);
             }
 
@@ -257,14 +307,14 @@ public class CapsuleServiceImpl implements CapsuleService {
         Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<AroundCapsuleRes> aroundCapsuleResList = new ArrayList<>();
-        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLongitude(), aroundCapsuleReq.getLatitude());
         for(Capsule capsule : aroundCapsuleList) {
             if(capsule.isDeleted()) continue;
             // 내 권한 X
             boolean isMember = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), aroundCapsuleReq.getMemberId());
             if(isMember) continue;
 
-            if(!capsule.getRangeType().equals("ALL")) continue;
+            if(!capsule.getRangeType().equals(RangeType.ALL)) continue;
 
             boolean isFriendCapsule = false;
             for(Member myFriend : friendList(member)) {
@@ -287,6 +337,120 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         return new SuccessRes<>(true, "내 주변 캡슐을 조회합니다.", aroundCapsuleResList);
+    }
+
+    @Override
+    public SuccessRes<LinkedHashMap<String, List<Integer>>> getAroundPopularPlace(AroundCapsuleReq aroundCapsuleReq) {
+        Optional<Member> oMember = memberRepository.findById(aroundCapsuleReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        HashMap<String, List<Integer>> hashMap = new HashMap<>();
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLongitude(), aroundCapsuleReq.getLatitude());
+        for(Capsule capsule : aroundCapsuleList) {
+            if(capsule.isDeleted()) continue;
+
+            boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), aroundCapsuleReq.getMemberId());
+            if(!isMine && capsule.getRangeType().equals(RangeType.PRIVATE)) continue;
+
+            boolean isFriendCapsule = false;
+            for(Member myFriend : friendList(member)) {
+                if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) {
+                    isFriendCapsule = true;
+                    break;
+                }
+            }
+            if(!isFriendCapsule && !capsule.getRangeType().equals(RangeType.ALL)) continue;
+            if(isFriendCapsule && !isMine && capsule.getRangeType().equals(RangeType.GROUP)) continue;
+
+            List<Integer> capsuleIdList = new ArrayList<>();
+            if(hashMap.containsKey(capsule.getAddress())) {
+                capsuleIdList = hashMap.get(capsule.getAddress());
+                capsuleIdList.add(capsule.getId());
+            } else {
+                capsuleIdList.add(capsule.getId());
+                hashMap.put(capsule.getAddress(), capsuleIdList);
+            }
+        }
+
+        List<Map.Entry<String, List<Integer>>> entryList = new ArrayList<>(hashMap.entrySet());
+        entryList.sort(((o1, o2) -> o2.getValue().size() - o1.getValue().size()));
+
+        LinkedHashMap<String, List<Integer>> popularPlaceList = new LinkedHashMap<>();
+        for(Map.Entry<String, List<Integer>> entry : entryList) {
+            popularPlaceList.put(entry.getKey(), entry.getValue());
+        }
+
+        return new SuccessRes<>(true, "내 주변 인기 장소를 조회합니다.", popularPlaceList);
+    }
+
+    @Override
+    public SuccessRes<CapsuleListRes> getPopularPlaceCapsule(PopularPlaceReq popularPlaceReq) {
+        Optional<Member> oMember = memberRepository.findById(popularPlaceReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
+        List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
+        List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
+
+        for(Integer capsuleId : popularPlaceReq.getCapsuleIdList()) {
+            Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
+            Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
+
+            if(capsule.isDeleted()) continue;
+
+            // 캡슐에 대한 열람 기록이 있는지 확인
+            boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, popularPlaceReq.getMemberId());
+            boolean isLocked = false;
+
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
+            int memorySize = memoryList.size();
+            LocalDate openDate = null;
+            if(memorySize > 0) openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
+
+            // 미열람
+            if(!isOpened) {
+                // 잠김 여부
+                if(memorySize > 0 && LocalDate.now().isBefore(openDate)) isLocked = true;
+
+                unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
+                        .capsuleId(capsuleId)
+                        .openDate(openDate)
+                        .address(capsule.getAddress())
+                        .isLocked(isLocked)
+                        .build());
+            } else {
+                // 열람
+                int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, popularPlaceReq.getMemberId());
+                boolean isAdded = false;
+                if(memorySize != count) isAdded = true;
+
+                openedCapsuleDtoList.add(OpenedCapsuleDto.builder()
+                        .capsuleId(capsuleId)
+                        .openDate(openDate)
+                        .address(capsule.getAddress())
+                        .isAdded(isAdded)
+                        .build());
+            }
+
+            mapInfoDtoList.add(MapInfoDto.builder()
+                    .capsuleId(capsuleId)
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
+                    .isOpened(isOpened)
+                    .isLocked(isLocked)
+                    .build());
+        }
+
+        Collections.sort(unopenedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
+        Collections.sort(openedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
+
+        CapsuleListRes capsuleListRes = CapsuleListRes.builder()
+                .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
+                .openedCapsuleDtoList(openedCapsuleDtoList)
+                .mapInfoDtoList(mapInfoDtoList)
+                .build();
+
+        return new SuccessRes<>(true, "인기 장소의 캡슐 목록을 조회합니다.", capsuleListRes);
     }
 
     @Override
@@ -332,7 +496,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(capsule.isDeleted()) continue;
 
             boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
-            if(!isMine && capsule.getRangeType().equals("PRIVATE")) continue;
+            if(!isMine && capsule.getRangeType().equals(RangeType.PRIVATE)) continue;
             // 친구 공개 구현하기
             // 그룹 : 전체, 그룹
             // 나 : 전체, 친구공개, 개인
@@ -351,8 +515,8 @@ public class CapsuleServiceImpl implements CapsuleService {
             for(Member myFriend : friendList(member)) {
                 if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) isFriendCapsule = true;
             }
-            if(!isFriendCapsule && !capsule.getRangeType().equals("ALL")) continue;
-            if(isFriendCapsule && capsule.isGroup() && !capsule.getRangeType().equals("ALL")) continue;
+            if(!isFriendCapsule && !capsule.getRangeType().equals(RangeType.ALL)) continue;
+            if(isFriendCapsule && capsule.isGroup() && !capsule.getRangeType().equals(RangeType.ALL)) continue;
 
             boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
             boolean isLocked = false;

@@ -6,9 +6,8 @@ import com.timecapsule.capsuleservice.db.entity.RangeType;
 import com.timecapsule.capsuleservice.service.CapsuleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.ws.rs.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -51,6 +50,16 @@ public class CapsuleController {
     @GetMapping("/around")
     public SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
         return capsuleService.getAroundCapsule(aroundCapsuleReq);
+    }
+
+    @GetMapping("/around/popular")
+    public SuccessRes<LinkedHashMap<String, List<Integer>>> getAroundPopularPlace(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
+        return capsuleService.getAroundPopularPlace(aroundCapsuleReq);
+    }
+
+    @GetMapping("/around/popular/list")
+    public SuccessRes<CapsuleListRes> getPopularPlaceCapsule(@RequestBody PopularPlaceReq popularPlaceReq) {
+        return capsuleService.getPopularPlaceCapsule(popularPlaceReq);
     }
 
     @GetMapping("/group/{capsuleId}")

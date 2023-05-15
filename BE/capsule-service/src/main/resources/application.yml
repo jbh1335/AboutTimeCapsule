@@ -23,7 +23,7 @@ spring:
     name: capsule-service
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-cass-name: com.mysql.cj.jdbc.Driver
     # server
     url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
     username: root
@@ -68,6 +68,10 @@ cloud:
       bucket: abouttimecapsule
     stack:
       auto: false
+
+kakao:
+  localMap:
+    key: e9329f7adb809f29cfe94b3442fdaae6
 
 logging:
   level:
