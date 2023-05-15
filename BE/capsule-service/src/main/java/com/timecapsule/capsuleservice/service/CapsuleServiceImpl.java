@@ -8,8 +8,19 @@ import com.timecapsule.capsuleservice.dto.*;
 import com.timecapsule.capsuleservice.exception.CustomException;
 import com.timecapsule.capsuleservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -19,6 +30,8 @@ import java.util.*;
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
+    @Value("${kakao.localMap.key}")
+    private String key;
     private final DistanceService distanceService;
     private final FcmService fcmService;
     private final CapsuleRepository capsuleRepository;
@@ -30,13 +43,16 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq) {
+        String buildingName = getKakaoAddress(String.valueOf(capsuleRegistReq.getLongitude()), String.valueOf(capsuleRegistReq.getLatitude()));
+        String address = (buildingName.equals("")) ? capsuleRegistReq.getAddress() : buildingName;
+
         Capsule capsule = Capsule.builder()
                 .title(capsuleRegistReq.getTitle())
                 .rangeType(capsuleRegistReq.getRangeType())
                 .isGroup(capsuleRegistReq.isGroup())
                 .latitude(capsuleRegistReq.getLatitude())
                 .longitude(capsuleRegistReq.getLongitude())
-                .address(capsuleRegistReq.getAddress())
+                .address(address)
                 .build();
 
         Capsule newCapsule = capsuleRepository.save(capsule);
@@ -55,6 +71,39 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         return new SuccessRes<>(true, "캡슐 등록을 완료했습니다.", newCapsule.getId());
+    }
+
+    private String getKakaoAddress(String longitude, String latitude) {
+        String url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x="+longitude+"&y="+latitude;
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "KakaoAK " + key);
+
+            MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+            parameters.add("x", longitude);
+            parameters.add("y", latitude);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(headers), String.class);
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(result.getBody());
+
+            JSONObject meta = (JSONObject) jsonObject.get("meta");
+            long totalCount = (long) meta.get("total_count");
+            if(totalCount <= 0) return "";
+
+            JSONArray documents = (JSONArray) jsonObject.get("documents");
+            JSONObject address = (JSONObject) documents.get(0);
+            JSONObject roadAddress = (JSONObject) address.get("road_address");
+            if(roadAddress == null) return "";
+
+            String buildingName = (String) roadAddress.get("building_name");
+            return buildingName;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
