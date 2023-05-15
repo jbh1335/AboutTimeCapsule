@@ -305,14 +305,14 @@ public class CapsuleServiceImpl implements CapsuleService {
         Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<AroundCapsuleRes> aroundCapsuleResList = new ArrayList<>();
-        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLongitude(), aroundCapsuleReq.getLatitude());
         for(Capsule capsule : aroundCapsuleList) {
             if(capsule.isDeleted()) continue;
             // 내 권한 X
             boolean isMember = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), aroundCapsuleReq.getMemberId());
             if(isMember) continue;
 
-            if(!capsule.getRangeType().equals("ALL")) continue;
+            if(!capsule.getRangeType().equals(RangeType.ALL)) continue;
 
             boolean isFriendCapsule = false;
             for(Member myFriend : friendList(member)) {
@@ -342,32 +342,43 @@ public class CapsuleServiceImpl implements CapsuleService {
         Optional<Member> oMember = memberRepository.findById(aroundCapsuleReq.getMemberId());
         Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        LinkedHashMap<String, List<Integer>> popularPlaceMap = new LinkedHashMap<>();
-        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
+        HashMap<String, List<Integer>> hashMap = new HashMap<>();
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLongitude(), aroundCapsuleReq.getLatitude());
         for(Capsule capsule : aroundCapsuleList) {
             if(capsule.isDeleted()) continue;
 
             boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), aroundCapsuleReq.getMemberId());
-            if(!isMine && capsule.getRangeType().equals("PRIVATE")) continue;
+            if(!isMine && capsule.getRangeType().equals(RangeType.PRIVATE)) continue;
 
             boolean isFriendCapsule = false;
             for(Member myFriend : friendList(member)) {
-                if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) isFriendCapsule = true;
+                if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) {
+                    isFriendCapsule = true;
+                    break;
+                }
             }
-            if(!isFriendCapsule && !capsule.getRangeType().equals("ALL")) continue;
-            if(isFriendCapsule && capsule.isGroup() && !capsule.getRangeType().equals("ALL")) continue;
+            if(!isFriendCapsule && !capsule.getRangeType().equals(RangeType.ALL)) continue;
+            if(isFriendCapsule && !isMine && capsule.getRangeType().equals(RangeType.GROUP)) continue;
 
             List<Integer> capsuleIdList = new ArrayList<>();
-            if(popularPlaceMap.containsKey(capsule.getAddress())) {
-                capsuleIdList = popularPlaceMap.get(capsule.getAddress());
+            if(hashMap.containsKey(capsule.getAddress())) {
+                capsuleIdList = hashMap.get(capsule.getAddress());
                 capsuleIdList.add(capsule.getId());
             } else {
                 capsuleIdList.add(capsule.getId());
-                popularPlaceMap.put(capsule.getAddress(), capsuleIdList);
+                hashMap.put(capsule.getAddress(), capsuleIdList);
             }
         }
 
-        return new SuccessRes<>(true, "내 주변 인기 장소를 조회합니다.", popularPlaceMap);
+        List<Map.Entry<String, List<Integer>>> entryList = new ArrayList<>(hashMap.entrySet());
+        entryList.sort(((o1, o2) -> o2.getValue().size() - o1.getValue().size()));
+
+        LinkedHashMap<String, List<Integer>> popularPlaceList = new LinkedHashMap<>();
+        for(Map.Entry<String, List<Integer>> entry : entryList) {
+            popularPlaceList.put(entry.getKey(), entry.getValue());
+        }
+
+        return new SuccessRes<>(true, "내 주변 인기 장소를 조회합니다.", popularPlaceList);
     }
 
     @Override
