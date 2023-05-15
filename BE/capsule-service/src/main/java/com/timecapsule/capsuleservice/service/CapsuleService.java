@@ -5,6 +5,7 @@ import com.timecapsule.capsuleservice.api.response.*;
 import com.timecapsule.capsuleservice.db.entity.RangeType;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface CapsuleService {
@@ -15,6 +16,7 @@ public interface CapsuleService {
     CommonRes deleteCapsule(int capsuleId);
     CommonRes modifyCapsuleRange(int capsuleId, RangeType rangeType);
     SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(AroundCapsuleReq aroundCapsuleReq);
+    SuccessRes<LinkedHashMap<String, List<Integer>>>getAroundPopluarPlace(AroundCapsuleReq aroundCapsuleReq);
     SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId);
     SuccessRes<CapsuleDetailRes> getCapsuleDetail(CapsuleDetailReq capsuleDetailReq);
     SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(CapsuleDetailReq capsuleDetailReq);

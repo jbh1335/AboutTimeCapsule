@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.ws.rs.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -51,6 +52,11 @@ public class CapsuleController {
     @GetMapping("/around")
     public SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
         return capsuleService.getAroundCapsule(aroundCapsuleReq);
+    }
+
+    @GetMapping("/around/popular")
+    public SuccessRes<LinkedHashMap<String, List<Integer>>> getAroundPopluarPlace(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
+        return capsuleService.getAroundPopluarPlace(aroundCapsuleReq);
     }
 
     @GetMapping("/group/{capsuleId}")

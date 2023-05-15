@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface CapsuleRepository extends JpaRepository<Capsule, Integer> {
     Optional<Capsule> findById(int id);
-    @Query(value = "SELECT c.* FROM capsule c " +
+    @Query(value = "SELECT c FROM capsule c " +
             "WHERE ST_Distance_Sphere(point(c.longitude, c.latitude), point(:longitude, :latitude)) <= 1000",
             nativeQuery = true)
     List<Capsule> findAroundCapsule(@Param("latitude") Double latitude,

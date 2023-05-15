@@ -13,8 +13,8 @@ eureka:
     lease-expiration-duration-in-seconds: 2
 
   client:
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: https://k8b302.p.ssafy.io:8761/eureka
 
@@ -23,11 +23,14 @@ spring:
     name: capsule-service
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    # server
-    url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    driver-cass-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
     username: root
-    password: b302capsule
+    password: root
+    # server
+#    url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+#    username: root
+#    password: b302capsule
 
   jpa:
     open-in-view: false
@@ -68,6 +71,10 @@ cloud:
       bucket: abouttimecapsule
     stack:
       auto: false
+
+kakao:
+  localMap:
+    key: e9329f7adb809f29cfe94b3442fdaae6
 
 logging:
   level:

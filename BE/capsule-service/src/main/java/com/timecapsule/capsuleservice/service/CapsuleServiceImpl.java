@@ -338,6 +338,39 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
+    public SuccessRes<LinkedHashMap<String, List<Integer>>> getAroundPopluarPlace(AroundCapsuleReq aroundCapsuleReq) {
+        Optional<Member> oMember = memberRepository.findById(aroundCapsuleReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        LinkedHashMap<String, List<Integer>> popularPlaceMap = new LinkedHashMap<>();
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(aroundCapsuleReq.getLatitude(), aroundCapsuleReq.getLongitude());
+        for(Capsule capsule : aroundCapsuleList) {
+            if(capsule.isDeleted()) continue;
+
+            boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), aroundCapsuleReq.getMemberId());
+            if(!isMine && capsule.getRangeType().equals("PRIVATE")) continue;
+
+            boolean isFriendCapsule = false;
+            for(Member myFriend : friendList(member)) {
+                if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) isFriendCapsule = true;
+            }
+            if(!isFriendCapsule && !capsule.getRangeType().equals("ALL")) continue;
+            if(isFriendCapsule && capsule.isGroup() && !capsule.getRangeType().equals("ALL")) continue;
+
+            List<Integer> capsuleIdList = new ArrayList<>();
+            if(popularPlaceMap.containsKey(capsule.getAddress())) {
+                capsuleIdList = popularPlaceMap.get(capsule.getAddress());
+                capsuleIdList.add(capsule.getId());
+            } else {
+                capsuleIdList.add(capsule.getId());
+                popularPlaceMap.put(capsule.getAddress(), capsuleIdList);
+            }
+        }
+
+        return new SuccessRes<>(true, "내 주변 인기 장소를 조회합니다.", popularPlaceMap);
+    }
+
+    @Override
     public SuccessRes<List<GroupMemberRes>> getGroupMember(int capsuleId) {
         Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
         Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
