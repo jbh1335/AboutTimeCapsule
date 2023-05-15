@@ -30,14 +30,6 @@
                 android:fontFamily="@font/onemobile"
                 android:hint="친구를 검색해보세요" />
 
-            <!--            <ImageView-->
-            <!--                android:id="@+id/searchIconBtn"-->
-            <!--                android:layout_width="30dp"-->
-            <!--                android:layout_height="30dp"-->
-            <!--                android:layout_marginLeft="2dp"-->
-            <!--                android:layout_gravity="center"-->
-            <!--                android:src="@drawable/search" />-->
-
         </LinearLayout>
 
         <LinearLayout
@@ -79,7 +71,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/find_friends_recycler_view"
             android:layout_width="328dp"
-            android:layout_height="wrap_content"
+            android:layout_height="330dp"
             android:layout_marginLeft="32dp"
             android:layout_marginTop="55dp"
             android:orientation="vertical"

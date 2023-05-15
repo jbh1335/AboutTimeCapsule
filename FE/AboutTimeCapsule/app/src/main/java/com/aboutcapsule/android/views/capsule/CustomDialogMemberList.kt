@@ -3,19 +3,29 @@ package com.aboutcapsule.android.views.capsule
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.capsule.GroupMemberDto
 import com.aboutcapsule.android.databinding.FragmentCustomDialogMemberListBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 
 class CustomDialogMemberList : DialogFragment() {
 
     companion object{
       private var binding : FragmentCustomDialogMemberListBinding ? = null
       lateinit var dialogAdapter: DialogAdapter
+
+      lateinit var viewModel : CapsuleViewModel
     }
 
     override fun onCreateView(
@@ -25,15 +35,26 @@ class CustomDialogMemberList : DialogFragment() {
         binding= FragmentCustomDialogMemberListBinding.inflate(inflater,container,false)
 
         setDialog()
+
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setmemberListRecycler()
+        callingApi()
+    }
 
-        getmemberListsdatas()
+    private fun callingApi(){
+        var capsuleId = GlobalAplication.preferences.getInt("memberlist_capsuleId",0)
+
+        val repository = CapsuleRepo()
+        val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+        viewModel.getGroupMemberList(capsuleId)
+        viewModel.groupMemberList.observe(viewLifecycleOwner){
+            setmemberListRecycler(it.groupMemberList)
+        }
     }
 
     // 다이얼로그 테두리 설정
@@ -49,36 +70,18 @@ class CustomDialogMemberList : DialogFragment() {
     }
 
     // 멤버 리사이클러뷰 뷰
-    private fun setmemberListRecycler(){
-        val memberDataList = getmemberListsdatas()
+    private fun setmemberListRecycler(data : MutableList<GroupMemberDto>){
         dialogAdapter = DialogAdapter()
 
-        dialogAdapter.itemList = memberDataList
+        dialogAdapter.itemList = data
         binding?.memberListDialogRecyclerView?.adapter = dialogAdapter
     }
-
-
-    // 멤버 리사이클러뷰 아이템
-    private fun getmemberListsdatas() : MutableList<DialogData>{
-        var itemList = mutableListOf<DialogData>()
-
-        for(i in 1..9){
-            var name = "user ${i}"
-            var img = R.drawable.heartimg
-            val tmp = DialogData(img,name)
-            itemList.add(tmp)
-        }
-
-        return itemList
-    }
-
 
     // 다이얼로그 없애기
     override fun onDestroy() {
         binding = null
+        GlobalAplication.preferences.getEditor().remove("memberlist_capsuleId") // 가지고 다니면 무거울까봐 지원주기 
         super.onDestroy()
     }
-
-
 
 }

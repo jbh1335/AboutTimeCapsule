@@ -60,7 +60,7 @@ class MainPageVisitedFragment : Fragment() {
         val pagerAdapter = PagerFragmentStateAdapter(requireActivity())
 
         pagerAdapter.addFragment(MainPageVistiedCapsuleListFragment())
-        pagerAdapter.addFragment(CapsuleMapFragment())
+        pagerAdapter.addFragment(MainPageVisitedCapsuleMapFragment())
 
         viewPager.adapter = pagerAdapter
 

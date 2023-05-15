@@ -4,14 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.lifecycle.ProcessLifecycleOwner.get
 import androidx.recyclerview.widget.RecyclerView
+import com.aboutcapsule.android.data.capsule.FriendDto
 import com.aboutcapsule.android.databinding.FindFriendRecyclerItemBinding
 import com.bumptech.glide.Glide
 
-class FindFriendAdapter(val onClickDeleteIcon : (findFriendData: FindFriendData )-> Unit) : RecyclerView.Adapter<FindFriendAdapter.ViewHolder>() , Filterable{
-    var itemList = mutableListOf<FindFriendData>()
-    var filterList = mutableListOf<FindFriendData>()
+class FindFriendAdapter(val onClickDeleteIcon : (friendDto: FriendDto )-> Unit) : RecyclerView.Adapter<FindFriendAdapter.ViewHolder>() , Filterable{
+    var itemList = mutableListOf<FriendDto>()
+    var filterList = mutableListOf<FriendDto>()
     var itemFilter = ItemFilter()
 
     override fun onCreateViewHolder(
@@ -28,15 +28,14 @@ class FindFriendAdapter(val onClickDeleteIcon : (findFriendData: FindFriendData 
         holder.binding.friendAddBtn.setOnClickListener{
             onClickDeleteIcon.invoke(itemList[position])
         }
+
     }
 
     inner class ViewHolder(val binding: FindFriendRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(findFriendData: FindFriendData) {
-            Glide.with(itemView).load(findFriendData.Img).into(binding.friendImg)
-            binding.friendName.text=findFriendData.name
-
+        fun bind(friendDto: FriendDto) {
+            Glide.with(itemView).load(friendDto.profileImageUrl).into(binding.friendImg)
+            binding.friendName.text=friendDto.nickname
         }
-
     }
 
     override fun getItemCount(): Int {
@@ -53,13 +52,12 @@ class FindFriendAdapter(val onClickDeleteIcon : (findFriendData: FindFriendData 
             if(str.isEmpty()){
                 filterList=itemList
             }else{
-                val filteringList = mutableListOf<FindFriendData>()
+                val filteringList = mutableListOf<FriendDto>()
 
                 for(item in itemList){
-                    if(item.name.contains(str))
+                    if(item.nickname.contains(str))
                         filteringList.add(item)
                 }
-
                 filterList = filteringList
             }
 
@@ -70,7 +68,7 @@ class FindFriendAdapter(val onClickDeleteIcon : (findFriendData: FindFriendData 
         }
 
         override fun publishResults(c: CharSequence?, result: FilterResults?) {
-                filterList = result?.values as MutableList<FindFriendData>
+                filterList = result?.values as MutableList<FriendDto>
                 notifyDataSetChanged()
         }
 
