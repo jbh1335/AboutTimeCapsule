@@ -1,5 +1,6 @@
 package com.aboutcapsule.android.views.ar;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 
@@ -12,6 +13,12 @@ import com.google.ar.core.Session;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.core.exceptions.UnavailableException;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import uk.co.appoly.arcorelocation.LocationScene;
 
@@ -46,6 +53,27 @@ public class ArActivity extends AppCompatActivity {
                 finish(); // 이전 Fragment이 없으면 현재 Activity를 종료합니다.
             }
         });
+
+        //TODO : AR 객체 세팅
+        //AR 객체
+        ViewRenderable.builder()
+                .setView(getApplication(), R.layout.ar_item) // 이미지를 로드할 레이아웃을 설정
+                .build()
+                .thenAccept(viewRenderable -> {
+                    // 이미지를 렌더링할 노드 생성
+                    Node imageNode = new Node();
+                    imageNode.setRenderable(viewRenderable);
+
+                    // 노드 위치 및 크기 설정
+                    imageNode.setLocalPosition(new Vector3(0.0f, 0.0f, -1.0f));
+                    imageNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+
+                    // ARCore의 기본 좌표계를 기준으로 y축 기준으로 180도 회전하여 이미지를 뒤집음
+                    imageNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 180));
+
+                    // 노드를 씬에 추가
+                    arSceneView.getScene().addChild(imageNode);
+                });
     }
 
     @Override
