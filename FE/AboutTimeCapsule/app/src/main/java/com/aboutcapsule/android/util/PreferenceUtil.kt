@@ -37,5 +37,4 @@ class PreferenceUtil(context:Context) {
         editor.clear()
         editor.commit()
     }
-
 }

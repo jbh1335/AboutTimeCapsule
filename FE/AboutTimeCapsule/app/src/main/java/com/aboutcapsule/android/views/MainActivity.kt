@@ -1,11 +1,19 @@
 package com.aboutcapsule.android.views
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
@@ -14,10 +22,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
 import com.aboutcapsule.android.util.GlobalAplication
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,12 +36,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         initBinding()
+
         initNavigation()
         initFirebase()
         bottomNav()
-
-        // sharedPreference
-//        preferences = PreferenceUtil(applicationContext)
 
     }
 
@@ -69,7 +76,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d("firebaseToken", "${task.result}")
             }
         }
-
     }
 
     private fun initNavigation() {
@@ -97,10 +103,5 @@ class MainActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
         return super.dispatchTouchEvent(ev)
     }
-
-    fun setCurrentUser() {
-
-    }
-
 }
 

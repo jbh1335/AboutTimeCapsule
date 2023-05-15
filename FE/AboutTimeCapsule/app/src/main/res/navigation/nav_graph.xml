@@ -133,12 +133,15 @@
     </fragment>
     <fragment
         android:id="@+id/capsuleMineFragment"
-        android:name="com.aboutcapsule.android.views.capsule.CapsuleMineFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleArticleFragment"
         android:label="fragment_capsule_mine"
         tools:layout="@layout/fragment_capsule_mine">
         <action
             android:id="@+id/action_capsuleMineFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_capsuleMineFragment_to_capsuleModifyFragment"
+            app:destination="@id/capsuleModifyFragment" />
     </fragment>
     <fragment
         android:id="@+id/myAllFriendsFragment"
@@ -152,12 +155,21 @@
         tools:layout="@layout/fragment_my_all_friends"/>
     <fragment
         android:id="@+id/capsuleGroupFragment"
-        android:name="com.aboutcapsule.android.views.capsule.CapsuleGroupFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleBoardFragment"
         android:label="fragment_capsule_group"
         tools:layout="@layout/fragment_capsule_group">
         <action
             android:id="@+id/action_capsuleGroupFragment_to_notificationMainFragment"
             app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_capsuleGroupFragment_to_articleRegistFragment"
+            app:destination="@id/articleRegistFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/capsuleModifyFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleModifyFragment"
+        android:label="fragment_capsule_modify"
+        tools:layout="@layout/fragment_capsule_modify"/>
 
 </navigation>
