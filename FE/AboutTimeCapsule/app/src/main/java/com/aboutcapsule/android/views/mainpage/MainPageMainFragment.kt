@@ -1,31 +1,47 @@
 package com.aboutcapsule.android.views.mainpage
 
-import android.content.Intent
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.views.MainActivity
-import com.aboutcapsule.android.views.notification.NotificationMainFragment
+import com.aboutcapsule.android.views.map.MapMainFragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 
 class MainPageMainFragment : Fragment() {
 
     companion object {
-        lateinit var binding: FragmentMainPageMainBinding
-        lateinit var navController: NavController
+        private lateinit var navController: NavController
+        private lateinit var binding: FragmentMainPageMainBinding
         lateinit var section2adapter: Section2Adapter
         lateinit var section3adapter: Section3Adapter
+
+        private var memberId = 1 // sharedpreferences 에서 멤버id 가져오기
+
+        private lateinit var viewModel : CapsuleViewModel
     }
 
     override fun onCreateView(
@@ -35,12 +51,13 @@ class MainPageMainFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_main, container, false)
 
-//      최초 렌더링시,  말풍선 비활성화
+//      최초 렌더링시, 말풍선 비활성화
         binding.section2Banner.visibility = View.INVISIBLE
 
 //        물음표 버튼 토글버틀
         bannerToggle()
         return binding.root
+
     }
 
     //    리싸이클러뷰나 뷰페이저 ,,는  onViewCreated 에서 초기화 해주는 것이 좋다
@@ -58,9 +75,75 @@ class MainPageMainFragment : Fragment() {
 
         // 버튼 클릭시 페이지 전환
         redirectPages()
+
+        setLocationUpdates()
+    }
+
+    private fun setRecylcerView(){
+
+        val repository = CapsuleRepo()
+        val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+        viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+
+        // 2번째 , 내 주변의 타임 캡슐 세팅
+//        viewModel.getAroundCapsuleList(memberId,)
+
+
+        // 3번째 , 내 주변의 인기장소 세팅
+    }
+
+    fun setLocationUpdates(){
+        val lm = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10.0f, locationListener)
+    }
+    val locationListener = object : android.location.LocationListener {
+        override fun onLocationChanged(location: Location) {
+            // 위치가 변경되었을 때 호출됩니다.
+            val latitude = location.latitude
+            val longitude = location.longitude
+            Log.d("메인페이지 위치", "$latitude  $longitude" )
+        }
+
+        override fun onLocationChanged(locations: MutableList<Location>) {
+            super.onLocationChanged(locations)
+            //위치가 변경되어 위치가 일괄 전달될 때 호출됩니다.
+        }
+        override fun onProviderDisabled(provider: String) {
+            super.onProviderDisabled(provider)
+            // 사용자가 GPS를 끄는 등의 행동을 해서 위치값에 접근할 수 없을 때 호출됩니다.
+        }
+
+        override fun onProviderEnabled(provider: String) {
+            super.onProviderEnabled(provider)
+            // 사용자가 GPS를 on하는 등의 행동을 해서 위치값에 접근할 수 있게 되었을 때 호출됩니다.
+        }
+
+        override fun onFlushComplete(requestCode: Int) {
+            super.onFlushComplete(requestCode)
+            //플러시 작업이 완료되고 플러시된 위치가 전달된 후 호출됩니다.
+        }
     }
 
     private fun setSection2View(){
+
+
         val section2DataList = getSection2datas()
         section2adapter = Section2Adapter()
         //       어댑터에 api로 받아온 데이터 넘겨주기

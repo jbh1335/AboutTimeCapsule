@@ -17,6 +17,7 @@ import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.data.capsule.UnopenedCapsuleDto
 import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -42,8 +43,15 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     fun addCapsule(postRegistCapsuleReq: PostRegistCapsuleReq){
         viewModelScope.launch {
             val response = repository.capsuleAdd(postRegistCapsuleReq)
+            Log.d(TAG,"$response")
             if(response.isSuccessful){
-                Log.d(TAG,"addCapsule : 응답 성공 / ${response.message()}")
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val dataObjects = jsonObject.getInt("data")
+
+                GlobalAplication.preferences.setInt("registCapsuleId",dataObjects) // 캡슐 생성 시 id 가지고 추억 생성하기로 가기
+
+                Log.d(TAG,"addCapsule : 응답 성공 / $dataObjects") // 캡슐 ID
             }else{
                 Log.d(TAG,"addCapsule : 응답 실패 / ${response.message()}" )
 

@@ -1,35 +1,22 @@
 package com.aboutcapsule.android.views
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.ActivityMainBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
+import com.aboutcapsule.android.util.GlobalAplication
 import com.google.firebase.messaging.FirebaseMessaging
-import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,9 +25,7 @@ class MainActivity : AppCompatActivity() {
         initBinding()
 
         initNavigation()
-
         initFirebase()
-
         bottomNav()
 
     }
@@ -61,8 +46,10 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.myPageMainFragment -> {
-                    val bundle = bundleOf("friendId" to 2)
-                    navController.navigate(R.id.myPageMainFragment,bundle)
+                    val currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
+                    GlobalAplication.preferences.setInt("friendId", currentUser)
+                    navController.navigate(R.id.myPageMainFragment)
+
                     true
                 }
                 else -> false
@@ -104,4 +91,3 @@ class MainActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 }
-
