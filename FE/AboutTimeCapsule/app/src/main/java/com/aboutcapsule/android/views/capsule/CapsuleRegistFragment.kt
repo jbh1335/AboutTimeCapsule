@@ -32,7 +32,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 // 캡슐 등록 버튼 눌러서 넘어오면서 좌표 가져와서 지도에 뿌려주기
-class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
+class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
 
      companion object{
         lateinit var binding : FragmentCapsuleRegistBinding
@@ -40,10 +40,7 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
         private lateinit var mMap : GoogleMap
         lateinit var markerOptions: MarkerOptions
 
-
         var radioBtn :String= ""
-        var bottomNavFlag : Boolean = true
-        private var bellFlag : Boolean = true
         var editTitle : String = ""
     }
 
@@ -51,9 +48,10 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
         super.onCreate(savedInstanceState)
 
         // 바텀 네비 숨기기
-        bottomNavToggle()
+        bottomNavToggle(true)
+
         // 상단 벨 숨기기
-        bellToggle(bellFlag)
+        bellToggle(true)
 
     }
 
@@ -118,10 +116,9 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
     }
 
     // 바텀 네비 숨기기 토글
-    private fun bottomNavToggle(){
+    private fun bottomNavToggle(sign : Boolean){
         val mainActivity = activity as MainActivity
-        mainActivity.hideBottomNavi(bottomNavFlag)
-        bottomNavFlag= !bottomNavFlag
+        mainActivity.hideBottomNavi(sign)
     }
 
     // 상단바 벨 사라지게 / 페이지 전환 시 다시 생성
@@ -129,10 +126,8 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
-            bellFlag = false
         }else{
             bell?.visibility = View.VISIBLE
-            bellFlag = true
         }
 
     }
@@ -160,7 +155,7 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
 
     override fun onStart() {
         super.onStart()
-        binding.registAloneMapFragment.onStart()
+         binding.registAloneMapFragment.onStart()
     }
 
     override fun onStop() {
@@ -186,9 +181,9 @@ class CapsuleRegistFragment : Fragment() ,OnMapReadyCallback {
     override fun onDestroy() {
 
         // 바텀 네비 다시 살리기
-        bottomNavToggle()
+        bottomNavToggle(false)
         // 상단 벨 다시 살리기
-        bellToggle(bellFlag)
+        bellToggle(false)
 
         Log.d("editTitle",binding.capsuleRegistTitle.text.toString())
 

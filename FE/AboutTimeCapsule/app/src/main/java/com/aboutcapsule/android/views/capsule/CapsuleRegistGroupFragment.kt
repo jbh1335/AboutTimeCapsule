@@ -22,6 +22,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCapsuleRegistGroupBinding
+import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -38,10 +39,14 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
        lateinit var binding : FragmentCapsuleRegistGroupBinding
        lateinit var navController : NavController
        lateinit var markerOptions: MarkerOptions
+       private var radioBtn: String =""
+       private var isGroup : Boolean = true
+       private var lat : Double = 0.0
+       private var lng : Double = 0.0
+       private lateinit var address : String
 
-       var radioBtn: String =""
-       var bottomNavFlag : Boolean = true
-       private var bellFlag : Boolean = true
+       private var memberNameList : ArrayList<String>? = null
+       private var memberIdList : ArrayList<Int>? = null
 
        private lateinit var mMap : GoogleMap
 
@@ -51,9 +56,9 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         super.onCreate(savedInstanceState)
 
         // 바텀 네비 숨기기
-        bottomNavToggle()
+        bottomNavToggle(true)
         // 상단 벨 숨기기
-        bellToggle(bellFlag)
+        bellToggle(true)
     }
 
     override fun onCreateView(
@@ -62,6 +67,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_regist_group,container,false)
+
+        getBundleData()
 
         binding.registGroupMapFragment.onCreate(savedInstanceState)
         binding.registGroupMapFragment.getMapAsync(this)
@@ -80,11 +87,37 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 
         submitDatas()
 
+        setAddMemberView()
+    }
+
+    // 추가된 멤버들 보여주기
+    private fun setAddMemberView(){
+        memberNameList = arguments?.getStringArrayList("memberNameList")
+        var str =""
+        if(memberNameList!=null){
+            for(i in 0 until memberNameList!!.size){
+                str+= "@"+memberNameList!!.get(i)+" "
+            }
+            binding.addMemberView.text=str
+        }
+    }
+    private fun getBundleData(){
+        // 친구 찾기 페이지 가버리면 날라가서 shared로 받음
+        lat = GlobalAplication.preferences.getString("lat","-1").toDouble()
+        lng = GlobalAplication.preferences.getString("lng","-1").toDouble()
+        address = GlobalAplication.preferences.getString("address","null")
     }
 
     // TODO : (그룹캡슐) 캡슐 생성버튼 클릭 시 , 캡슐생성 api 보내고 페이지 이동
     private fun submitDatas(){
-        val text = binding.capsuleRegistGroupTitle.text.toString()
+        val text = binding.capsuleRegistGroupTitle.editableText // 제목
+        memberIdList = arguments?.getIntegerArrayList("memberIdList") // 멤버 아이디
+        lat // 위도
+        lng // 경도
+        address
+        Log.d("APi_edittext","$text")
+        Log.d("APi_address" , "$address")
+
         binding.capsuleRegistGruopRegistbtn.setOnClickListener {
 //            if (text.isEmpty() || text.length < 11) {
 //                Toast.makeText(requireContext(), "제목길이는 1~10글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
@@ -92,7 +125,14 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 //            } else {
 ////                Log.d("allData", radioBtn)
 //                Log.d("allData", binding.capsuleRegistGroupTitle.text.toString())
-                navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
+            Log.d("APi_submit","$text")
+            Log.d("APi_submit","$memberIdList")
+            Log.d("APi_submit","$radioBtn")
+            Log.d("APi_submit","$lat")
+            Log.d("APi_submit","$lng")
+            Log.d("APi_submit","$isGroup")
+            Log.d("APi_submit","$address")
+            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
 //            }
         }
     }
@@ -115,13 +155,17 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 R.id.radio_2type_group -> radioBtn="GROUP"
             }
         }
+        if(radioBtn=="ALL"){ // 선택후 친구 찾으러 갔을 경우 체크 상태로 유지
+            binding.radiogruop2type.check(R.id.radio_2type_all)
+        }else if (radioBtn=="GROUP"){
+            binding.radiogruop2type.check(R.id.radio_2type_group)
+        }
     }
 
     // 바텀 네비 숨기기 토글
-    private fun bottomNavToggle(){
+    private fun bottomNavToggle(sign : Boolean){
         val mainActivity = activity as MainActivity
-        mainActivity.hideBottomNavi(bottomNavFlag)
-        bottomNavFlag= !bottomNavFlag
+        mainActivity.hideBottomNavi(sign)
     }
 
     // 상단바 벨 사라지게 / 페이지 전환 시 다시 생성
@@ -129,10 +173,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
-            bellFlag = false
         }else{
             bell?.visibility = View.VISIBLE
-            bellFlag = true
         }
 
     }
@@ -145,10 +187,10 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         markerOptions = MarkerOptions()
         setCustomMarker()
 
-        val deajeonSS = LatLng(36.355038,127.298297)
+        val userLocation = LatLng(lat,lng)
 
-        mMap.addMarker(markerOptions.position(deajeonSS).title("대전 캠퍼스 "))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(deajeonSS,16f))
+        mMap.addMarker(markerOptions.position(userLocation))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,16f))
     }
 
     fun setCustomMarker(){
@@ -186,12 +228,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 
     override fun onDestroy() {
 
-        // 바텀 네비 다시 살리기
-        bottomNavToggle()
-        // 상단 벨 다시 살리기
-        bellToggle(bellFlag)
-
-        Log.d("editTitle", binding.capsuleRegistGroupTitle.text.toString())
+        bottomNavToggle(false)
 
         binding.registGroupMapFragment.onDestroy()
         super.onDestroy()
