@@ -43,6 +43,8 @@ import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.mainpage.CapsuleListFragment
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -71,7 +73,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         // ------ viewModel -----
         private lateinit var viewModel : CapsuleViewModel
 
-
         // ------------ 지도 ---------------
         //클라이언트(사용자위치) 변수 ( provider -> 배터리 소모 줄이고 정확도 높이게 도와줌 )
         private lateinit var fusedLocationClient :FusedLocationProviderClient
@@ -85,6 +86,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         private lateinit var mMap:GoogleMap
         // 사용자의 마지막 위치 가져오기
         private var lastKnownLocation: Location? = null
+        // 사용자 위치 콜백
+        private lateinit var locationCallback: LocationCallback
 
         private val TAG = MapMainFragment::class.java.simpleName
 
@@ -152,6 +155,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         // 캡슐 생성하기 버튼 클릭 시, view 띄워주기
         registBtnToggle()
 
+        callbackLocations()
     }
 
     // 상단바 벨 사라지게 / 페이지 전환 시 다시 생성
@@ -346,54 +350,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
         updateLocationUI()
-//        if (ActivityCompat.checkSelfPermission(
-//                requireContext(),
-//                ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                requireContext(),
-//                ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return
-//        }
-//        findCurrentPlace()
     }
-
-//    @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
-//    private fun findCurrentPlace() {
-//        // Use fields to define the data types to return.
-//        val placeFields: List<Place.Field> =
-//            listOf(Place.Field.NAME, Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
-//
-//        // Use the builder to create a FindCurrentPlaceRequest.
-//        val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
-//
-//        // Call findCurrentPlace and handle the response (first check that the user has granted permission).
-//        if (ContextCompat.checkSelfPermission(mainActivity, ACCESS_FINE_LOCATION) ==
-//            PackageManager.PERMISSION_GRANTED ||
-//            ContextCompat.checkSelfPermission(mainActivity, ACCESS_COARSE_LOCATION) ==
-//            PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // Retrieve likely places based on the device's current location
-//            lifecycleScope.launch {
-//                try {
-//                    val tmp =placesClient.findCurrentPlace(request)
-//                    Log.d("장소나오나","$tmp")
-//                   } catch (e: Exception) {
-//                    e.printStackTrace()
-//                }
-//            }
-//        } else {
-//            Log.d(TAG, "LOCATION permission not granted")
-//        }
-//    }
 
             @SuppressLint("MissingPermission")
     private fun updateLocationUI() {
@@ -447,6 +404,20 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             }
         }catch (e: SecurityException) { // 에러 발생
             Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    private fun callbackLocations(){
+        locationCallback = object : LocationCallback(){
+            override fun onLocationResult(locationResult: LocationResult) {
+                locationResult ?: return
+                for(location in locationResult.locations){
+                    lastKnownLocation = location
+                    val latlng = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
+
+                }
+            }
         }
     }
 
