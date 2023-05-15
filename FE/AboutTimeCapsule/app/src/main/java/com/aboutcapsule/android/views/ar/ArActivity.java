@@ -1,9 +1,10 @@
 package com.aboutcapsule.android.views.ar;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.aboutcapsule.android.R;
 import com.aboutcapsule.android.util.Utils;
@@ -19,6 +20,8 @@ public class ArActivity extends AppCompatActivity {
     private LocationScene locationScene;
     private boolean installRequested;
 
+    ImageView back_btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,11 +30,22 @@ public class ArActivity extends AppCompatActivity {
             // Not a supported device.
             return;
         }
-        Utils.checkPermissions(this);   // 권한 검사
+        Utils.checkPermissions(this); //권한 검사
 
-        //
+        //AR
         setContentView(R.layout.activity_ar);
         arSceneView = findViewById(R.id.ar_scene_view);
+
+        //뒤로가기
+        back_btn = (ImageView) findViewById(R.id.back_btn);
+        back_btn.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                fragmentManager.popBackStack(); // 이전 Fragment로 이동합니다.
+            } else {
+                finish(); // 이전 Fragment이 없으면 현재 Activity를 종료합니다.
+            }
+        });
     }
 
     @Override
@@ -94,5 +108,16 @@ public class ArActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         arSceneView.destroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack(); // 이전 Fragment로 이동합니다.
+        } else {
+            finish(); // 이전 Fragment이 없으면 현재 Activity를 종료합니다.
+        }
     }
 }
