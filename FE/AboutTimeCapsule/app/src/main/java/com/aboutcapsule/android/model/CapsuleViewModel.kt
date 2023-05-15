@@ -5,13 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aboutcapsule.android.data.capsule.AroundCapsuleDto
+import com.aboutcapsule.android.data.capsule.CapsuleCountRes
 import com.aboutcapsule.android.data.capsule.FriendDto
 import com.aboutcapsule.android.data.capsule.GetFriendListRes
 import com.aboutcapsule.android.data.capsule.GetAroundCapsuleListRes
+import com.aboutcapsule.android.data.capsule.GetCapsuleCountRes
 import com.aboutcapsule.android.data.capsule.GetCapsuleListRes
 import com.aboutcapsule.android.data.capsule.GetGroupMemberRes
+import com.aboutcapsule.android.data.capsule.GetMapRes
 import com.aboutcapsule.android.data.capsule.GetVisitedListRes
 import com.aboutcapsule.android.data.capsule.GroupMemberDto
+import com.aboutcapsule.android.data.capsule.MapDto
 import com.aboutcapsule.android.data.capsule.MapInfoDto
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
@@ -29,7 +33,8 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var groupMemberList : MutableLiveData<GetGroupMemberRes> = MutableLiveData()
     var aroundCapsuleList : MutableLiveData<GetAroundCapsuleListRes> = MutableLiveData()
     var friendList : MutableLiveData<GetFriendListRes> = MutableLiveData()
-
+    var capsuleCountDatas : MutableLiveData<GetCapsuleCountRes> = MutableLiveData()
+    var mapInfoList : MutableLiveData<GetMapRes> = MutableLiveData()
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
@@ -37,6 +42,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         lateinit var groupMemberDtoList : MutableList<GroupMemberDto>
         lateinit var aroundCapsuleDtoList: MutableList<AroundCapsuleDto>
         lateinit var myfriendDtoList : MutableList<FriendDto>
+        lateinit var mapDtoList : MutableList<MapDto>
     }
 
     // 캡슐 등록
@@ -317,5 +323,62 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
             }
         }
     }
+
+    fun getCapsuleCount(memberId: Int){
+        viewModelScope.launch {
+            val response = repository.capsuleCount(memberId)
+            if (response.isSuccessful) {
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val capsuleCountData = jsonObject.getJSONObject("data")
+
+                val myCapsuleCnt =capsuleCountData.getInt("myCapsuleCnt")
+                val friendCapsuleCnt = capsuleCountData.getInt("friendCapsuleCnt")
+                val openCapsuleCnt = capsuleCountData.getInt("openCapsuleCnt")
+                val isNewAlarm = capsuleCountData.getBoolean("isNewAlarm")
+
+                val capsuleCountRes = CapsuleCountRes(myCapsuleCnt,friendCapsuleCnt,openCapsuleCnt,isNewAlarm)
+
+                val getCapsuleCountRes = GetCapsuleCountRes(capsuleCountRes)
+
+                capsuleCountDatas.value = getCapsuleCountRes
+
+                Log.d(TAG, "getCapsuleCount : 응답 성공 / $capsuleCountData ")
+            }
+            Log.d(TAG, "getCapsuleCount : 응답 실패/ ${response.message()}")
+        }
+    }
+
+    fun getMapInfo(capsuleId: Int,memberId: Int,latitude: Double,longitude: Double){
+        viewModelScope.launch {
+            val response = repository.aroundCapsuleInMap(capsuleId,memberId,latitude, longitude)
+            if(response.isSuccessful){
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val mapDto = jsonObject.getJSONArray("data")
+                mapInfoDtoList = mutableListOf()
+                for(i in 0 until mapDto.length()){
+                    val curr = mapDto.getJSONObject(i)
+
+                    val capsuleId = curr.getInt("capsuleId")
+                    val isLocked = curr.getBoolean("isLocked")
+                    val isMine = curr.getBoolean("isMine")
+                    val isAllowedDistance = curr.getBoolean("isAllowedDistance")
+                    val latitude = curr.getDouble("latitude")
+                    val longitude = curr.getDouble("longitude")
+
+                    mapDtoList.add(MapDto(capsuleId, isLocked, isMine, isAllowedDistance, latitude, longitude))
+                }
+                val getMapRes = GetMapRes(mapDtoList)
+
+                    mapInfoList.value = getMapRes
+
+                Log.d(TAG, "getMapInfo : 응답 성공 / $mapDto ")
+            }
+            Log.d(TAG, "getMapInfo : 응답 실패 / ${response.message()}")
+
+        }
+    }
+
 
 }

@@ -77,13 +77,25 @@ class MainPageMainFragment : Fragment() {
         redirectPages()
 
         setLocationUpdates()
+
+        settingView()
     }
 
-    private fun setRecylcerView(){
+
+    // 리사이클러 뷰 두개 세팅
+    private fun settingView(){
 
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+
+        // 1번째 , 캡슐 수 가져오기
+        viewModel.getCapsuleCount(1) // 멤버 ID 넣어주기
+        viewModel.capsuleCountDatas.observe(viewLifecycleOwner){
+                binding.mainSection1Capsule1.text = it.capsuleCountRes.myCapsuleCnt.toString()
+                binding.mainSection1Capsule2.text = it.capsuleCountRes.friendCapsuleCnt.toString()
+                binding.mainSection1Capsule3.text = it.capsuleCountRes.openCapsuleCnt.toString()
+        }
 
         // 2번째 , 내 주변의 타임 캡슐 세팅
 //        viewModel.getAroundCapsuleList(memberId,)
