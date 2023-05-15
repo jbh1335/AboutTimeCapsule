@@ -7,18 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentCustomDialogFindFriendBinding
+import com.aboutcapsule.android.databinding.FragmentMypageSearchDialogBinding
 import com.aboutcapsule.android.views.capsule.CustomDialogMemberList
 import com.aboutcapsule.android.views.capsule.DialogAdapter
 import com.aboutcapsule.android.views.capsule.DialogData
 
 class CustomDialogFindFriendFragment : DialogFragment() {
 
-
     companion object{
-        private var binding : FragmentCustomDialogFindFriendBinding? = null
+        private var binding : FragmentMypageSearchDialogBinding? = null
         lateinit var dialogFindFriendAdapter: DialogFindFriendAdapter
     }
 
@@ -26,7 +27,7 @@ class CustomDialogFindFriendFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= FragmentCustomDialogFindFriendBinding.inflate(inflater,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_mypage_search_dialog, container, false)
 
         setDialog()
 
@@ -48,9 +49,9 @@ class CustomDialogFindFriendFragment : DialogFragment() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        binding?.findfriendsDialogCloseBtn!!.setOnClickListener {
-            dismiss()
-        }
+//        binding?.findfriendsDialogCloseBtn!!.setOnClickListener {
+//            dismiss()
+//        }
     }
 
     // 멤버 리사이클러뷰 뷰

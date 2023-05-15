@@ -131,6 +131,7 @@
                         android:textSize="25dp" />
 
                     <ImageView
+                        android:id="@+id/searchFriendBtn"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="235dp"

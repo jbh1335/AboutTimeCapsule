@@ -80,6 +80,7 @@ class MyPageMainFragment : Fragment() {
                 moveToFriendProfileFromMyPageFriendThumbnail()
             }
             // 모든 친구 보기로 이동
+            searchFriendUser()
         })
 
 
@@ -203,6 +204,13 @@ class MyPageMainFragment : Fragment() {
                 viewModel.refuseFriendRequest(currentUser, friendRequestId!!)
             }
         })
+    }
+
+    fun searchFriendUser() {
+        binding.searchFriendBtn.setOnClickListener {
+            var dialog = CustomDialogFindFriendFragment()
+            dialog.show(parentFragmentManager, "searchFriendDialog")
+        }
     }
 
 
