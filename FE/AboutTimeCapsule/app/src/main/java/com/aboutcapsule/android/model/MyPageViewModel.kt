@@ -8,6 +8,7 @@ import com.aboutcapsule.android.data.mypage.AllFriendRes
 import com.aboutcapsule.android.data.mypage.FriendDtoList
 import com.aboutcapsule.android.data.mypage.FriendRequestDtoList
 import com.aboutcapsule.android.data.mypage.GetMyPageRes
+import com.aboutcapsule.android.data.mypage.SearchMemberRes
 import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -24,6 +25,7 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
     var allFriendList : MutableLiveData<MutableList<AllFriendRes>> = MutableLiveData()
     var friendId :Int? = 0
     var friendReqId: Int = 0
+    var searchUserList : MutableLiveData<MutableList<SearchMemberRes>> = MutableLiveData()
 
 
     fun getMyPage(currentUser:Int, memberId:Int?) {
@@ -169,6 +171,29 @@ class MyPageViewModel(private val repository : MypageRepo) : ViewModel() {
             if (response.isSuccessful) {
                 getMyPage(currentUser, friendId)
             }
+        }
+    }
+
+    fun findFriend(memberId: Int, nickname: String) {
+        viewModelScope.launch {
+            val response = repository.findFriend(memberId, nickname)
+            if (response.isSuccessful) {
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val dataArray = jsonObject.getJSONArray("data")
+                var dataList = mutableListOf<SearchMemberRes>()
+                for (i in 0 until dataArray.length()) {
+                    val dataObject = dataArray.getJSONObject(i)
+                    val friendReqData = dataObject.getInt("friendId")
+                    val friendMemberId = dataObject.getInt("memberId")
+                    val state = dataObject.getString("state")
+                    val nickname = dataObject.getString("nickname")
+                    val profileImageUrl = dataObject.getString("profileImageUrl")
+                    dataList.add(SearchMemberRes(friendReqData, friendMemberId, state, nickname, profileImageUrl))
+                }
+                searchUserList.value = dataList
+            }
+
         }
     }
 
