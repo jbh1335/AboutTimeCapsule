@@ -157,6 +157,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                                           List<OpenedCapsuleDto> openedCapsuleDtoList,
                                           List<MapInfoDto> mapInfoDtoList, List<Integer> capsuleIdList) {
 
+
         for(CapsuleMember capsuleMember : member.getCapsuleMemberList()) {
             Capsule capsule = capsuleMember.getCapsule();
             int capsuleId = capsule.getId();
@@ -164,7 +165,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(capsule.isDeleted()) continue;
             if(who.equals("friend")) {
                 if(capsuleIdList.contains(capsuleId)) continue;
-                if(capsule.getRangeType().equals("PRIVATE")) continue;
+                if(capsule.getRangeType().equals(RangeType.PRIVATE)) continue;
                 capsuleIdList.add(capsuleId);
             }
 
@@ -338,7 +339,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     @Override
-    public SuccessRes<LinkedHashMap<String, List<Integer>>> getAroundPopluarPlace(AroundCapsuleReq aroundCapsuleReq) {
+    public SuccessRes<LinkedHashMap<String, List<Integer>>> getAroundPopularPlace(AroundCapsuleReq aroundCapsuleReq) {
         Optional<Member> oMember = memberRepository.findById(aroundCapsuleReq.getMemberId());
         Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
@@ -379,6 +380,76 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         return new SuccessRes<>(true, "내 주변 인기 장소를 조회합니다.", popularPlaceList);
+    }
+
+    @Override
+    public SuccessRes<CapsuleListRes> getPopularPlaceCapsule(PopularPlaceReq popularPlaceReq) {
+        Optional<Member> oMember = memberRepository.findById(popularPlaceReq.getMemberId());
+        Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<UnopenedCapsuleDto> unopenedCapsuleDtoList = new ArrayList<>();
+        List<OpenedCapsuleDto> openedCapsuleDtoList = new ArrayList<>();
+        List<MapInfoDto> mapInfoDtoList = new ArrayList<>();
+
+        for(Integer capsuleId : popularPlaceReq.getCapsuleIdList()) {
+            Optional<Capsule> oCapsule = capsuleRepository.findById(capsuleId);
+            Capsule capsule = oCapsule.orElseThrow(() -> new CustomException(ErrorCode.CAPSULE_NOT_FOUND));
+
+            if(capsule.isDeleted()) continue;
+
+            // 캡슐에 대한 열람 기록이 있는지 확인
+            boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsuleId, popularPlaceReq.getMemberId());
+            boolean isLocked = false;
+
+            List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleId);
+            int memorySize = memoryList.size();
+            LocalDate openDate = null;
+            if(memorySize > 0) openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
+
+            // 미열람
+            if(!isOpened) {
+                // 잠김 여부
+                if(memorySize > 0 && LocalDate.now().isBefore(openDate)) isLocked = true;
+
+                unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
+                        .capsuleId(capsuleId)
+                        .openDate(openDate)
+                        .address(capsule.getAddress())
+                        .isLocked(isLocked)
+                        .build());
+            } else {
+                // 열람
+                int count = memoryOpenMemberRepository.countByCapsuleIdAndMemberId(capsuleId, popularPlaceReq.getMemberId());
+                boolean isAdded = false;
+                if(memorySize != count) isAdded = true;
+
+                openedCapsuleDtoList.add(OpenedCapsuleDto.builder()
+                        .capsuleId(capsuleId)
+                        .openDate(openDate)
+                        .address(capsule.getAddress())
+                        .isAdded(isAdded)
+                        .build());
+            }
+
+            mapInfoDtoList.add(MapInfoDto.builder()
+                    .capsuleId(capsuleId)
+                    .latitude(capsule.getLatitude())
+                    .longitude(capsule.getLongitude())
+                    .isOpened(isOpened)
+                    .isLocked(isLocked)
+                    .build());
+        }
+
+        Collections.sort(unopenedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
+        Collections.sort(openedCapsuleDtoList, Comparator.comparing(o -> (o.getOpenDate() == null ? LocalDate.MIN : o.getOpenDate())));
+
+        CapsuleListRes capsuleListRes = CapsuleListRes.builder()
+                .unopenedCapsuleDtoList(unopenedCapsuleDtoList)
+                .openedCapsuleDtoList(openedCapsuleDtoList)
+                .mapInfoDtoList(mapInfoDtoList)
+                .build();
+
+        return new SuccessRes<>(true, "인기 장소의 캡슐 목록을 조회합니다.", capsuleListRes);
     }
 
     @Override
@@ -424,7 +495,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             if(capsule.isDeleted()) continue;
 
             boolean isMine = capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
-            if(!isMine && capsule.getRangeType().equals("PRIVATE")) continue;
+            if(!isMine && capsule.getRangeType().equals(RangeType.PRIVATE)) continue;
             // 친구 공개 구현하기
             // 그룹 : 전체, 그룹
             // 나 : 전체, 친구공개, 개인
@@ -443,8 +514,8 @@ public class CapsuleServiceImpl implements CapsuleService {
             for(Member myFriend : friendList(member)) {
                 if(capsuleMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), myFriend.getId())) isFriendCapsule = true;
             }
-            if(!isFriendCapsule && !capsule.getRangeType().equals("ALL")) continue;
-            if(isFriendCapsule && capsule.isGroup() && !capsule.getRangeType().equals("ALL")) continue;
+            if(!isFriendCapsule && !capsule.getRangeType().equals(RangeType.ALL)) continue;
+            if(isFriendCapsule && capsule.isGroup() && !capsule.getRangeType().equals(RangeType.ALL)) continue;
 
             boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
             boolean isLocked = false;
