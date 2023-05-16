@@ -228,6 +228,8 @@ public class MemoryServiceImpl implements MemoryService {
         boolean isLocked = (groupOpenDateReq.getOpenDate() != null && LocalDate.now().isBefore(groupOpenDateReq.getOpenDate()));
         capsule.getMemoryList().forEach(memory -> memoryRepository.save(Memory.of(memory, groupOpenDateReq.getOpenDate(), isLocked)));
 
+        memoryOpenMemberRepository.deleteAllByCapsuleId(capsule.getId());
+
         return new CommonRes(true, "그룹 캡슐의 최초 오픈 날짜 설정을 완료했습니다.");
     }
 }
