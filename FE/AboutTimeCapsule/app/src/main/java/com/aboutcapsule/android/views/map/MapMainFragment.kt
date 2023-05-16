@@ -202,8 +202,12 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             GlobalAplication.preferences.setString("address",address.toString())
             navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistGroupFragment)
         }
-    }
 
+        // AR 카메라 클릭 시
+        binding.cameraBtn.setOnClickListener{
+            navController.navigate(R.id.action_mapMainFragment_to_arActivity)
+        }
+    }
 
 
     // 네비게이션 세팅
