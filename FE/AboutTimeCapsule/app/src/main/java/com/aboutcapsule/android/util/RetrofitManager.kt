@@ -1,5 +1,6 @@
 package com.aboutcapsule.android.util
 
+import com.aboutcapsule.android.service.Arservice
 import com.aboutcapsule.android.service.CapsuleService
 import com.aboutcapsule.android.service.MemberService
 import com.aboutcapsule.android.service.OauthService
@@ -13,13 +14,8 @@ class RetrofitManager {
         private const val memberPort = "api/member/"
         private const val capsulePort = "api/capsule/"
         private const val oauthPort = "api/oauth/"
-        private const val chatPort = ""
     }
 
-//        val getMemberRetrofit = Retrofit.Builder()
-//                .baseUrl(BASE_URL+ memberPort)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build()
 
     object oauthInstance {
         private val retrofit by lazy {
@@ -53,6 +49,17 @@ class RetrofitManager {
         }
         val api: CapsuleService by lazy{
             retrofit.create(CapsuleService::class.java)
+        }
+    }
+    object ArInstance {
+        private val retrofit by lazy {
+            Retrofit.Builder()
+                .baseUrl(BASE_URL + capsulePort)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+        val api: Arservice by lazy {
+            retrofit.create(Arservice::class.java)
         }
     }
 
