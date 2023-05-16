@@ -120,7 +120,6 @@ class CustomDialogFindFriendFragment : DialogFragment() {
         acceptFriendRequest()
         refuseFriendRequest()
         sendFriendRequest()
-//        moveToProfile()
 
     }
 
@@ -131,7 +130,7 @@ class CustomDialogFindFriendFragment : DialogFragment() {
                 val friendmemberId = myPageViewModel.searchUserList.value?.get(position)?.memberId
                 val friendNickname = myPageViewModel.searchUserList.value?.get(position)?.nickname
                 myPageViewModel.friendAcceptRequest(currentUser,friendReqId!!)
-                myPageViewModel.findFriend(friendmemberId!! ,friendNickname!!)
+
             }
         })
     }
