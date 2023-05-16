@@ -47,17 +47,17 @@ public class CapsuleController {
         return capsuleService.modifyCapsuleRange(capsuleId, rangeType);
     }
 
-    @GetMapping("/around")
+    @PostMapping("/around")
     public SuccessRes<List<AroundCapsuleRes>> getAroundCapsule(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
         return capsuleService.getAroundCapsule(aroundCapsuleReq);
     }
 
-    @GetMapping("/around/popular")
+    @PostMapping("/around/popular")
     public SuccessRes<LinkedHashMap<String, List<Integer>>> getAroundPopularPlace(@RequestBody AroundCapsuleReq aroundCapsuleReq) {
         return capsuleService.getAroundPopularPlace(aroundCapsuleReq);
     }
 
-    @GetMapping("/around/popular/list")
+    @PostMapping("/around/popular/list")
     public SuccessRes<CapsuleListRes> getPopularPlaceCapsule(@RequestBody PopularPlaceReq popularPlaceReq) {
         return capsuleService.getPopularPlaceCapsule(popularPlaceReq);
     }
@@ -67,17 +67,17 @@ public class CapsuleController {
         return capsuleService.getGroupMember(capsuleId);
     }
 
-    @GetMapping("/capsuleDetail")
+    @PostMapping("/capsuleDetail")
     public SuccessRes<CapsuleDetailRes> getCapsuleDetail(@RequestBody CapsuleDetailReq capsuleDetailReq) {
         return capsuleService.getCapsuleDetail(capsuleDetailReq);
     }
 
-    @GetMapping("/map/capsuleDetail")
+    @PostMapping("/map/capsuleDetail")
     public SuccessRes<MapCapsuleDetailRes> getMapCapsuleDetail(@RequestBody CapsuleDetailReq capsuleDetailReq) {
         return capsuleService.getMapCapsuleDetail(capsuleDetailReq);
     }
 
-    @GetMapping("/map")
+    @PostMapping("/map")
     public SuccessRes<List<MapRes>> getMapCapsule(@RequestBody CapsuleDetailReq capsuleDetailReq) {
         return capsuleService.getMapCapsule(capsuleDetailReq);
     }
