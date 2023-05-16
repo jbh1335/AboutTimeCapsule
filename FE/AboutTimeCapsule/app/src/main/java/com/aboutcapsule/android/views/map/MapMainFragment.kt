@@ -1,8 +1,6 @@
 package com.aboutcapsule.android.views.map
 
 import android.Manifest
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,17 +9,13 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.annotation.RequiresPermission
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
@@ -30,7 +24,6 @@ import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
@@ -39,7 +32,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
-import com.aboutcapsule.android.data.capsule.MapDto
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleRes
 import com.aboutcapsule.android.databinding.FragmentMapMainBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
@@ -47,7 +40,6 @@ import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.capsule.CapsuleRegistGroupFragment
-import com.aboutcapsule.android.views.mainpage.CapsuleListFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
@@ -58,16 +50,10 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback{
@@ -144,6 +130,9 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 사용자 위치 권한 얻기
+        getLocationPermission()
 
         // 사용자 위치
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
@@ -262,8 +251,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        // 사용자 권한 얻기
-        getLocationPermission()
 
         // 지도 UI 업데이트
         updateLocationUI()
@@ -436,26 +423,24 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
     override fun onMyLocationButtonClick(): Boolean {
         var memberId = 1 // 캡슐 Id 가져오기
 
-        var mapMarkerList : MutableList<MapDto> = mutableListOf()
+        var mapMarkerList : MutableList<MapAroundCapsuleRes> = mutableListOf()
 
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
-        Log.d("getMapInfo", "${lastKnownLocation!!.latitude}, ${lastKnownLocation!!.longitude} , memberId :$memberId")
 
         val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
-//        val datas = MapAroundCapsuleReq(memberId, 36.354946759143, 127.29980994578)
 
         viewModel.getAroundCapsuleInMap(datas)
-        viewModel.mapInfoList.observe(viewLifecycleOwner){
-            setMarkers(it.mapDtoList)
+        viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner){
+            setMarkers(it.mapAroundCapsuleResList)
         }
 
         return false
     }
 
     // 서버에서 데이터를 받아와서 마커 꾸려주기
-    private fun setMarkers(list : MutableList<MapDto>){
+    private fun setMarkers(list : MutableList<MapAroundCapsuleRes>){
 
 
         for(i in 0 until list.size){

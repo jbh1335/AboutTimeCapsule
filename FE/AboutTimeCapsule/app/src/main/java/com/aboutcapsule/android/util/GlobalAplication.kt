@@ -25,7 +25,7 @@ class GlobalAplication:Application() {
         globalAplication = this
         preferences.remove("friendId")
         preferences.clear()
-//        preferences.setInt("currentUser", 1)
+        preferences.setInt("currentUser", 1)
 //        preferences.setInt("currentUserNickname", )
 
 

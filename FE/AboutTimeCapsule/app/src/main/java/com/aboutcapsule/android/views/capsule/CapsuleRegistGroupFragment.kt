@@ -44,7 +44,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
        lateinit var binding : FragmentCapsuleRegistGroupBinding
        lateinit var navController : NavController
        lateinit var markerOptions: MarkerOptions
-       private var radioBtn: String =""
+       private var radioBtn: String = ""
        private var isGroup : Boolean = true
        private var lat : Double = 0.0
        private var lng : Double = 0.0
@@ -125,21 +125,22 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 //            Log.d("리스트",tmp.toString())
             lat // 위도
             lng // 경도
+            Log.d("radio","$radioBtn")
             Log.d("APi_edittext","$title")
             Log.d("APi_address" , "$address")
 
-            if(radioBtn.equals("")){
+            if(radioBtn == ""){
                 Toast.makeText(requireContext(),"공개 범위를 설정해주세요",Toast.LENGTH_SHORT).show()
             }else if (title.isEmpty() || title.length > 30) {
                 Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                val tmp =arguments?.getIntegerArrayList("memberIdList")
-                Log.d("tmp : " , "$tmp")
+                val memberlist =arguments?.getIntegerArrayList("memberIdList")
+                Log.d("success in radio","$radioBtn")
                 val repository = CapsuleRepo()
                 val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
                 viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
-                var postRegistCapsuleData = PostRegistCapsuleReq(tmp!!,title, radioBtn, isGroup,lat,lng,address)
+                var postRegistCapsuleData = PostRegistCapsuleReq(memberlist!!,title, radioBtn, isGroup,lat,lng,address)
                 viewModel.addCapsule(postRegistCapsuleData)
 
 //            Log.d("APi_submit","$memberIdList")

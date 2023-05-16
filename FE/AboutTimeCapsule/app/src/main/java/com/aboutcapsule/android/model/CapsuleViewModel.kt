@@ -16,7 +16,7 @@ import com.aboutcapsule.android.data.capsule.GetMapRes
 import com.aboutcapsule.android.data.capsule.GetVisitedListRes
 import com.aboutcapsule.android.data.capsule.GroupMemberDto
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
-import com.aboutcapsule.android.data.capsule.MapDto
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleRes
 import com.aboutcapsule.android.data.capsule.MapInfoDto
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
@@ -35,7 +35,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var aroundCapsuleList : MutableLiveData<GetAroundCapsuleListRes> = MutableLiveData()
     var friendList : MutableLiveData<GetFriendListRes> = MutableLiveData()
     var capsuleCountDatas : MutableLiveData<GetCapsuleCountRes> = MutableLiveData()
-    var mapInfoList : MutableLiveData<GetMapRes> = MutableLiveData()
+    var aroundCapsuleInMapList : MutableLiveData<GetMapRes> = MutableLiveData()
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
@@ -43,7 +43,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         lateinit var groupMemberDtoList : MutableList<GroupMemberDto>
         lateinit var aroundCapsuleDtoList: MutableList<AroundCapsuleDto>
         lateinit var myfriendDtoList : MutableList<FriendDto>
-        lateinit var mapDtoList : MutableList<MapDto>
+        lateinit var aroundCapsuleInMapAroundCapsuleList : MutableList<MapAroundCapsuleRes>
     }
 
     // 캡슐 등록
@@ -360,28 +360,24 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
                 val mapDto = jsonObject.getJSONArray("data")
-                mapInfoDtoList = mutableListOf()
+                aroundCapsuleInMapAroundCapsuleList = mutableListOf()
                 for(i in 0 until mapDto.length()){
                     val curr = mapDto.getJSONObject(i)
-                  Log.d("curr","$curr")
-//                    val capsuleId = curr.getInt("capsuleId")
-//                    val isLocked = curr.getBoolean("isLocked")
-//                    val isMine = curr.getBoolean("isMine")
-//                    val isAllowedDistance = curr.getBoolean("isAllowedDistance")
-//                    val latitude = curr.getDouble("latitude")
-//                    val longitude = curr.getDouble("longitude")
-//
-//                    mapDtoList.add(MapDto(capsuleId, isLocked, isMine, isAllowedDistance, latitude, longitude))
-                }
-//                val getMapRes = GetMapRes(mapDtoList)
-//
-//                    mapInfoList.value = getMapRes
-//
-//                Log.d(TAG, "getMapInfo : 응답 성공 / $mapDto ")
+                    val capsuleId = curr.getInt("capsuleId")
+                    val isLocked = curr.getBoolean("isLocked")
+                    val isMine = curr.getBoolean("isMine")
+                    val isAllowedDistance = curr.getBoolean("isAllowedDistance")
+                    val latitude = curr.getDouble("latitude")
+                    val longitude = curr.getDouble("longitude")
 
-                Log.d(TAG, "getMapInfo : 응답 성공 / ${response.body()?.string()} ")
+                    aroundCapsuleInMapAroundCapsuleList.add(MapAroundCapsuleRes(capsuleId, isLocked, isMine, isAllowedDistance, latitude, longitude))
+                }
+                    val getMapRes = GetMapRes(aroundCapsuleInMapAroundCapsuleList)
+                     aroundCapsuleInMapList.value = getMapRes
+
+                Log.d(TAG, "getAroundCapsuleInMap : 응답 성공 / ${response.body()} ")
             } else {
-                Log.d(TAG, "getMapInfo : 응답 실패 / ${response.body()}  / ${response.message()}  / ${response.code()}")
+                Log.d(TAG, "getAroundCapsuleInMap : 응답 실패 / ${response.body()}  / ${response.message()}  / ${response.code()}")
             }
         }
     }

@@ -26,6 +26,7 @@ import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.repository.MypageRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.capsule.CapsuleRegistFragment
 import com.google.android.material.tabs.TabLayout
@@ -38,6 +39,9 @@ class MainPageMyCapsuleFragment : Fragment() {
         private lateinit var  viewPager : ViewPager2
         private lateinit var  tabLayout : TabLayout
         private lateinit var pagerAdapter : PagerFragmentStateAdapter
+
+        private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+        private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
     }
 
 

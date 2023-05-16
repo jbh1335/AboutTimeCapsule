@@ -24,6 +24,7 @@ import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.map.MapMainFragment
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -39,9 +40,11 @@ class MainPageMainFragment : Fragment() {
         lateinit var section2adapter: Section2Adapter
         lateinit var section3adapter: Section3Adapter
 
-        private var memberId = 1 // sharedpreferences 에서 멤버id 가져오기
-
         private lateinit var viewModel : CapsuleViewModel
+
+        private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+        private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
+
     }
 
     override fun onCreateView(
@@ -53,6 +56,8 @@ class MainPageMainFragment : Fragment() {
 
 //      최초 렌더링시, 말풍선 비활성화
         binding.section2Banner.visibility = View.INVISIBLE
+//      000님의 타임 캡슐 view 설정
+        binding.mainSection1Title.text = "${userNickname}님의 타임 캡슐"
 
 //        물음표 버튼 토글버틀
         bannerToggle()
@@ -87,8 +92,8 @@ class MainPageMainFragment : Fragment() {
 
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
-        viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
-
+        viewModel = ViewModelProvider  (this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
+        Log.d("dd","getCapsule _ frag : $memberId " )
         // 1번째 , 캡슐 수 가져오기
         viewModel.getCapsuleCount(memberId) // 멤버 ID 넣어주기
         viewModel.capsuleCountDatas.observe(viewLifecycleOwner){
