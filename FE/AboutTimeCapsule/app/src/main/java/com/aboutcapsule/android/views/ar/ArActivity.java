@@ -1,6 +1,5 @@
 package com.aboutcapsule.android.views.ar;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 
@@ -8,26 +7,46 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.aboutcapsule.android.R;
+import com.aboutcapsule.android.data.GetCapsuleNearRes;
+import com.aboutcapsule.android.util.GlobalAplication;
 import com.aboutcapsule.android.util.Utils;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.ar.core.Frame;
+import com.google.ar.core.Plane;
 import com.google.ar.core.Session;
+import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.core.exceptions.UnavailableException;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.Scene;
-import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import uk.co.appoly.arcorelocation.LocationMarker;
 import uk.co.appoly.arcorelocation.LocationScene;
 
 public class ArActivity extends AppCompatActivity {
+    private int memberId = GlobalAplication.preferences.getInt("currentUser", -1);
+
     private ArSceneView arSceneView;
     private LocationScene locationScene;
+
     private boolean installRequested;
+    private boolean hasFinishedLoadingRenderable = false;
+    private boolean hasFinishedSetRenderable = false;
+    private Snackbar loadingMessageSnackbar = null;
 
     ImageView back_btn;
+
+    public List<GetCapsuleNearRes> capsuleList;
+    private ArrayList<CompletableFuture<ViewRenderable>> capsuleLayoutList;
+    private ArrayList<ViewRenderable> capsuleRenderableList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,32 +67,136 @@ public class ArActivity extends AppCompatActivity {
         back_btn.setOnClickListener(v -> {
             FragmentManager fragmentManager = getSupportFragmentManager();
             if (fragmentManager.getBackStackEntryCount() > 0) {
-                fragmentManager.popBackStack(); // 이전 Fragment로 이동합니다.
+                fragmentManager.popBackStack(); // 이전 Fragment로 이동
             } else {
-                finish(); // 이전 Fragment이 없으면 현재 Activity를 종료합니다.
+                finish(); // 이전 Fragment이 없으면 현재 Activity를 종료
             }
         });
 
-        //TODO : AR 객체 세팅
-        //AR 객체
-        ViewRenderable.builder()
-                .setView(getApplication(), R.layout.ar_item) // 이미지를 로드할 레이아웃을 설정
-                .build()
-                .thenAccept(viewRenderable -> {
-                    // 이미지를 렌더링할 노드 생성
-                    Node imageNode = new Node();
-                    imageNode.setRenderable(viewRenderable);
+        capsuleList = new ArrayList<>();
+        capsuleLayoutList = new ArrayList<>();
+        capsuleRenderableList = new ArrayList<>();
 
-                    // 노드 위치 및 크기 설정
-                    imageNode.setLocalPosition(new Vector3(0.0f, 0.0f, -1.0f));
-                    imageNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        //TODO : 내 주변 캡슐 가져오는 API 호출
+        //더미데이터
+        capsuleList.add(new GetCapsuleNearRes(1, false, true,false, 36.3552217, 127.2979467));
+        capsuleList.add(new GetCapsuleNearRes(2, false, true,false, 36.3552217, 127.2979467));
+        capsuleList.add(new GetCapsuleNearRes(3, false, true,false, 36.3552217, 127.2979467));
 
-                    // ARCore의 기본 좌표계를 기준으로 y축 기준으로 180도 회전하여 이미지를 뒤집음
-                    imageNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 180));
 
-                    // 노드를 씬에 추가
-                    arSceneView.getScene().addChild(imageNode);
-                });
+        //AR 랜더링
+        if(capsuleList.size() != 0) {
+            //capsuleLayoutList 생성
+            for (int i = 0; i < capsuleList.size(); i++) {
+                capsuleLayoutList.add(ViewRenderable.builder().setView(getApplication(), R.layout.ar_item).build());
+            }
+
+            //캡슐 오브젝트 생성
+            CompletableFuture<ViewRenderable> objCapsule = new CompletableFuture<>();
+            for (int i = 0; i < capsuleList.size(); i++) {
+                objCapsule = capsuleLayoutList.get(i);
+            }
+
+            //랜더링할 리스트에 담기
+            CompletableFuture.allOf(objCapsule)
+                    .handle(
+                            (notUsed, throwable) -> {
+                                // When you build a Renderable, Sceneform loads its resources in the background while
+                                // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
+                                // before calling get().
+                                if (throwable != null) {
+                                    Utils.displayError(getApplication(), "Unable to load renderables", throwable);
+                                    return null;
+                                }
+                                try {
+                                    if (capsuleList.size() != 0) {
+                                        for (int i = 0; i < capsuleList.size(); i++) {
+                                            capsuleRenderableList.add(capsuleLayoutList.get(i).get());
+                                        }
+                                    }
+                                    hasFinishedLoadingRenderable = true;
+
+                                } catch (InterruptedException |
+                                         ExecutionException ex) {
+                                    Utils.displayError(getApplication(), "Unable to load renderables", ex);
+                                }
+                                return null;
+                            });
+
+            //AR 객체 렌더링
+            arSceneView
+                    .getScene()
+                    .addOnUpdateListener(
+                            (FrameTime frameTime) -> {
+                                // 모형을 로딩한 후에 다시 다음 작업을 진행
+                                if (!hasFinishedLoadingRenderable) {
+                                    return;
+                                }
+
+                                if (locationScene == null) {
+                                    try {
+                                        locationScene = new LocationScene(getApplication(), getParent(), arSceneView);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    locationScene.setOffsetOverlapping(false);  // 겹치는 모형에 이동량을 더할 지 설정
+                                }
+
+                                // ArFrame 가져오기
+                                Frame frame = arSceneView.getArFrame();
+                                if (frame == null) {
+                                    return;
+                                }
+
+                                // Frame이 추적 중일 때 다시 시작
+                                if (frame.getCamera().getTrackingState() != TrackingState.TRACKING) {
+                                    return;
+                                }
+
+                                // locationScene이 비어 있지 않고 모형이 설치되어 있지 않다면
+                                if (locationScene != null && !hasFinishedSetRenderable) {
+                                    LocationMarker[] locationMarker = new LocationMarker[capsuleList.size()];
+
+                                    try {
+                                        Thread.sleep(13);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    for (int i = 0; i < capsuleList.size(); i++) {
+                                        //이미지를 렌더링할 노드 생성
+                                        Node imageNode = new Node();
+                                        imageNode.setRenderable(capsuleRenderableList.get(i));
+
+                                        // 노드 위치 및 크기 설정
+                                        imageNode.setLocalPosition(new Vector3(0.0f, 0.0f, -1.0f));
+                                        imageNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+
+                                        // 노드를 위치 마커에 찍어서 씬에 추가
+                                        locationMarker[i] = new LocationMarker(capsuleList.get(i).getLongitude(), capsuleList.get(i).getLatitude(), imageNode);
+                                        locationScene.mLocationMarkers.add(locationMarker[i]);
+
+                                        hasFinishedSetRenderable = true; //캡슐 배치 완료
+                                    }
+                                }
+
+                                //locationScene
+                                if (locationScene != null) {
+                                    locationScene.processFrame(frame);
+                                }
+
+                                //트래킹 관련
+                                if (loadingMessageSnackbar != null) {
+                                    for (Plane plane : frame.getUpdatedTrackables(Plane.class)) {
+                                        if (plane.getTrackingState() == TrackingState.TRACKING) {
+                                            hideLoadingMessage();
+                                        }
+                                    }
+                                }
+
+                            });
+        }
+
     }
 
     @Override
@@ -148,4 +271,28 @@ public class ArActivity extends AppCompatActivity {
             finish(); // 이전 Fragment이 없으면 현재 Activity를 종료합니다.
         }
     }
+
+    private void showLoadingMessage() {
+        if (loadingMessageSnackbar != null && loadingMessageSnackbar.isShownOrQueued()) {
+            return;
+        }
+
+        loadingMessageSnackbar =
+                Snackbar.make(
+                        ArActivity.this.findViewById(android.R.id.content),
+                        "seeking plane!!!",
+                        Snackbar.LENGTH_INDEFINITE);
+        loadingMessageSnackbar.getView().setBackgroundColor(0xbf323232);
+        loadingMessageSnackbar.show();
+    }
+
+    private void hideLoadingMessage() {
+        if (loadingMessageSnackbar == null) {
+            return;
+        }
+
+        loadingMessageSnackbar.dismiss();
+        loadingMessageSnackbar = null;
+    }
+
 }
