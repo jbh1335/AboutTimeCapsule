@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/memory")
+@RequestMapping("/api/capsule/memory")
 public class MemoryController {
     private final MemoryService memoryService;
 
