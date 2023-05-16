@@ -28,6 +28,10 @@ class PreferenceUtil(context:Context) {
     fun getEditor() : SharedPreferences.Editor {
        return editor
     }
+    fun remove(key: String) {
+        editor.remove(key)
+        editor.commit()
+    }
 
     fun clear() {
         editor.clear()
