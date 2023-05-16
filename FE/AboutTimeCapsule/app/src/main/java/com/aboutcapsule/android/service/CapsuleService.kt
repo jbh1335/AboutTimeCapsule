@@ -44,6 +44,6 @@ interface CapsuleService {
     suspend fun findCapsuleCount(@Path("memberId") memberId: Int ): Response<ResponseBody>
 
     @POST("map")
-    suspend fun findAroundCapsuleInMap(@Body mapAroundCapsuleReq: MapAroundCapsuleReq ) : Response<ResponseBody>
+    suspend fun findAroundCapsuleInMap(@Body mapAroundCapsuleReq: MapAroundCapsuleReq) : Response<ResponseBody>
 
 }

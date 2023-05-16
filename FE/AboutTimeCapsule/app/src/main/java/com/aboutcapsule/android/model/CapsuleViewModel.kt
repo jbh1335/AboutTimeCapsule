@@ -345,13 +345,15 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 capsuleCountDatas.value = getCapsuleCountRes
 
                 Log.d(TAG, "getCapsuleCount : 응답 성공 / $capsuleCountData ")
+            }else {
+                Log.d(TAG, "getCapsuleCount : 응답 실패/ ${response.message()}")
             }
-            Log.d(TAG, "getCapsuleCount : 응답 실패/ ${response.message()}")
         }
     }
 
     // 지도에서 주변 캡슐 조회
     fun getAroundCapsuleInMap(mapAroundCapsuleReq : MapAroundCapsuleReq){
+        Log.d(TAG, "getAroundCapsuleInMap: $mapAroundCapsuleReq")
         viewModelScope.launch {
             val response = repository.aroundCapsuleInMap(mapAroundCapsuleReq)
             if(response.isSuccessful){
@@ -361,23 +363,26 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 mapInfoDtoList = mutableListOf()
                 for(i in 0 until mapDto.length()){
                     val curr = mapDto.getJSONObject(i)
-
-                    val capsuleId = curr.getInt("capsuleId")
-                    val isLocked = curr.getBoolean("isLocked")
-                    val isMine = curr.getBoolean("isMine")
-                    val isAllowedDistance = curr.getBoolean("isAllowedDistance")
-                    val latitude = curr.getDouble("latitude")
-                    val longitude = curr.getDouble("longitude")
-
-                    mapDtoList.add(MapDto(capsuleId, isLocked, isMine, isAllowedDistance, latitude, longitude))
+                  Log.d("curr","$curr")
+//                    val capsuleId = curr.getInt("capsuleId")
+//                    val isLocked = curr.getBoolean("isLocked")
+//                    val isMine = curr.getBoolean("isMine")
+//                    val isAllowedDistance = curr.getBoolean("isAllowedDistance")
+//                    val latitude = curr.getDouble("latitude")
+//                    val longitude = curr.getDouble("longitude")
+//
+//                    mapDtoList.add(MapDto(capsuleId, isLocked, isMine, isAllowedDistance, latitude, longitude))
                 }
-                val getMapRes = GetMapRes(mapDtoList)
+//                val getMapRes = GetMapRes(mapDtoList)
+//
+//                    mapInfoList.value = getMapRes
+//
+//                Log.d(TAG, "getMapInfo : 응답 성공 / $mapDto ")
 
-                    mapInfoList.value = getMapRes
-
-                Log.d(TAG, "getMapInfo : 응답 성공 / $mapDto ")
+                Log.d(TAG, "getMapInfo : 응답 성공 / ${response.body()?.string()} ")
+            } else {
+                Log.d(TAG, "getMapInfo : 응답 실패 / ${response.body()}  / ${response.message()}  / ${response.code()}")
             }
-            Log.d(TAG, "getMapInfo : 응답 실패 / ${response.message()}")
         }
     }
 

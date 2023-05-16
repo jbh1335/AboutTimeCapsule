@@ -141,15 +141,15 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
                 var postRegistCapsuleData = PostRegistCapsuleReq(tmp!!,title, radioBtn, isGroup,lat,lng,address)
                 viewModel.addCapsule(postRegistCapsuleData)
-//                viewModel.addCapsule()
+
 //            Log.d("APi_submit","$memberIdList")
-            Log.d("APi_submit","$title")
-            Log.d("APi_submit","$tmp")
-            Log.d("APi_submit","$radioBtn")
-            Log.d("APi_submit","$lat")
-            Log.d("APi_submit","$lng")
-            Log.d("APi_submit","$isGroup")
-            Log.d("APi_submit","$address")
+//            Log.d("APi_submit","$title")
+//            Log.d("APi_submit","$tmp")
+//            Log.d("APi_submit","$radioBtn")
+//            Log.d("APi_submit","$lat")
+//            Log.d("APi_submit","$lng")
+//            Log.d("APi_submit","$isGroup")
+//            Log.d("APi_submit","$address")
 
             navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
             }
