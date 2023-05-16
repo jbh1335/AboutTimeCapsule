@@ -192,11 +192,9 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             val lat : Double = lastKnownLocation?.latitude!!
             val lng : Double = lastKnownLocation?.longitude!!
 
-
-
             val addressInfo = geocoder.getFromLocation(lat,lng,1)
             val address = addressInfo?.get(0)?.getAddressLine(0)
-
+            Log.d("address" , address.toString())
             GlobalAplication.preferences.setString("lat",lat.toString())
             GlobalAplication.preferences.setString("lng",lng.toString())
             GlobalAplication.preferences.setString("address",address.toString())
@@ -384,16 +382,19 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             if(locationPermissionGranted){
                 val locationResult = fusedLocationClient.lastLocation
                 locationResult.addOnCompleteListener(mainActivity) { task ->
-                    if(task.isSuccessful){ // 위치 접근 성공
+                    if(task.isSuccessful && task.result!=null) { // 위치 접근 성공
                         lastKnownLocation = task.result
-//                        if(lastKnownLocation != null){
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-//                                LatLng(lastKnownLocation!!.latitude,
-//                                lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
-//                        }
-                        val latlng = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
+                        if(lastKnownLocation != null){
+                            val latlng = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
+                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
+                        }else {
+                            locationResult.addOnCompleteListener(mainActivity){
+
+                            }
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                            mMap.uiSettings?.isMyLocationButtonEnabled = false
+                        }
 //                        mMap.addMarker(MarkerOptions().position(latlng).title("여기"))
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
                         Log.d("사용자 위치 : 위도 / 전역변수 ", "${lastKnownLocation?.latitude}")
                         Log.d("사용자 위치 : 경도 / 전역변수 ", "${lastKnownLocation?.longitude}")
 
@@ -410,6 +411,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             Log.e("Exception: %s", e.message, e)
         }
     }
+
 
     private fun callbackLocations(){
         locationCallback = object : LocationCallback(){

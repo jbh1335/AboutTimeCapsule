@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface CapsuleService {
 
@@ -33,8 +34,15 @@ interface CapsuleService {
     suspend fun findGroupMember(@Path("capsuleId") capsuleId:Int) : Response<ResponseBody>
 
     @GET("around")
-    suspend fun findAroundCapsule(memberId: Int, latitude : Double, longitude : Double ) : Response<ResponseBody>
+    suspend fun findAroundCapsule(@Query("memberId") memberId: Int, @Query("latitude") latitude : Double,@Query("longitude") longitude : Double ) : Response<ResponseBody>
 
     @GET("friend/{memberId}")
     suspend fun findFriendList(@Path("memberId") memberId : Int ): Response<ResponseBody>
+
+    @GET("main/{memberId}")
+    suspend fun findCaspuleCount(@Path("memberId") memberId: Int ): Response<ResponseBody>
+
+    @GET("map")
+    suspend fun findAroundCapsuleInMap(@Query("capsuleId") capsuleId:Int, @Query("memberId") memberId:Int, @Query("latitude") latitude: Double ,  @Query("longitude") longitude: Double ) : Response<ResponseBody>
+
 }

@@ -76,8 +76,6 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
 
                viewModel.getMyCapsuleList(1)
                viewModel.myCapsuleList.observe(viewLifecycleOwner) {
-//                   observingUnopendList = it.unopenedCapsuleDtoList
-//                   observingOpendList = it.openedCapsuleDtoList
                    setWaitingView(it.unopenedCapsuleDtoList)
                    setMeetView(it.openedCapsuleDtoList)
 

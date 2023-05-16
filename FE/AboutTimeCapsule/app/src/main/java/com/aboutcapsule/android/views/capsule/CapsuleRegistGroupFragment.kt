@@ -15,13 +15,18 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.databinding.FragmentCapsuleRegistGroupBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -43,10 +48,12 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
        private var isGroup : Boolean = true
        private var lat : Double = 0.0
        private var lng : Double = 0.0
+
        private lateinit var address : String
+       private lateinit var viewModel : CapsuleViewModel
 
        private var memberNameList : ArrayList<String>? = null
-       private var memberIdList : ArrayList<Int>? = null
+       private var memberIdList : MutableList<Int>? = null
 
        private lateinit var mMap : GoogleMap
 
@@ -110,30 +117,42 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 
     // TODO : (그룹캡슐) 캡슐 생성버튼 클릭 시 , 캡슐생성 api 보내고 페이지 이동
     private fun submitDatas(){
-        val text = binding.capsuleRegistGroupTitle.editableText // 제목
-        memberIdList = arguments?.getIntegerArrayList("memberIdList") // 멤버 아이디
-        lat // 위도
-        lng // 경도
-        address
-        Log.d("APi_edittext","$text")
-        Log.d("APi_address" , "$address")
-
         binding.capsuleRegistGruopRegistbtn.setOnClickListener {
-//            if (text.isEmpty() || text.length < 11) {
-//                Toast.makeText(requireContext(), "제목길이는 1~10글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
-//                    .show()
-//            } else {
-////                Log.d("allData", radioBtn)
-//                Log.d("allData", binding.capsuleRegistGroupTitle.text.toString())
-            Log.d("APi_submit","$text")
-            Log.d("APi_submit","$memberIdList")
+
+            val title = binding.capsuleRegistGroupTitle.editableText.toString() // 제목
+//            memberIdList = arguments?.getIntegerArrayList("memberIdList") // 멤버 아이디
+//            val tmp =arguments?.getIntegerArrayList("memberIdList")
+//            Log.d("리스트",tmp.toString())
+            lat // 위도
+            lng // 경도
+            Log.d("APi_edittext","$title")
+            Log.d("APi_address" , "$address")
+
+            if(radioBtn.equals("")){
+                Toast.makeText(requireContext(),"공개 범위를 설정해주세요",Toast.LENGTH_SHORT).show()
+            }else if (title.isEmpty() || title.length > 30) {
+                Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                val tmp =arguments?.getIntegerArrayList("memberIdList")
+                Log.d("tmp : " , "$tmp")
+                val repository = CapsuleRepo()
+                val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+                viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+                var postRegistCapsuleData = PostRegistCapsuleReq(tmp!!,title, radioBtn, isGroup,lat,lng,address)
+                viewModel.addCapsule(postRegistCapsuleData)
+//                viewModel.addCapsule()
+//            Log.d("APi_submit","$memberIdList")
+            Log.d("APi_submit","$title")
+            Log.d("APi_submit","$tmp")
             Log.d("APi_submit","$radioBtn")
             Log.d("APi_submit","$lat")
             Log.d("APi_submit","$lng")
             Log.d("APi_submit","$isGroup")
             Log.d("APi_submit","$address")
+
             navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
-//            }
+            }
         }
     }
 
