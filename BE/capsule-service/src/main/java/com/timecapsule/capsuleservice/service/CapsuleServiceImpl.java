@@ -490,7 +490,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<MapRes> mapResList = new ArrayList<>();
-        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude());
+        List<Capsule> aroundCapsuleList = capsuleRepository.findAroundCapsule(capsuleDetailReq.getLongitude(), capsuleDetailReq.getLatitude());
 
         for(Capsule capsule : aroundCapsuleList) {
             if(capsule.isDeleted()) continue;
