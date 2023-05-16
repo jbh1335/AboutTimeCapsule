@@ -1,12 +1,12 @@
 package com.aboutcapsule.android.service
 
-import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
+import com.aboutcapsule.android.data.GetCapsuleNearReq
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.GET
 
 interface Arservice {
-    @POST("map")
-    suspend fun getCapsuleNear (@Body postRegistCapsuleReq : PostRegistCapsuleReq) : Response<ResponseBody>
+    @GET("map")
+    suspend fun getCapsuleNear (@Body getCapsuleNearReq: GetCapsuleNearReq) : Response<ResponseBody>
 }
