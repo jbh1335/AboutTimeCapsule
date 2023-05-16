@@ -3,6 +3,11 @@ package com.aboutcapsule.android.data.mypage
 import com.google.gson.annotations.SerializedName
 
 data class GetMyPageRes(
+    @SerializedName("friend_id")
+    val friendId:Int,
+    @SerializedName("other_member_id")
+    val otherMemberId:Int,
+    val state:String,
     val nickname:String,
     val email:String,
     @SerializedName("profile_image_url")
