@@ -112,7 +112,7 @@ class CapsuleArticleFragment : Fragment() {
         // 상단 툴바 알림페이지로 리다이렉트
         val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         notiBtn?.setOnClickListener{
-            MainPageMainFragment.navController.navigate(R.id.action_capsuleMineFragment_to_notificationMainFragment)
+            navController.navigate(R.id.action_capsuleMineFragment_to_notificationMainFragment)
         }
     }
 

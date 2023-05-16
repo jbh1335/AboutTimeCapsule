@@ -184,7 +184,7 @@ class CapsuleBoardFragment : Fragment() {
         // 상단 툴바 알림페이지로 리다이렉트
         val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         notiBtn?.setOnClickListener{
-            MainPageMainFragment.navController.navigate(R.id.action_capsuleGroupFragment_to_notificationMainFragment)
+           navController.navigate(R.id.action_capsuleGroupFragment_to_notificationMainFragment)
         }
 
         // 멤버 목록 클릭 시 , 다이얼로그 보여주기

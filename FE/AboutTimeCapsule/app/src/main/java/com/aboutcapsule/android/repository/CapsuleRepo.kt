@@ -43,5 +43,12 @@ class CapsuleRepo {
         return RetrofitManager.capsuleInstance.api.findFriendList(memberId)
     }
 
+    suspend fun capsuleCount(memberId: Int) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findCaspuleCount(memberId)
+    }
+
+    suspend fun aroundCapsuleInMap(capsuleId : Int , memberId : Int, latitude: Double,longitude: Double) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findAroundCapsuleInMap(capsuleId,memberId,latitude, longitude)
+    }
 
 }
