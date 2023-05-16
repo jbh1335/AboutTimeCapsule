@@ -3,11 +3,12 @@ package com.aboutcapsule.android.views.capsule
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.aboutcapsule.android.data.capsule.GroupMemberDto
 import com.aboutcapsule.android.databinding.DialogMemberlistRecyclerItemBinding
 import com.bumptech.glide.Glide
 
 class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>(){
-        var itemList = mutableListOf<DialogData>()
+        var itemList = mutableListOf<GroupMemberDto>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val binding = DialogMemberlistRecyclerItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -19,9 +20,9 @@ class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>(){
         }
 
         inner class ViewHolder(val binding: DialogMemberlistRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root){
-            fun bind(dialogData: DialogData) {
-                Glide.with(itemView).load(dialogData.img).into(binding.dialogMemberlistItemImg)
-                binding.dialogMemberlistItemName.text=dialogData.name
+            fun bind(groupMemberDto: GroupMemberDto) {
+                Glide.with(itemView).load(groupMemberDto.profileImageUrl).into(binding.dialogMemberlistItemImg)
+                binding.dialogMemberlistItemName.text=groupMemberDto.nickname
             }
         }
 

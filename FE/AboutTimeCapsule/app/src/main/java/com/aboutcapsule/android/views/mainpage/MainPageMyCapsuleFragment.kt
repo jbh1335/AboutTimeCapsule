@@ -81,10 +81,6 @@ class MainPageMyCapsuleFragment : Fragment() {
                 binding.whosCapsule.text="친구의 캡슐"
                 sendDataToFragment("friendApi")
             }
-            "visitedApi"->{
-                binding.whosCapsule.text="나의 방문 기록"
-                sendDataToFragment("visitedApi")
-            }
         }
     }
 

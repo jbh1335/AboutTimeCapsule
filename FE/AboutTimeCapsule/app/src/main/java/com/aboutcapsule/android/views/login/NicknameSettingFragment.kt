@@ -69,14 +69,26 @@ class NicknameSettingFragment : Fragment() {
                 activity?.let {
                     Log.d("프래그먼트", "클릭중")
                     val tmpaccessToken = GlobalAplication.preferences.getString("tempAccessToken", "false")
+                    Log.d("임시토큰", "${tmpaccessToken}")
                     if (tmpaccessToken != "false") {
+                        Log.d("tmpaccessToken", "여긴 오니?")
                         val memberId = GlobalAplication.preferences.getInt("currentUser", -1)
                         val nickname = GlobalAplication.preferences.getString("nickname", "false")
                         myPageViewModel.modifyNickname(memberId, nickname)
+                        Log.d("api요청쏘니?", "${memberId}, ${nickname}")
                         myPageViewModel.isModifyNickname.observe(viewLifecycleOwner) {
+                            Log.d("닉네임변경요청관측", "${myPageViewModel.isModifyNickname}")
                             GlobalAplication.preferences.setString("accessToken", tmpaccessToken)
                             val intent = Intent(context, MainActivity::class.java)
                             startActivity(intent)
+
+                            // 프래그먼트 종료
+                            requireActivity().supportFragmentManager
+                                .beginTransaction()
+                                .remove(this)
+                                .commit()
+                            requireActivity().finish()
+
                         }
                     }
 
