@@ -42,7 +42,6 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         private var picture_flag = 0
         private var fileAbsolutePath: String? = null
         private var bellFlag: Boolean = true
-
         private var flag = false
 
         // 갤러리에서 데이터(사진) 가져올 때 사용
@@ -62,7 +61,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
         getCalendarDate()
 
-        bellToggle(bellFlag)
+        bellToggle(true)
 
         setNavigation()
 
@@ -78,19 +77,16 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
     }
 
-    override fun onDestroy() {
-        // 상단 벨 다시 살리기
-        bellToggle(bellFlag)
-
-        super.onDestroy()
-    }
-
     fun redirectPage(){
         // 분기처리 해서 그룹 or 개인 캡슐 페이지로 이동
 //        binding.articleRegistRegistbtn.setOnClickListener{
 //            navController.navigate(R.id.action_articleRegistFragment_to_capsuleMineFragment)
 //        }
+
         binding.articleRegistRegistbtn.setOnClickListener{
+                val capsuleId = requireArguments().getInt("registCapsuleId") // viewmodel response값으로 받은 capsuleId 세팅
+
+
             navController.navigate(R.id.action_articleRegistFragment_to_capsuleGroupFragment)
         }
     }
@@ -163,10 +159,8 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
-            bellFlag=false
         }else{
             bell?.visibility = View.VISIBLE
-            bellFlag =true
         }
     }
 
@@ -233,6 +227,14 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
             ).check()
+    }
+
+
+    override fun onDestroy() {
+        // 상단 벨 다시 살리기
+        bellToggle(false)
+
+        super.onDestroy()
     }
 
 }
