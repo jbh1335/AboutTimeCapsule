@@ -363,6 +363,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 aroundCapsuleInMapAroundCapsuleList = mutableListOf()
                 for(i in 0 until mapDto.length()){
                     val curr = mapDto.getJSONObject(i)
+                    Log.d("list","$curr")
                     val capsuleId = curr.getInt("capsuleId")
                     val isLocked = curr.getBoolean("isLocked")
                     val isMine = curr.getBoolean("isMine")

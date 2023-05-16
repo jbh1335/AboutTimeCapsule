@@ -43,7 +43,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
    companion object{
        lateinit var binding : FragmentCapsuleRegistGroupBinding
        lateinit var navController : NavController
-       lateinit var markerOptions: MarkerOptions
+       private var markerOptions = MarkerOptions()
        private var radioBtn: String = ""
        private var isGroup : Boolean = true
        private var lat : Double = 0.0
@@ -213,7 +213,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,16f))
     }
 
-    fun setCustomMarker(){
+    private fun setCustomMarker(){
         var bitmapdraw : BitmapDrawable = resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
         var bitmap = bitmapdraw.bitmap
         var customMarker = Bitmap.createScaledBitmap(bitmap,90,120,false)
