@@ -22,7 +22,7 @@ public class MemoryController {
         return memoryService.registMemory(multipartFileList, memoryRegistReq);
     }
 
-    @GetMapping
+    @PostMapping
     public SuccessRes<MemoryRes> getMemory(@RequestBody MemoryReq memoryReq) {
         return memoryService.getMemory(memoryReq);
     }
