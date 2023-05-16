@@ -205,6 +205,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
 
         // AR 카메라 클릭 시
         binding.cameraBtn.setOnClickListener{
+            GlobalAplication.preferences.setString("ar_lat", lastKnownLocation!!.latitude.toString())
+            GlobalAplication.preferences.setString("ar_lng", lastKnownLocation!!.longitude.toString())
             navController.navigate(R.id.action_mapMainFragment_to_arActivity)
         }
     }
