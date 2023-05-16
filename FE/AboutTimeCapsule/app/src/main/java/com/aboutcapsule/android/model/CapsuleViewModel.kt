@@ -15,6 +15,7 @@ import com.aboutcapsule.android.data.capsule.GetGroupMemberRes
 import com.aboutcapsule.android.data.capsule.GetMapRes
 import com.aboutcapsule.android.data.capsule.GetVisitedListRes
 import com.aboutcapsule.android.data.capsule.GroupMemberDto
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
 import com.aboutcapsule.android.data.capsule.MapDto
 import com.aboutcapsule.android.data.capsule.MapInfoDto
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
@@ -349,9 +350,10 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         }
     }
 
-    fun getMapInfo(capsuleId: Int,memberId: Int,latitude: Double,longitude: Double){
+    // 지도에서 주변 캡슐 조회
+    fun getAroundCapsuleInMap(mapAroundCapsuleReq : MapAroundCapsuleReq){
         viewModelScope.launch {
-            val response = repository.aroundCapsuleInMap(capsuleId,memberId,latitude, longitude)
+            val response = repository.aroundCapsuleInMap(mapAroundCapsuleReq)
             if(response.isSuccessful){
                 val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
@@ -376,7 +378,6 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 Log.d(TAG, "getMapInfo : 응답 성공 / $mapDto ")
             }
             Log.d(TAG, "getMapInfo : 응답 실패 / ${response.message()}")
-
         }
     }
 

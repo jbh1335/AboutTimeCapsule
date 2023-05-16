@@ -90,7 +90,7 @@ class MainPageMainFragment : Fragment() {
         viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
 
         // 1번째 , 캡슐 수 가져오기
-        viewModel.getCapsuleCount(1) // 멤버 ID 넣어주기
+        viewModel.getCapsuleCount(memberId) // 멤버 ID 넣어주기
         viewModel.capsuleCountDatas.observe(viewLifecycleOwner){
                 binding.mainSection1Capsule1.text = it.capsuleCountRes.myCapsuleCnt.toString()
                 binding.mainSection1Capsule2.text = it.capsuleCountRes.friendCapsuleCnt.toString()
@@ -104,7 +104,7 @@ class MainPageMainFragment : Fragment() {
         // 3번째 , 내 주변의 인기장소 세팅
     }
 
-    fun setLocationUpdates(){
+    private fun setLocationUpdates(){
         val lm = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),

@@ -6,6 +6,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
@@ -35,6 +36,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
 import com.aboutcapsule.android.databinding.FragmentMapMainBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
@@ -52,6 +54,7 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
@@ -251,7 +254,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-
         // 사용자 권한 얻기
         getLocationPermission()
 
@@ -270,6 +272,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
 //        var latlng = LatLng(lastKnownLocation?.latitude!!,lastKnownLocation?.longitude!!)
 //        mMap.addMarker(MarkerOptions().position(latLng).title("여기"))
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
+
+
 
     }
 
@@ -401,6 +405,16 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
                             .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
                         mMap.uiSettings?.isMyLocationButtonEnabled = false
                     }
+
+                    // 반경 설정
+                    var currPos = LatLng(lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+                    var circle1KM = CircleOptions().center(currPos)
+                        .radius(1000.0) // 반지름 단위 : m
+                        .strokeWidth(0f) // 선 너비
+                        .fillColor(Color.parseColor("#88B0E0E6"))
+
+                    mMap.addCircle(circle1KM)
+
                 }
             }
         }catch (e: SecurityException) { // 에러 발생
@@ -415,22 +429,35 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
                 locationResult ?: return
                 for(location in locationResult.locations){
                     lastKnownLocation = location
-                    val latlng = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
+                    val currPos = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPos, 15f))
 
                 }
             }
         }
     }
 
-    // 버튼 클릭 시 내 현재 위치로 이동
+    // 버튼 클릭 시 내 현재 위치로 이동   / 내 위치 근처에 있는 캡슐 서버에 api 쏘기
     override fun onMyLocationButtonClick(): Boolean {
+        var memberId = 1 // 캡슐 Id 가져오기
+
+        val repository = CapsuleRepo()
+        val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+        viewModel = ViewModelProvider  (this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
+        val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+
+        viewModel.getAroundCapsuleInMap(datas)
+        viewModel.mapInfoList.observe(viewLifecycleOwner){
+                it.mapDtoList
+        }
+
         return false
     }
     // 현재 내 위치 표시 ( 파란 점 )
-    override fun onMyLocationClick(p0: Location) {
-        Log.d("내위치표시","$p0")
-        Toast.makeText(mainActivity,"onMyLocationClick/curr location",Toast.LENGTH_SHORT).show()
+    override fun onMyLocationClick(l: Location) {
+        Log.d("내위치표시","$l")
+        var currLat = l.latitude
+        var currLng = l.longitude
     }
 
 
