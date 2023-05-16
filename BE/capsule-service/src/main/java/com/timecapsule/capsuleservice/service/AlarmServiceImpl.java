@@ -37,6 +37,7 @@ public class AlarmServiceImpl implements AlarmService{
                 .categoryType(alarm.getCategoryType())
                 .build()));
 
+        redisService.setData("alarm_new", memberId, false);
         return new SuccessRes<>(true, "알림 내역을 조회합니다.", alarmResList);
     }
 

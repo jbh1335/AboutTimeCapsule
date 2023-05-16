@@ -44,6 +44,8 @@ public class FcmServiceImpl implements FcmService {
                     .categoryType(messageDto.getCategoryType())
                     .capsuleId(Integer.parseInt(messageDto.getDataMap().get("capsuleId")))
                     .build());
+
+            redisService.setData("alarm_new", member.getId(), true);
         } catch (FirebaseMessagingException e) {
             throw new RuntimeException(e);
         }
