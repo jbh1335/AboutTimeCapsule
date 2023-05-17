@@ -2,6 +2,7 @@ package com.aboutcapsule.android.repository
 
 import android.util.Log
 import com.aboutcapsule.android.data.memory.MemoryRegistReq
+import com.aboutcapsule.android.data.memory.MemoryReq
 import com.aboutcapsule.android.util.RetrofitManager
 import com.aboutcapsule.android.views.capsule.ArticleRegistFragment
 import okhttp3.MultipartBody
@@ -14,5 +15,8 @@ class MemoryRepo {
         Log.d("레포", "${ArticleRegistFragment.imageList}")
         Log.d("레포req", "${memoryRegistReq}")
         return RetrofitManager.memoryInstance.api.registerMemory(imageList, memoryRegistReq)
+    }
+    suspend fun getCapsuleMemory(memoryReq: MemoryReq) : Response<ResponseBody>{
+        return RetrofitManager.memoryInstance.api.getCapsuleMemory(memoryReq)
     }
 }

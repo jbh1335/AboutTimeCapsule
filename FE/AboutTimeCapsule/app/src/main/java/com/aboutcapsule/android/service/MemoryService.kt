@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.service
 
 import com.aboutcapsule.android.data.memory.MemoryRegistReq
+import com.aboutcapsule.android.data.memory.MemoryReq
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -14,6 +15,9 @@ import retrofit2.http.Part
 interface MemoryService {
     @Multipart
     @POST("regist")
-    suspend fun registerMemory(@Part multipartFileList: List<MultipartBody.Part>, @Part("memoryRegistReq") memoryRegistReq : RequestBody) : Response<ResponseBody>
+    suspend fun registerMemory(@Part multipartFileList: List<MultipartBody.Part>,
+                               @Part("memoryRegistReq") memoryRegistReq : RequestBody): Response<ResponseBody>
 
+    @POST("/")
+    suspend fun getCapsuleMemory(@Body memoryReq: MemoryReq) :Response<ResponseBody>
 }
