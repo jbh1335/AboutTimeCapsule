@@ -4,11 +4,11 @@ import java.time.LocalDate
 
 data class MemoryDetailDto(
     val memoryId: Int,
-    val nickname: Int,
+    val nickname: String,
     val memoryTitle: String,
     val profileImageUrl: String,
     val content: String,
-    val imageUrl: Array<String>,
+    val imageUrl: ArrayList<String>,
     val commentCnt: Int,
     val createdDate: LocalDate,
     val isLocked: Boolean,
