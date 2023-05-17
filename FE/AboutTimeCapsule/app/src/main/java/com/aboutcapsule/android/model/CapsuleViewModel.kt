@@ -27,6 +27,8 @@ import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     private var TAG = "CapsuleViewModel"
@@ -393,6 +395,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
             if(response.isSuccessful){
                 val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
+                Log.d("openDate","$jsonObject")
                 val mapCapsuledDetail = jsonObject.getJSONObject("data")
 
                 var capusleId =  mapCapsuledDetail.getInt("capsuleId")
@@ -401,7 +404,6 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 var isLocked = mapCapsuledDetail.getBoolean("isLocked")
                 var isGroup = mapCapsuledDetail.getBoolean("isGroup")
                 var openDate = mapCapsuledDetail.getString("openDate")
-
                 val data = PostMapCapsuleDetailRes(capusleId,memberNickname,leftTime,isLocked,isGroup, openDate)
 
                 capsuleInMapDetailDatas.value = data

@@ -2,7 +2,9 @@ package com.aboutcapsule.android.views.map
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -17,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
@@ -60,7 +63,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.Locale
 
-class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback , OnMarkerClickListener{
+class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback , OnMarkerClickListener {
 
     companion object{
         lateinit var binding : FragmentMapMainBinding
@@ -273,7 +276,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
 
         // 사용자의 위치,카메라 가져오기
         getDeviceLocation()
-
 
     }
 
@@ -546,8 +548,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         bundle.putDouble("lat" , lastKnownLocation!!.latitude)
         bundle.putDouble("lng" , lastKnownLocation!!.longitude)
         dialog.arguments = bundle
-        dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
-
+        dialog.show(childFragmentManager, "customDialogCapsuleInfoFragment")
         }
 
 

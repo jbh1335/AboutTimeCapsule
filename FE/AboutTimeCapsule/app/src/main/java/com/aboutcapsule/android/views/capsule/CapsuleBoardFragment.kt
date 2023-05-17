@@ -47,6 +47,12 @@ class CapsuleBoardFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_group,container,false)
 
+        val capsuleId=requireArguments().getInt("capsuleId")
+        val lat = requireArguments().getDouble("lat")
+        val lng = requireArguments().getDouble("lng")
+
+        Log.d("캡슐보드","$capsuleId /$lat / $lng")
+
         getCalendarDate()
 
         redirectPage()
