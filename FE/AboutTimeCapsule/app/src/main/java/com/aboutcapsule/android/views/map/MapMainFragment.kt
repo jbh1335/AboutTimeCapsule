@@ -24,8 +24,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -60,7 +62,9 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.Locale
 
-class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback , OnMarkerClickListener{
+class MapMainFragment : Fragment() ,OnMapReadyCallback
+    ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback
+    , OnMarkerClickListener , CustomDialogCapsuleInfoFragment.DialogCallback{
 
     companion object{
         lateinit var binding : FragmentMapMainBinding
@@ -90,6 +94,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         private lateinit var marker : Marker
         // 서버에서 받은 마커들
         private  var mapMarkerList : MutableList<Marker>? = mutableListOf()
+        // 다이얼로그에서 열기버튼 눌러서 넘어온 경우 ( capsuleId 값 받아서 넘기기 )
+        private var isRedirect : Int = -1 // isRedirect -> capsuleId 임 (다이얼로그에서 가져온 )
 
         private val TAG = MapMainFragment::class.java.simpleName
 
@@ -401,7 +407,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             Log.e("Exception: %s", e.message, e)
         }
     }
-    // 위치 정보 콜백 함수 호출 ( 일정 주기 정해주기 )
+    // 위치 정보 콜백 함수 호출 ( 주기 정해주기 )
     private fun callbackLocations(){
         val locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -450,18 +456,19 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
                 previousCircle = mMap.addCircle(currCircle) // 새로운 반경원 추가
 
                 val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
-
-                viewModel.getAroundCapsuleInMap(datas)
-                viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner){
-                    setMarkers(it.mapAroundCapsuleResList)
+                if(view!= null ) {
+                    viewModel.getAroundCapsuleInMap(datas)
+                    viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner) {
+                        setMarkers(it.mapAroundCapsuleResList)
+                    }
+                } else{
+                    Log.d("체크","체크 ")
                 }
-
-
             }
         }
     }
 
-    fun setRepo(){
+    private fun setRepo(){
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider(this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
@@ -546,10 +553,10 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         bundle.putDouble("lat" , lastKnownLocation!!.latitude)
         bundle.putDouble("lng" , lastKnownLocation!!.longitude)
         dialog.arguments = bundle
+            dialog.setCallback(this) // 콜백 인터페이스 설정
         dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
 
         }
-
 
        return true
     }
@@ -586,6 +593,33 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         bellToggle(false)
 
         super.onDestroy()
+    }
+      // 다이얼로그에서 열기버튼 눌렀을 경우 페이지 전환
+    private fun redirectChk(){
+        // 다이얼로그에서 열기버튼 눌러서 넘어온 경우
+        if(isRedirect != -1){
+            val bundle = Bundle()
+            bundle.putInt("capsuleId", isRedirect)
+            bundle.putDouble("lat", lastKnownLocation!!.latitude)
+            bundle.putDouble("lng", lastKnownLocation!!.longitude)
+            isRedirect=-1
+
+//            navController.popBackStack(navController.graph.startDestinationId,false)
+//            val fragmentManager = requireActivity().supportFragmentManager
+//            val fragmentTransaction = fragmentManager.beginTransaction()
+//            fragmentTransaction.remove(this)
+            navController.navigate(R.id.action_mapMainFragment_to_capsuleGroupFragment,bundle)
+//            fragmentTransaction.commit()
+        }
+
+    }
+
+    override fun onDialogDismissed(data: Int) {
+        isRedirect=data
+
+        redirectChk()
+
+
     }
 
 }
