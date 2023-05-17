@@ -1,7 +1,10 @@
 package com.aboutcapsule.android.views.ar;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -9,7 +12,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.aboutcapsule.android.R;
-import com.aboutcapsule.android.data.GetCapsuleNearRes;
 import com.aboutcapsule.android.data.capsule.GetMapRes;
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq;
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleRes;
@@ -99,6 +101,7 @@ public class ArActivity extends AppCompatActivity {
         capsuleViewModel.getAroundCapsuleInMap(new MapAroundCapsuleReq(memberId, lat, lng));
 
         capsuleViewModel.getAroundCapsuleInMapList().observe(this, new Observer<GetMapRes>() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public void onChanged(GetMapRes getMapRes) {
                 //데이터 받아와서 capsuleList에 넣기
@@ -194,6 +197,16 @@ public class ArActivity extends AppCompatActivity {
                                                 imageNode.setLocalPosition(new Vector3(0.0f, 0.0f, -1.0f));
                                                 imageNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
 
+                                                //캡슐 클릭시 상세 화면으로 이동
+                                                View eView = capsuleRenderableList.get(i).getView();
+                                                int capsuleId = capsuleList.get(i).getCapsuleId();
+                                                
+                                                //TODO : 캡슐이랑 연결 => 에러남...
+//                                                eView.setOnTouchListener((v, event) -> {
+//                                                    Toast.makeText(getApplicationContext(), capsuleId, Toast.LENGTH_SHORT).show();
+//                                                    return false;
+//                                                });
+                                                
                                                 // 노드를 위치 마커에 찍어서 씬에 추가
                                                 locationMarker[i] = new LocationMarker(capsuleList.get(i).getLongitude(), capsuleList.get(i).getLatitude(), imageNode);
                                                 locationScene.mLocationMarkers.add(locationMarker[i]);
@@ -220,11 +233,6 @@ public class ArActivity extends AppCompatActivity {
                 }
             }
         });
-
-        //더미데이터
-//        capsuleList.add(new MapAroundCapsuleRes(1, false, true,false, 36.3552217, 127.2979467));
-//        capsuleList.add(new MapAroundCapsuleRes(2, false, true,false, 36.3552217, 127.2979467));
-//        capsuleList.add(new MapAroundCapsuleRes(3, false, true,false, 36.3552217, 127.2979467));
 
     }
 
