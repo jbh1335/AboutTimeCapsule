@@ -31,10 +31,15 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
     private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
     private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
 
+
     // bundle 값
     private  var capsuleId :Int = 0
     private var lat : Double = 0.0
     private var lng : Double = 0.0
+
+    // callback 객체
+    private var callback : DialogCallback? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,11 +57,21 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
         return binding?.root
     }
 
+
     // 네비게이션 세팅
     private fun setNavigation(){
         val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
     }
+
+    fun setCallback(callback: DialogCallback){
+        this.callback=callback
+    }
+    interface DialogCallback{
+        fun onDialogDismissed(data: Int)
+    }
+
+
 
     private fun callingApi(){
 
@@ -119,6 +134,9 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
                     binding?.capsuleinfoDialogBtn?.setOnClickListener{
                         // 상세 페이지로 이동 !
                         // 열기 버튼 클릭했는지 판단용 클릭리스너
+
+                        callback?.onDialogDismissed(capsuleId)
+
                         dismiss()
                     }
                 }

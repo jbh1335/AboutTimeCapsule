@@ -12,7 +12,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
-import com.aboutcapsule.android.data.capsule.UnopenedCapsuleDto
 import com.aboutcapsule.android.databinding.FragmentCapsuleVistiedBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
@@ -46,10 +45,14 @@ class MainPageVistiedCapsuleListFragment : Fragment() {
 
     }
 
+    interface OnVisitedItemClickListener{
+        fun onItemClick(position:Int)
+    }
+
     // 방문한 캡슐 ( view )
     private fun setVisitedView(data : MutableList<OpenedCapsuleDto>) {
 
-        visitedAdapter = CapsuleOpenedAdapter()
+//        visitedAdapter = CapsuleOpenedAdapter()
 
         var gridManager = GridLayoutManager(context, 3)
         visitedAdapter.itemList = data
@@ -68,7 +71,6 @@ class MainPageVistiedCapsuleListFragment : Fragment() {
             setVisitedView(it.openedCapsuleDtoList)
         }
     }
-
 
     // 네비게이션 세팅
     private fun setNavigation() {

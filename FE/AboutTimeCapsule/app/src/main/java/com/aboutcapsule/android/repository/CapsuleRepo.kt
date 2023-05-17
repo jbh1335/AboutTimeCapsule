@@ -1,5 +1,8 @@
 package com.aboutcapsule.android.repository
 
+import com.aboutcapsule.android.data.capsule.AroundCapsuleReq
+import com.aboutcapsule.android.data.capsule.AroundPopularPlaceReq
+import com.aboutcapsule.android.data.capsule.CapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
 import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
@@ -37,8 +40,8 @@ class CapsuleRepo {
         return RetrofitManager.capsuleInstance.api.findGroupMember(capsuleId)
     }
 
-    suspend fun aroundCapsule(memberId: Int, latitude : Double , longitude : Double ) : Response<ResponseBody>{
-        return RetrofitManager.capsuleInstance.api.findAroundCapsule(memberId,latitude,longitude)
+    suspend fun aroundCapsule(aroundCapsuleReq : AroundCapsuleReq) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findAroundCapsule(aroundCapsuleReq)
     }
 
     suspend fun myFriendList(memberId : Int) : Response<ResponseBody>{
@@ -55,6 +58,14 @@ class CapsuleRepo {
 
     suspend fun capsuleInMapDetail(mapCapsuleDetailReq : MapCapsuleDetailReq) : Response<ResponseBody>{
         return RetrofitManager.capsuleInstance.api.findCapsuleInMapDetail(mapCapsuleDetailReq)
+    }
+
+    suspend fun capsuleDetail(capsuleDetailReq: CapsuleDetailReq) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findCapsuleDetail(capsuleDetailReq)
+    }
+
+    suspend fun aroundPopularPlaceList(aroundPopularPlaceReq: AroundPopularPlaceReq): Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findAroundPopularPlace((aroundPopularPlaceReq))
     }
 
 }
