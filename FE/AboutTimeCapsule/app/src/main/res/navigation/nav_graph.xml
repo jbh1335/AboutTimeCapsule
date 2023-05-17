@@ -41,6 +41,9 @@
         <action
             android:id="@+id/action_mapMainFragment_to_arActivity"
             app:destination="@id/arActivity" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleGroupFragment"
+            app:destination="@id/capsuleGroupFragment" />
     </fragment>
 
     <fragment

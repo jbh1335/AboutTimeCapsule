@@ -1,5 +1,7 @@
 package com.aboutcapsule.android.repository
 
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
+import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.util.RetrofitManager
 import okhttp3.ResponseBody
@@ -44,11 +46,15 @@ class CapsuleRepo {
     }
 
     suspend fun capsuleCount(memberId: Int) : Response<ResponseBody>{
-        return RetrofitManager.capsuleInstance.api.findCaspuleCount(memberId)
+        return RetrofitManager.capsuleInstance.api.findCapsuleCount(memberId)
     }
 
-    suspend fun aroundCapsuleInMap(capsuleId : Int , memberId : Int, latitude: Double,longitude: Double) : Response<ResponseBody>{
-        return RetrofitManager.capsuleInstance.api.findAroundCapsuleInMap(capsuleId,memberId,latitude, longitude)
+    suspend fun aroundCapsuleInMap(mapAroundCapsuleReq: MapAroundCapsuleReq) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findAroundCapsuleInMap(mapAroundCapsuleReq)
+    }
+
+    suspend fun capsuleInMapDetail(mapCapsuleDetailReq : MapCapsuleDetailReq) : Response<ResponseBody>{
+        return RetrofitManager.capsuleInstance.api.findCapsuleInMapDetail(mapCapsuleDetailReq)
     }
 
 }

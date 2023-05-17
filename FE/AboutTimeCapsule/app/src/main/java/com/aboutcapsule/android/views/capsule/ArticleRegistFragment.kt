@@ -232,7 +232,6 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             binding.galleryBtn.id -> { settingPermission(1)}
-
         }
     }
 

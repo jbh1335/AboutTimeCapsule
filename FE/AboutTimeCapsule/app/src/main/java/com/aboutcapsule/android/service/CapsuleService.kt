@@ -1,5 +1,7 @@
 package com.aboutcapsule.android.service
 
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
+import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -40,9 +42,11 @@ interface CapsuleService {
     suspend fun findFriendList(@Path("memberId") memberId : Int ): Response<ResponseBody>
 
     @GET("main/{memberId}")
-    suspend fun findCaspuleCount(@Path("memberId") memberId: Int ): Response<ResponseBody>
+    suspend fun findCapsuleCount(@Path("memberId") memberId: Int ): Response<ResponseBody>
 
-    @GET("map")
-    suspend fun findAroundCapsuleInMap(@Query("capsuleId") capsuleId:Int, @Query("memberId") memberId:Int, @Query("latitude") latitude: Double ,  @Query("longitude") longitude: Double ) : Response<ResponseBody>
+    @POST("map")
+    suspend fun findAroundCapsuleInMap(@Body mapAroundCapsuleReq: MapAroundCapsuleReq) : Response<ResponseBody>
 
+    @POST("map/capsuleDetail")
+    suspend fun findCapsuleInMapDetail(@Body mapCapsuleDetailReq : MapCapsuleDetailReq) : Response<ResponseBody>
 }

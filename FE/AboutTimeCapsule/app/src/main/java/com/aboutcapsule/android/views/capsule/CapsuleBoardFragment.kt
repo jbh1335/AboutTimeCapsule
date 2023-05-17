@@ -61,6 +61,12 @@ class CapsuleBoardFragment : Fragment() {
 
         getCalendarDate()
 
+        // 맵에서 넘어온 데이터들 ( 다이얼로그 열기버튼 클릭 시 , )
+        var capsuleId = requireArguments().getInt("capsuleId")
+        var lat =requireArguments().getDouble("lat")
+        var lng =requireArguments().getDouble("lng")
+        Log.d("넘어옴" , "$capsuleId /$lat / $lng")
+
         redirectPage()
 
         return binding.root
