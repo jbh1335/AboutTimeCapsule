@@ -51,6 +51,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 
        private lateinit var address : String
        private lateinit var viewModel : CapsuleViewModel
+       private lateinit var groupmemberNames : String
 
        private var memberNameList : ArrayList<String>? = null
        private var memberIdList : MutableList<Int>? = null
@@ -106,6 +107,10 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 str+= "@"+memberNameList!!.get(i)+" "
             }
             binding.addMemberView.text=str
+            groupmemberNames=str
+        }else{
+            binding.addMemberView.hint="멤버를 추가해주세요"
+            groupmemberNames=""
         }
     }
     private fun getBundleData(){
@@ -125,16 +130,18 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 //            Log.d("리스트",tmp.toString())
             lat // 위도
             lng // 경도
-            Log.d("radio","$radioBtn")
-            Log.d("APi_edittext","$title")
-            Log.d("APi_address" , "$address")
+            Log.d("radio", "$radioBtn")
+            Log.d("APi_edittext", "$title")
+            Log.d("APi_address", "$address")
 
-            if(radioBtn == ""){
-                Toast.makeText(requireContext(),"공개 범위를 설정해주세요",Toast.LENGTH_SHORT).show()
+            if (radioBtn == "") {
+                Toast.makeText(requireContext(), "공개 범위를 설정해주세요", Toast.LENGTH_SHORT).show()
+            } else if(groupmemberNames==""){
+                Toast.makeText(requireContext(),"그룹 멤버를 추가해주세요",Toast.LENGTH_SHORT).show()
             }else if (title.isEmpty() || title.length > 30) {
                 Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
                     .show()
-            } else {
+            }else {
                 val memberlist =arguments?.getIntegerArrayList("memberIdList")
                 Log.d("success in radio","$radioBtn")
                 val repository = CapsuleRepo()
