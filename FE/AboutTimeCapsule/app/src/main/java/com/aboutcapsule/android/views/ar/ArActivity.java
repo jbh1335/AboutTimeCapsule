@@ -20,6 +20,7 @@ import com.aboutcapsule.android.model.CapsuleViewModel;
 import com.aboutcapsule.android.repository.CapsuleRepo;
 import com.aboutcapsule.android.util.GlobalAplication;
 import com.aboutcapsule.android.util.Utils;
+import com.aboutcapsule.android.views.map.CustomDialogCapsuleInfoFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.ar.core.Frame;
 import com.google.ar.core.Plane;
@@ -198,14 +199,21 @@ public class ArActivity extends AppCompatActivity {
                                                 imageNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
 
                                                 //캡슐 클릭시 상세 화면으로 이동
-                                                View eView = capsuleRenderableList.get(i).getView();
-                                                int capsuleId = capsuleList.get(i).getCapsuleId();
-                                                
-                                                //TODO : 캡슐이랑 연결 => 에러남...
-//                                                eView.setOnTouchListener((v, event) -> {
-//                                                    Toast.makeText(getApplicationContext(), capsuleId, Toast.LENGTH_SHORT).show();
-//                                                    return false;
-//                                                });
+                                                View view = capsuleRenderableList.get(i).getView();
+                                                MapAroundCapsuleRes capsule = capsuleList.get(i);
+
+                                                view.setOnTouchListener((v, event) -> {
+                                                    //다이얼로그 띄우기
+                                                    CustomDialogCapsuleInfoFragment dialog = new CustomDialogCapsuleInfoFragment();
+                                                    Bundle bundle = new Bundle();
+                                                    bundle.putInt("capsuleId", capsule.getCapsuleId());
+                                                    bundle.putDouble("lat", capsule.getLatitude());
+                                                    bundle.putDouble("lng", capsule.getLongitude());
+                                                    dialog.setArguments(bundle);
+                                                    dialog.show(getSupportFragmentManager(), "customDialogCapsuleInfoFragment");
+
+                                                    return false;
+                                                });
                                                 
                                                 // 노드를 위치 마커에 찍어서 씬에 추가
                                                 locationMarker[i] = new LocationMarker(capsuleList.get(i).getLongitude(), capsuleList.get(i).getLatitude(), imageNode);
