@@ -185,7 +185,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
         // 개인 캡슐 클릭 시
         binding.capsuleRegistAloneBtn.setOnClickListener {
             var bundle = bundleOf( "lat" to "${lastKnownLocation?.latitude}" , "lng" to "${lastKnownLocation?.longitude}" )
-            navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistFragment)
+            navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistFragment,bundle)
         }
 
         // 그룹 캡슐 클릭 시
@@ -545,13 +545,13 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             val isAllowedDistance = tag.first
             val capsuleId = tag.second
             Log.d("마커 값","$isAllowedDistance / $capsuleId")
-        val dialog = CustomDialogCapsuleInfoFragment()
-        val bundle = Bundle()
-        bundle.putInt("capsuleId",capsuleId)
-        bundle.putDouble("lat" , lastKnownLocation!!.latitude)
-        bundle.putDouble("lng" , lastKnownLocation!!.longitude)
-        dialog.arguments = bundle
+            val dialog = CustomDialogCapsuleInfoFragment()
             dialog.setCallback(this) // 콜백 인터페이스 설정
+            val bundle = Bundle()
+            bundle.putInt("capsuleId",capsuleId)
+            bundle.putDouble("lat" , lastKnownLocation!!.latitude)
+            bundle.putDouble("lng" , lastKnownLocation!!.longitude)
+            dialog.arguments = bundle
         dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
 
         }
@@ -602,14 +602,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             bundle.putDouble("lng", lastKnownLocation!!.longitude)
             isRedirect=-1
 
-//            navController.popBackStack(navController.graph.startDestinationId,false)
-//            val fragmentManager = requireActivity().supportFragmentManager
-//            val fragmentTransaction = fragmentManager.beginTransaction()
-//            fragmentTransaction.remove(this)
             navController.navigate(R.id.action_mapMainFragment_to_capsuleGroupFragment,bundle)
-//            fragmentTransaction.commit()
         }
-
     }
 
     override fun onDialogDismissed(data: Int) {

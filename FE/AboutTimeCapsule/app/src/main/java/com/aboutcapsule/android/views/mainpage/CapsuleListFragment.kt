@@ -31,11 +31,12 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
     companion object{
         private lateinit var findHost : String // 분기처리 정보 넘겨받음 , api 판별용
         private lateinit var viewModel : CapsuleViewModel
+        private var lat : Double = 0.0 //좌 표
+        private var lng : Double = 0.0 //좌 표
+
         private const val TAG = "CapsuleListFragment"
-        private lateinit var observingUnopendList : MutableList<UnopenedCapsuleDto>
-        private lateinit var observingOpendList : MutableList<OpenedCapsuleDto>
-        private lateinit var observingMapInfoList : MutableList<MapInfoDto>
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,6 +51,7 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
 
 //        Log.d("캡슐리스트프래그먼트" ,MainActivity.preferences.getString("meOrFriend","notKey"))
 
+        setData()
 
         setNavigation()
 
@@ -64,6 +66,11 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
         findHost = data
     }
     // onDataPass로 MainPageMyCapsuleFragment에서 넘겨받은 분기처리 정보 받은 후 api 통신
+
+    fun setData(){
+        lat = requireArguments().getDouble("lat")
+        lng = requireArguments().getDouble("lng")
+    }
     private fun callingApi(){
 
         val repository = CapsuleRepo()
@@ -94,19 +101,85 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
 
     // 000님을 기다리고 있어요 ( view )
     private fun setWaitingView(data : MutableList<UnopenedCapsuleDto>){
-        unOpenedAdapter = CapsuleUnOpenedAdapter()
+        unOpenedAdapter = CapsuleUnOpenedAdapter(object : OnWaitingItemClickListener{
+            override fun onItemClick(position: Int) {
+
+                when(findHost) {
+                    "myCapsuleApi" -> {
+                        val dialog = CustomDialogMainpage()
+                        val bundle = Bundle()
+                        val capsuleId = viewModel.myCapsuleList.value?.unopenedCapsuleDtoList?.get(position)!!.capsuleId
+
+                        bundle.putInt("capsuleId", capsuleId)
+                        bundle.putDouble("lat", lat)
+                        bundle.putDouble("lng", lng)
+                        dialog.arguments = bundle
+                        dialog.show(parentFragmentManager, "customDialog")
+                    }
+                    "friendApi" -> {
+                        val dialog = CustomDialogMainpage()
+                        val bundle = Bundle()
+                        val capsuleId = viewModel.friendCapsuleList.value?.unopenedCapsuleDtoList?.get(position)!!.capsuleId
+
+                        bundle.putInt("capsuleId", capsuleId)
+                        bundle.putDouble("lat", lat)
+                        bundle.putDouble("lng", lng)
+                        dialog.arguments = bundle
+                        dialog.show(parentFragmentManager, "customDialog")
+                    }
+                }
+            }
+        })
 
         unOpenedAdapter.itemList = data
         binding.capsuleListSection1RecyclerView.adapter =unOpenedAdapter
     }
 
+    interface OnWaitingItemClickListener{
+        fun onItemClick(position : Int)
+    }
+
+    interface OnMeetingItemClickListener{
+        fun onItemClick(position : Int)
+    }
+
     // 000님과 만났어요 ( view )
     private fun setMeetView(data : MutableList<OpenedCapsuleDto>){
-        openedAdapter = CapsuleOpenedAdapter()
+        openedAdapter = CapsuleOpenedAdapter(object : OnMeetingItemClickListener{
+            override fun onItemClick(position: Int) {
+
+                when(findHost) {
+                    "myCapsuleApi" -> {
+                        val dialog = CustomDialogMainpage()
+                        val bundle = Bundle()
+                        val capsuleId = viewModel.myCapsuleList.value?.openedCapsuleDtoList?.get(position)!!.capsuleId
+
+                        bundle.putInt("capsuleId", capsuleId)
+                        bundle.putDouble("lat", lat)
+                        bundle.putDouble("lng", lng)
+                        dialog.arguments = bundle
+                        dialog.show(parentFragmentManager, "customDialog")
+                    }
+                    "friendApi" -> {
+                        val dialog = CustomDialogMainpage()
+                        val bundle = Bundle()
+                        val capsuleId = viewModel.friendCapsuleList.value?.openedCapsuleDtoList?.get(position)!!.capsuleId
+
+                        bundle.putInt("capsuleId", capsuleId)
+                        bundle.putDouble("lat", lat)
+                        bundle.putDouble("lng", lng)
+                        dialog.arguments = bundle
+                        dialog.show(parentFragmentManager, "customDialog")
+                    }
+                }
+
+            }
+        })
 
         openedAdapter.itemList = data
         binding.capsuleListSection2RecyclerView.adapter =openedAdapter
     }
+
 
 
     // 네비게이션 세팅

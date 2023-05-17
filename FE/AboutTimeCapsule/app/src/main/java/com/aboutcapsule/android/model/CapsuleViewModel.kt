@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aboutcapsule.android.data.capsule.AroundCapsuleDto
+import com.aboutcapsule.android.data.capsule.AroundCapsuleReq
 import com.aboutcapsule.android.data.capsule.CapsuleCountRes
+import com.aboutcapsule.android.data.capsule.CapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.FriendDto
 import com.aboutcapsule.android.data.capsule.GetFriendListRes
 import com.aboutcapsule.android.data.capsule.GetAroundCapsuleListRes
@@ -20,6 +22,8 @@ import com.aboutcapsule.android.data.capsule.MapAroundCapsuleRes
 import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.MapInfoDto
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
+import com.aboutcapsule.android.data.capsule.PostAroundPopularPlaceRes
+import com.aboutcapsule.android.data.capsule.PostCapsuleDetailRes
 import com.aboutcapsule.android.data.capsule.PostMapCapsuleDetailRes
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.data.capsule.UnopenedCapsuleDto
@@ -39,6 +43,8 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var capsuleCountDatas : MutableLiveData<GetCapsuleCountRes> = MutableLiveData()
     var aroundCapsuleInMapList : MutableLiveData<GetMapRes> = MutableLiveData()
     var capsuleInMapDetailDatas : MutableLiveData<PostMapCapsuleDetailRes> = MutableLiveData()
+    var capsuleDetailDatas : MutableLiveData<PostCapsuleDetailRes> = MutableLiveData()
+    var aroundPopularPlaceList :MutableLiveData<PostAroundPopularPlaceRes> = MutableLiveData()
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
@@ -47,6 +53,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         lateinit var aroundCapsuleDtoList: MutableList<AroundCapsuleDto>
         lateinit var myfriendDtoList : MutableList<FriendDto>
         lateinit var aroundCapsuleInMapAroundCapsuleList : MutableList<MapAroundCapsuleRes>
+
     }
 
     // 캡슐 등록
@@ -116,7 +123,8 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
 
                 myCapsuleList.value = getCapsuleListRes
 
-                Log.d(TAG,"getMyCapsuleList : 응답 성공 / $dataObjects")
+                Log.d(TAG,
+                    "getMyCapsuleList : 응답 성공 / $dataObjects")
             }else {
                 Log.d(TAG,"getCapsuleList : 응답 실패 / ${response.message()}" )
             }
@@ -273,9 +281,10 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     }
 
     // 1km 이내 캡슐 조회
-    fun getAroundCapsuleList(capsuleId: Int, latitude : Double, longitude : Double){
+    fun getAroundCapsuleList(aroundCapsuleReq : AroundCapsuleReq){
             viewModelScope.launch {
-                var response = repository.aroundCapsule(capsuleId,latitude,longitude)
+                var response = repository.aroundCapsule(aroundCapsuleReq)
+
                 if(response.isSuccessful){
                     val jsonString = response.body()?.string()
                     val jsonObject = JSONObject(jsonString)
@@ -294,9 +303,11 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                     aroundCapsuleList.value = getAroundCapsuleListRes
 
                     Log.d(TAG, "getAroundCapsuleList : 응답 성공 / $jsonObject ")
-                }
-                Log.d(TAG, "getAroundCapsuleList : 응답 실패/ ${response.message()}")
 
+                    Log.d(TAG, "getAroundCapsuleList : 응답 성공 / ${response.body()?.string()} ")
+                }else {
+                    Log.d(TAG, "getAroundCapsuleList : 응답 실패/ ${response.message()}")
+                }
             }
     }
 
@@ -328,6 +339,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         }
     }
 
+    // 메인페이지 상단 캡슐 개수 보여주기
     fun getCapsuleCount(memberId: Int){
         viewModelScope.launch {
             val response = repository.capsuleCount(memberId)
@@ -393,14 +405,14 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
             if(response.isSuccessful){
                 val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
-                val mapCapsuledDetail = jsonObject.getJSONObject("data")
+                val mapCapsuleDetail = jsonObject.getJSONObject("data")
 
-                var capusleId =  mapCapsuledDetail.getInt("capsuleId")
-                var memberNickname = mapCapsuledDetail.getString("memberNickname")
-                var leftTime = mapCapsuledDetail.getString("leftTime")
-                var isLocked = mapCapsuledDetail.getBoolean("isLocked")
-                var isGroup = mapCapsuledDetail.getBoolean("isGroup")
-                var openDate = mapCapsuledDetail.getString("openDate")
+                var capusleId =  mapCapsuleDetail.getInt("capsuleId")
+                var memberNickname = mapCapsuleDetail.getString("memberNickname")
+                var leftTime = mapCapsuleDetail.getString("leftTime")
+                var isLocked = mapCapsuleDetail.getBoolean("isLocked")
+                var isGroup = mapCapsuleDetail.getBoolean("isGroup")
+                var openDate = mapCapsuleDetail.getString("openDate")
 
                 val data = PostMapCapsuleDetailRes(capusleId,memberNickname,leftTime,isLocked,isGroup, openDate)
 
@@ -410,11 +422,37 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
             }else{
                 Log.d(TAG, "getAroundCapsuleInMap : 응답 성공 / ${response.message()} ")
             }
-
-
-
         }
     }
 
+    fun getCapsuleDetail(capsuleDetailReq: CapsuleDetailReq){
+        viewModelScope.launch {
+            val response = repository.capsuleDetail(capsuleDetailReq)
+            if(response.isSuccessful){
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val capsuleDetail = jsonObject.getJSONObject("data")
+
+                val capsuleId = capsuleDetail.getInt("capsuleId")
+                val memberNickname = capsuleDetail.getString("memberNickname")
+                val distance = capsuleDetail.getInt("distance")
+                val leftTime = capsuleDetail.getString("leftTime")
+                val isLocked = capsuleDetail.getBoolean("isLocked")
+                val latitude = capsuleDetail.getDouble("latitude")
+                val longitude = capsuleDetail.getDouble("longitude")
+                val address = capsuleDetail.getString("address")
+
+                val data = PostCapsuleDetailRes(capsuleId, memberNickname, distance, leftTime, isLocked, latitude, longitude, address)
+
+                capsuleDetailDatas.value = data
+
+                Log.d(TAG, "getCapsuleDetail : 응답 성공 / ${response.body()} ")
+            }else{
+                Log.d(TAG, "getCapsuleDetail : 응답 성공 / ${response.message()} ")
+            }
+
+        }
+
+    }
 
 }

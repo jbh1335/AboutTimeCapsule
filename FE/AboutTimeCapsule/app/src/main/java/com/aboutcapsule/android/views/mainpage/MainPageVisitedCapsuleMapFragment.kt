@@ -42,13 +42,13 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
 
-        callingApi() // api 받아오기
-
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_visited_capsule_map,container,false)
 
 
         binding.visitedMapFragment.onCreate(savedInstanceState)
         binding.visitedMapFragment.getMapAsync(this)
+
+        callingApi() // api 받아오기
 
         return binding.root
     }
@@ -70,9 +70,8 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
-
-               viewModel.getVisitedCapsuleList(1)
-                viewModel.visitedCapsuleList.observe(viewLifecycleOwner) {
+        viewModel.getVisitedCapsuleList(1)
+        viewModel.visitedCapsuleList.observe(viewLifecycleOwner) {
                     Log.d(TAG, "${it.mapInfoDtoList}")
                     mapMarkers = it.mapInfoDtoList
                 }

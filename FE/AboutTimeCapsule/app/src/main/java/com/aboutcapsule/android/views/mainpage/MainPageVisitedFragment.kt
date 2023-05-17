@@ -26,6 +26,9 @@ class MainPageVisitedFragment : Fragment() {
     private lateinit var  viewPager : ViewPager2
     private lateinit var  tabLayout : TabLayout
 
+    private var lat : Double = 0.0 //좌 표
+    private var lng : Double = 0.0 //좌 표
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +48,14 @@ class MainPageVisitedFragment : Fragment() {
         setNavigation()
         setToolbar()
 
+        setData()
+
         redirectPage()
+    }
+
+    fun setData(){
+        lat = requireArguments().getDouble("lat")
+        lng = requireArguments().getDouble("lng")
     }
 
     // 네비게이션 세팅
