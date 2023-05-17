@@ -75,7 +75,6 @@ class MyPageMainFragment : Fragment() {
             }
             //하단 친구 요청 이미지 렌더링
             if (it.friendRequestDtoList != null) {
-                Log.d("friendRequestDtoList in frag", "${it.friendRequestDtoList}")
                 getMyPageFriendRequestList(it.friendRequestDtoList)
                 moveToFriendProfileFromMyPageFriendThumbnail()
             }

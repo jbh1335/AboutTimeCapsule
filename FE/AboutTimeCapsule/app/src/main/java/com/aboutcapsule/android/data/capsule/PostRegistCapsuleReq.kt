@@ -9,10 +9,10 @@ data class PostRegistCapsuleReq(
 
     var title : String ,
 
-    @SerializedName("range_type")
+
     var rangeType : String ,
 
-    @SerializedName("is_group")
+
     var isGroup : Boolean ,
 
     var latitude : Double,
