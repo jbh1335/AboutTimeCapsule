@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.service
 
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
+import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -46,4 +47,6 @@ interface CapsuleService {
     @POST("map")
     suspend fun findAroundCapsuleInMap(@Body mapAroundCapsuleReq: MapAroundCapsuleReq) : Response<ResponseBody>
 
+    @POST("map/capsuleDetail")
+    suspend fun findCapsuleInMapDetail(@Body mapCapsuleDetailReq : MapCapsuleDetailReq) : Response<ResponseBody>
 }
