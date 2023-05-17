@@ -202,10 +202,10 @@ public class Utils {
 
     public static void showMissingPermissionDialog(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("提示");
-        builder.setMessage("当前应用缺少必要权限。\\n\\n请点击\\\"设置\\\"-\\\"权限\\\"-打开所需权限。");
+        builder.setTitle("");
+        builder.setMessage("");
 
-        builder.setNegativeButton("取消",
+        builder.setNegativeButton("",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -213,7 +213,7 @@ public class Utils {
                     }
                 });
 
-        builder.setPositiveButton("设置",
+        builder.setPositiveButton("",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
