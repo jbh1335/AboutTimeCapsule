@@ -26,14 +26,6 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private RoleType roleType = RoleType.USER;
-    @OneToMany(mappedBy = "fromMember")
-    private List<Friend> fromMemberList = new ArrayList<>();
-    @OneToMany(mappedBy = "toMember")
-    private List<Friend> toMemberList = new ArrayList<>();
-
-    public void updateNickname(String nickname){
-        this.nickname = nickname;
-    }
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
