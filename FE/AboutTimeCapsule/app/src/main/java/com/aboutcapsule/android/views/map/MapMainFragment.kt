@@ -40,7 +40,7 @@ import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
-import com.aboutcapsule.android.views.capsule.CapsuleRegistGroupFragment
+import com.aboutcapsule.android.views.mainpage.CustomDialogMainpage
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -58,7 +58,6 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.net.PlacesClient
 import java.util.Locale
 
 class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback , OnMarkerClickListener{
@@ -90,7 +89,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         // 마커
         private lateinit var marker : Marker
         // 서버에서 받은 마커들
-        private lateinit var mapMarkerList : MutableList<MapAroundCapsuleRes>
+        private  var mapMarkerList : MutableList<Marker>? = mutableListOf()
 
         private val TAG = MapMainFragment::class.java.simpleName
 
@@ -450,8 +449,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
                     .fillColor(Color.parseColor("#88B0E0E6"))
                 previousCircle = mMap.addCircle(currCircle) // 새로운 반경원 추가
 
-                mapMarkerList  = mutableListOf()
-
                 val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
 
                 viewModel.getAroundCapsuleInMap(datas)
@@ -467,7 +464,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
     fun setRepo(){
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
-        viewModel = ViewModelProvider  (this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
+        viewModel = ViewModelProvider(this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
 
     }
 
@@ -478,8 +475,10 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
 
     // 서버에서 데이터를 받아와서 마커 꾸려주기
     private fun setMarkers(list : MutableList<MapAroundCapsuleRes>){
+
+        clearMarkersFromMap()
+
         for(i in 0 until list.size){
-            mapMarkerList.add(list[i])
             var curr = list[i]
 
             var isAllowedDistance = curr.isAllowedDistance
@@ -501,18 +500,21 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
             marker = mMap.addMarker(markerOptions.position(currLocation))!!
             val tag = Pair(isAllowedDistance,capsuleId)
             marker?.tag= tag
-            // 값 가져오는 방법
-            //            val tag = marker.getTag() as? Pair<Boolean, Int>
-            //if (tag != null) {
-            //    val booleanValue = tag.first
-            //    val intValue = tag.second
-            //    // 필요한 작업 수행
-            //}
+
+            mapMarkerList!!.add(marker) // 나중에 제거하기 위해 리스트에 넣어주기
+
         }
+    }
+    //이전 모든 마커들 제거
+    private fun clearMarkersFromMap(){
+        for(marker in mapMarkerList!! ){
+            marker.remove()
+        }
+        mapMarkerList?.clear()
     }
 
     // 마커 이미지 변경
-    fun setCustomMarker(img : Int ){
+    private fun setCustomMarker(img : Int ){
 //        예시 )  R.drawable.mine_marker
         var bitmapdraw : BitmapDrawable = resources.getDrawable(img) as BitmapDrawable
         var bitmap = bitmapdraw.bitmap
@@ -527,19 +529,28 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         var currLng = l.longitude
     }
 
-//    // 마커 클릭 시 ,
-//    mMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
-//        override fun onMarkerClick(marker: Marker): Boolean {
-//            // 마커를 클릭했을 때 수행할 작업을 여기에 작성하세요.
-//            // marker 객체를 통해 클릭한 마커의 정보에 접근할 수 있습니다.
-//            // true를 반환하면 기본 동작이 실행되지 않습니다. false를 반환하면 기본 동작이 실행됩니다.
-//            return true
-//        }
-//    })
 
     // 마커 클릭 리스너
     override fun onMarkerClick(marker: Marker): Boolean {
         Log.d("marker","$marker")
+
+        // 마커의 tag 값 가져오기
+        val tag = marker.tag as? Pair<Boolean, Int>
+        if (tag != null) {
+            val isAllowedDistance = tag.first
+            val capsuleId = tag.second
+            Log.d("마커 값","$isAllowedDistance / $capsuleId")
+        val dialog = CustomDialogCapsuleInfoFragment()
+        val bundle = Bundle()
+        bundle.putInt("capsuleId",capsuleId)
+        bundle.putDouble("lat" , lastKnownLocation!!.latitude)
+        bundle.putDouble("lng" , lastKnownLocation!!.longitude)
+        dialog.arguments = bundle
+        dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
+
+        }
+
+
        return true
     }
 

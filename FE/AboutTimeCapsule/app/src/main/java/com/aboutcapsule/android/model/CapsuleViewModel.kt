@@ -17,8 +17,10 @@ import com.aboutcapsule.android.data.capsule.GetVisitedListRes
 import com.aboutcapsule.android.data.capsule.GroupMemberDto
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleRes
+import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.MapInfoDto
 import com.aboutcapsule.android.data.capsule.OpenedCapsuleDto
+import com.aboutcapsule.android.data.capsule.PostMapCapsuleDetailRes
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.data.capsule.UnopenedCapsuleDto
 import com.aboutcapsule.android.repository.CapsuleRepo
@@ -36,6 +38,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var friendList : MutableLiveData<GetFriendListRes> = MutableLiveData()
     var capsuleCountDatas : MutableLiveData<GetCapsuleCountRes> = MutableLiveData()
     var aroundCapsuleInMapList : MutableLiveData<GetMapRes> = MutableLiveData()
+    var capsuleInMapDetailDatas : MutableLiveData<PostMapCapsuleDetailRes> = MutableLiveData()
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
@@ -380,6 +383,36 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
             } else {
                 Log.d(TAG, "getAroundCapsuleInMap : 응답 실패 / ${response.body()}  / ${response.message()}  / ${response.code()}")
             }
+        }
+    }
+
+    // 지도 마커의 캡슐 상세 정보
+    fun getCapsuleInMapDetail(mapCapsuleDetailReq : MapCapsuleDetailReq){
+        viewModelScope.launch {
+            var response = repository.capsuleInMapDetail(mapCapsuleDetailReq)
+            if(response.isSuccessful){
+                val jsonString = response.body()?.string()
+                val jsonObject = JSONObject(jsonString)
+                val mapCapsuledDetail = jsonObject.getJSONObject("data")
+
+                var capusleId =  mapCapsuledDetail.getInt("capsuleId")
+                var memberNickname = mapCapsuledDetail.getString("memberNickname")
+                var leftTime = mapCapsuledDetail.getString("leftTime")
+                var isLocked = mapCapsuledDetail.getBoolean("isLocked")
+                var isGroup = mapCapsuledDetail.getBoolean("isGroup")
+                var openDate = mapCapsuledDetail.getString("openDate")
+
+                val data = PostMapCapsuleDetailRes(capusleId,memberNickname,leftTime,isLocked,isGroup, openDate)
+
+                capsuleInMapDetailDatas.value = data
+
+                Log.d(TAG, "getAroundCapsuleInMap : 응답 성공 / ${response.body()} ")
+            }else{
+                Log.d(TAG, "getAroundCapsuleInMap : 응답 성공 / ${response.message()} ")
+            }
+
+
+
         }
     }
 
