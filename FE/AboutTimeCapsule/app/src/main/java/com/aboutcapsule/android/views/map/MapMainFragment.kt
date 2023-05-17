@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -42,10 +43,12 @@ import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.capsule.CapsuleRegistGroupFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -58,7 +61,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.net.PlacesClient
 import java.util.Locale
 
-class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback{
+class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback , OnMarkerClickListener{
 
     companion object{
         lateinit var binding : FragmentMapMainBinding
@@ -80,16 +83,14 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         private lateinit var mMap:GoogleMap
         // 사용자의 마지막 위치 가져오기
         private var lastKnownLocation: Location? = null
-        // 사용자 위치 콜백
-        private lateinit var locationCallback: LocationCallback
         // 마커 옵션
         private lateinit var markerOptions : MarkerOptions
         // 반경 원
-        private lateinit var circle1KM : Circle
+        private  var previousCircle: Circle? = null
         // 마커
         private lateinit var marker : Marker
-
-        private var markerFlag : Boolean = false
+        // 서버에서 받은 마커들
+        private lateinit var mapMarkerList : MutableList<MapAroundCapsuleRes>
 
         private val TAG = MapMainFragment::class.java.simpleName
 
@@ -116,14 +117,12 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         savedInstanceState: Bundle?
     ): View? {
 
-//        placesClient = Places.createClient(mainActivity)
-
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_map_main,container,false)
-
 
         // 상단 벨 숨기기
         bellToggle(true)
 
+        setRepo()
 
         return binding.root
     }
@@ -143,9 +142,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         // 사용자 위치 권한 얻기
         getLocationPermission()
 
-        // 사용자 위치
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
-
         navController = Navigation.findNavController(view)
 
         // 지도
@@ -161,7 +157,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         // 캡슐 생성하기 버튼 클릭 시, view 띄워주기
         registBtnToggle()
 
-        callbackLocations()
     }
 
     // 상단바 벨 사라지게 / 페이지 전환 시 다시 생성
@@ -261,6 +256,9 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
     override fun onMapReady(map: GoogleMap) {
         mMap = map
 
+        // 사용자 위치
+        callbackLocations()
+
         // 지도 UI 업데이트
         updateLocationUI()
 
@@ -269,12 +267,13 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
         mMap.setOnMyLocationClickListener(this)
         enableMyLocation()
 
+        // 마커 클릭 이벤트 처리
+        mMap.setOnMarkerClickListener(this)
+
         // 사용자의 위치,카메라 가져오기
         getDeviceLocation()
 
-//        var latlng = LatLng(36.354946759143,127.29980994578)
-//        mMap.addMarker(MarkerOptions().position(latLng).title("여기"))
-//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
+
     }
 
     // 내 위치 권한 체크
@@ -379,10 +378,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
                         if(lastKnownLocation != null){
                             val latlng = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
                              mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
-                        }else {
-                            locationResult.addOnCompleteListener(mainActivity){
 
-                            }
+                        }else {
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
                             mMap.uiSettings?.isMyLocationButtonEnabled = false
                         }
@@ -397,77 +394,90 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
                             .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
                         mMap.uiSettings?.isMyLocationButtonEnabled = false
                     }
-
-                    // 반경 설정
-                    var currPos = LatLng(lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
-                    circle1KM = mMap.addCircle(CircleOptions().center(currPos)
-                        .radius(1000.0) // 반지름 단위 : m
-                        .strokeWidth(0f) // 선 너비
-                        .fillColor(Color.parseColor("#88B0E0E6")))
-
-
                 }
             }
         }catch (e: SecurityException) { // 에러 발생
             Log.e("Exception: %s", e.message, e)
         }
     }
-
-
+    // 위치 정보 콜백 함수 호출 ( 일정 주기 정해주기 )
     private fun callbackLocations(){
-        locationCallback = object : LocationCallback(){
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult ?: return
-                for(location in locationResult.locations){
-                    lastKnownLocation = location
-                    val currPos = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPos, 15f))
+        val locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 20 * 1000
+        if (ActivityCompat.checkSelfPermission(
+                mainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                mainActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
 
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+
+    }
+
+    // 콜백
+    private val locationCallback = object : LocationCallback(){
+        override fun onLocationResult(locationResult: LocationResult) {
+            locationResult ?: return
+            for(location in locationResult.locations){
+                lastKnownLocation = location
+                Log.d("markerCallback" , "${lastKnownLocation!!.latitude} ${lastKnownLocation!!.longitude}")
+
+                val currPos = LatLng(lastKnownLocation?.latitude!!, lastKnownLocation?.longitude!!)
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currPos, 15f))
+                Log.d("markerPos" , "${lastKnownLocation!!.latitude} ${lastKnownLocation!!.longitude}")
+
+                // 반경 원 설정
+                previousCircle?.remove()  // 이전위치 반경원 제거
+                var currCircle = CircleOptions().center(currPos)
+                    .radius(1000.0) // 반지름 단위 : m
+                    .strokeWidth(0f) // 선 너비
+                    .fillColor(Color.parseColor("#88B0E0E6"))
+                previousCircle = mMap.addCircle(currCircle) // 새로운 반경원 추가
+
+                mapMarkerList  = mutableListOf()
+
+                val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+
+                viewModel.getAroundCapsuleInMap(datas)
+                viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner){
+                    setMarkers(it.mapAroundCapsuleResList)
                 }
+
+
             }
         }
     }
 
-    // 버튼 클릭 시 내 현재 위치로 이동   / 내 위치 근처에 있는 캡슐 서버에 api 쏘기
-    override fun onMyLocationButtonClick(): Boolean {
-
-        var mapMarkerList : MutableList<MapAroundCapsuleRes> = mutableListOf()
-
-        if( markerFlag ) {
-            marker.remove()
-        }
-        markerFlag = true
-
+    fun setRepo(){
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
 
-        val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+    }
 
-        viewModel.getAroundCapsuleInMap(datas)
-        viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner){
-            setMarkers(it.mapAroundCapsuleResList)
-        }
-// 반경 설정
-        var currPos = LatLng(lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
-        circle1KM.remove()
-        circle1KM = mMap.addCircle(CircleOptions().center(currPos)
-            .radius(1000.0) // 반지름 단위 : m
-            .strokeWidth(0f) // 선 너비
-            .fillColor(Color.parseColor("#88B0E0E6")))
-
-//        circle1KM.remove()
-
-
-
+    // 버튼 클릭 시 내 현재 위치로 이동
+    override fun onMyLocationButtonClick(): Boolean {
         return false
     }
 
     // 서버에서 데이터를 받아와서 마커 꾸려주기
     private fun setMarkers(list : MutableList<MapAroundCapsuleRes>){
-
-
         for(i in 0 until list.size){
+            mapMarkerList.add(list[i])
             var curr = list[i]
 
             var isAllowedDistance = curr.isAllowedDistance
@@ -524,6 +534,13 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback ,OnMyLocationButtonClickL
 //            return true
 //        }
 //    })
+
+    // 마커 클릭 리스너
+    override fun onMarkerClick(marker: Marker): Boolean {
+        Log.d("marker","$marker")
+       return true
+    }
+
 
     override fun onStart() {
         super.onStart()
