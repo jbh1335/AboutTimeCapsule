@@ -25,6 +25,9 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
     private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
     private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
 
+    // callback 객체
+    private var callback : DialogCallback? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +40,13 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
         callingApi()
 
         return binding?.root
+    }
+
+    fun setCallback(callback: DialogCallback){
+        this.callback=callback
+    }
+    interface DialogCallback{
+        fun onDialogDismissed(data: Int)
     }
 
 
@@ -100,6 +110,8 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
                     }
                     binding?.capsuleinfoDialogBtn?.setOnClickListener{
                         // 상세 페이지로 이동 !
+                        callback?.onDialogDismissed(capsuleId)
+                        dismiss()
                     }
 
                 }
