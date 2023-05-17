@@ -43,8 +43,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
    companion object{
        lateinit var binding : FragmentCapsuleRegistGroupBinding
        lateinit var navController : NavController
-       lateinit var markerOptions: MarkerOptions
-       private var radioBtn: String =""
+       private var markerOptions = MarkerOptions()
+       private var radioBtn: String = ""
        private var isGroup : Boolean = true
        private var lat : Double = 0.0
        private var lng : Double = 0.0
@@ -125,31 +125,32 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 //            Log.d("리스트",tmp.toString())
             lat // 위도
             lng // 경도
+            Log.d("radio","$radioBtn")
             Log.d("APi_edittext","$title")
             Log.d("APi_address" , "$address")
 
-            if(radioBtn.equals("")){
+            if(radioBtn == ""){
                 Toast.makeText(requireContext(),"공개 범위를 설정해주세요",Toast.LENGTH_SHORT).show()
             }else if (title.isEmpty() || title.length > 30) {
                 Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                val tmp =arguments?.getIntegerArrayList("memberIdList")
-                Log.d("tmp : " , "$tmp")
+                val memberlist =arguments?.getIntegerArrayList("memberIdList")
+                Log.d("success in radio","$radioBtn")
                 val repository = CapsuleRepo()
                 val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
                 viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
-                var postRegistCapsuleData = PostRegistCapsuleReq(tmp!!,title, radioBtn, isGroup,lat,lng,address)
+                var postRegistCapsuleData = PostRegistCapsuleReq(memberlist!!,title, radioBtn, isGroup,lat,lng,address)
                 viewModel.addCapsule(postRegistCapsuleData)
-//                viewModel.addCapsule()
+
 //            Log.d("APi_submit","$memberIdList")
-            Log.d("APi_submit","$title")
-            Log.d("APi_submit","$tmp")
-            Log.d("APi_submit","$radioBtn")
-            Log.d("APi_submit","$lat")
-            Log.d("APi_submit","$lng")
-            Log.d("APi_submit","$isGroup")
-            Log.d("APi_submit","$address")
+//            Log.d("APi_submit","$title")
+//            Log.d("APi_submit","$tmp")
+//            Log.d("APi_submit","$radioBtn")
+//            Log.d("APi_submit","$lat")
+//            Log.d("APi_submit","$lng")
+//            Log.d("APi_submit","$isGroup")
+//            Log.d("APi_submit","$address")
 
             navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
             }
@@ -212,7 +213,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,16f))
     }
 
-    fun setCustomMarker(){
+    private fun setCustomMarker(){
         var bitmapdraw : BitmapDrawable = resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
         var bitmap = bitmapdraw.bitmap
         var customMarker = Bitmap.createScaledBitmap(bitmap,90,120,false)
