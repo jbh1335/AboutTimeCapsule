@@ -38,6 +38,7 @@
                     android:id="@+id/x_btn"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_marginRight="10dp"
                     android:layout_gravity="right|center_vertical"
                     android:src="@drawable/mapinfoclosebtn"/>
 
@@ -51,15 +52,26 @@
                 android:background="@drawable/circle_background"
                 android:padding="25dp"
                 android:src="@drawable/redcapsule" />
-            <TextView
-                android:id="@+id/capsule_info_date"
+              <TextView
+                android:id="@+id/capsule_info_opendate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:textSize="26sp"
                 android:text="2023.3.3"/>
-            <TextView
+              <TextView
+                android:id="@+id/capsule_info_availDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:textSize="26sp"
+                  android:visibility="gone"
+                android:textColor="@color/btnColor"
+                tools:text="2023.3.3"/>
+
+           <TextView
                 android:id="@+id/capsule_info_remainTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,10 +88,10 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:textSize="26sp"
-                android:text="000님의 캡슐"/>
+                tools:text="000님의 캡슐"/>
 
             <Button
-                android:id="@+id/capsuleinfo_dialog_close_btn"
+                android:id="@+id/capsuleinfo_dialog_btn"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
