@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service("capsuleService")
@@ -599,6 +600,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         List<Memory> memoryList = memoryRepository.findAllByCapsuleIdAndIsDeletedFalse(capsuleDetailReq.getCapsuleId());
         int memorySize = memoryList.size();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         LocalDate openDate = null;
 
         if(memorySize > 0) {
@@ -631,7 +633,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .leftTime(leftTime)
                 .isLocked(isLocked)
                 .isGroup(isGroup)
-                .openDate(openDate)
+                .openDate(openDate != null ? openDate.format(dateTimeFormatter) : "")
                 .build();
     }
 

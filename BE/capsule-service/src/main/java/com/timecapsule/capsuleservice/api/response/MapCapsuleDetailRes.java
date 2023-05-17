@@ -15,10 +15,10 @@ public class MapCapsuleDetailRes {
     private boolean locked;
     @JsonProperty("isGroup")
     private boolean group;
-    private LocalDate openDate;
+    private String openDate;
 
     @Builder
-    public MapCapsuleDetailRes(int capsuleId, String memberNickname, String leftTime, boolean isLocked, boolean isGroup, LocalDate openDate) {
+    public MapCapsuleDetailRes(int capsuleId, String memberNickname, String leftTime, boolean isLocked, boolean isGroup, String openDate) {
         this.capsuleId = capsuleId;
         this.memberNickname = memberNickname;
         this.leftTime = leftTime;
