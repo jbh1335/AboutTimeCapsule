@@ -5,9 +5,17 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.aboutcapsule.android.R;
 import com.aboutcapsule.android.data.GetCapsuleNearRes;
+import com.aboutcapsule.android.data.capsule.GetMapRes;
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq;
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleRes;
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory;
+import com.aboutcapsule.android.model.CapsuleViewModel;
+import com.aboutcapsule.android.repository.CapsuleRepo;
 import com.aboutcapsule.android.util.GlobalAplication;
 import com.aboutcapsule.android.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
@@ -44,9 +52,11 @@ public class ArActivity extends AppCompatActivity {
 
     ImageView back_btn;
 
-    public List<GetCapsuleNearRes> capsuleList;
+    public List<MapAroundCapsuleRes> capsuleList;
     private ArrayList<CompletableFuture<ViewRenderable>> capsuleLayoutList;
     private ArrayList<ViewRenderable> capsuleRenderableList;
+
+    private CapsuleViewModel capsuleViewModel = null ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,125 +87,144 @@ public class ArActivity extends AppCompatActivity {
         capsuleLayoutList = new ArrayList<>();
         capsuleRenderableList = new ArrayList<>();
 
-        //TODO : 내 주변 캡슐 가져오는 API 호출
+        //내 주변 캡슐 가져오는 API 호출
+        CapsuleRepo capsuleRepo = new CapsuleRepo();
+        CapsuleViewModelFactory capsuleViewModelFactory = new CapsuleViewModelFactory(capsuleRepo);
+
+        capsuleViewModel = new ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel.class);
+
+        Double lat = Double.parseDouble(GlobalAplication.preferences.getString("ar_lat","-1"));
+        Double lng = Double.parseDouble(GlobalAplication.preferences.getString("ar_lng","-1"));
+
+        capsuleViewModel.getAroundCapsuleInMap(new MapAroundCapsuleReq(memberId, lat, lng));
+
+        capsuleViewModel.getAroundCapsuleInMapList().observe(this, new Observer<GetMapRes>() {
+            @Override
+            public void onChanged(GetMapRes getMapRes) {
+                //데이터 받아와서 capsuleList에 넣기
+                for (MapAroundCapsuleRes capsule : getMapRes.getMapAroundCapsuleResList()) {
+                    capsuleList.add(capsule);
+                }
+
+                //AR 랜더링
+                if(capsuleList.size() != 0) {
+                    //capsuleLayoutList 생성
+                    for (int i = 0; i < capsuleList.size(); i++) {
+                        capsuleLayoutList.add(ViewRenderable.builder().setView(getApplication(), R.layout.ar_item).build());
+                    }
+
+                    //캡슐 오브젝트 생성
+                    CompletableFuture<ViewRenderable> objCapsule = new CompletableFuture<>();
+                    for (int i = 0; i < capsuleList.size(); i++) {
+                        objCapsule = capsuleLayoutList.get(i);
+                    }
+
+                    //랜더링할 리스트에 담기
+                    CompletableFuture.allOf(objCapsule)
+                            .handle(
+                                    (notUsed, throwable) -> {
+                                        // When you build a Renderable, Sceneform loads its resources in the background while
+                                        // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
+                                        // before calling get().
+                                        if (throwable != null) {
+                                            Utils.displayError(getApplication(), "Unable to load renderables", throwable);
+                                            return null;
+                                        }
+                                        try {
+                                            if (capsuleList.size() != 0) {
+                                                for (int i = 0; i < capsuleList.size(); i++) {
+                                                    capsuleRenderableList.add(capsuleLayoutList.get(i).get());
+                                                }
+                                            }
+                                            hasFinishedLoadingRenderable = true;
+
+                                        } catch (InterruptedException |
+                                                 ExecutionException ex) {
+                                            Utils.displayError(getApplication(), "Unable to load renderables", ex);
+                                        }
+                                        return null;
+                                    });
+
+                    //AR 객체 렌더링
+                    arSceneView
+                            .getScene()
+                            .addOnUpdateListener(
+                                    (FrameTime frameTime) -> {
+                                        // 모형을 로딩한 후에 다시 다음 작업을 진행
+                                        if (!hasFinishedLoadingRenderable) {
+                                            return;
+                                        }
+
+                                        if (locationScene == null) {
+                                            try {
+                                                locationScene = new LocationScene(getApplication(), getParent(), arSceneView);
+                                            } catch (Exception e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            locationScene.setOffsetOverlapping(false);  // 겹치는 모형에 이동량을 더할 지 설정
+                                        }
+
+                                        // ArFrame 가져오기
+                                        Frame frame = arSceneView.getArFrame();
+                                        if (frame == null) {
+                                            return;
+                                        }
+
+                                        // Frame이 추적 중일 때 다시 시작
+                                        if (frame.getCamera().getTrackingState() != TrackingState.TRACKING) {
+                                            return;
+                                        }
+
+                                        // locationScene이 비어 있지 않고 모형이 설치되어 있지 않다면
+                                        if (locationScene != null && !hasFinishedSetRenderable) {
+                                            LocationMarker[] locationMarker = new LocationMarker[capsuleList.size()];
+
+                                            try {
+                                                Thread.sleep(13);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            for (int i = 0; i < capsuleList.size(); i++) {
+                                                //이미지를 렌더링할 노드 생성
+                                                Node imageNode = new Node();
+                                                imageNode.setRenderable(capsuleRenderableList.get(i));
+
+                                                // 노드 위치 및 크기 설정
+                                                imageNode.setLocalPosition(new Vector3(0.0f, 0.0f, -1.0f));
+                                                imageNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+
+                                                // 노드를 위치 마커에 찍어서 씬에 추가
+                                                locationMarker[i] = new LocationMarker(capsuleList.get(i).getLongitude(), capsuleList.get(i).getLatitude(), imageNode);
+                                                locationScene.mLocationMarkers.add(locationMarker[i]);
+
+                                                hasFinishedSetRenderable = true; //캡슐 배치 완료
+                                            }
+                                        }
+
+                                        //locationScene
+                                        if (locationScene != null) {
+                                            locationScene.processFrame(frame);
+                                        }
+
+                                        //트래킹 관련
+                                        if (loadingMessageSnackbar != null) {
+                                            for (Plane plane : frame.getUpdatedTrackables(Plane.class)) {
+                                                if (plane.getTrackingState() == TrackingState.TRACKING) {
+                                                    hideLoadingMessage();
+                                                }
+                                            }
+                                        }
+
+                                    });
+                }
+            }
+        });
+
         //더미데이터
-        capsuleList.add(new GetCapsuleNearRes(1, false, true,false, 36.3552217, 127.2979467));
-        capsuleList.add(new GetCapsuleNearRes(2, false, true,false, 36.3552217, 127.2979467));
-        capsuleList.add(new GetCapsuleNearRes(3, false, true,false, 36.3552217, 127.2979467));
-
-
-        //AR 랜더링
-        if(capsuleList.size() != 0) {
-            //capsuleLayoutList 생성
-            for (int i = 0; i < capsuleList.size(); i++) {
-                capsuleLayoutList.add(ViewRenderable.builder().setView(getApplication(), R.layout.ar_item).build());
-            }
-
-            //캡슐 오브젝트 생성
-            CompletableFuture<ViewRenderable> objCapsule = new CompletableFuture<>();
-            for (int i = 0; i < capsuleList.size(); i++) {
-                objCapsule = capsuleLayoutList.get(i);
-            }
-
-            //랜더링할 리스트에 담기
-            CompletableFuture.allOf(objCapsule)
-                    .handle(
-                            (notUsed, throwable) -> {
-                                // When you build a Renderable, Sceneform loads its resources in the background while
-                                // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
-                                // before calling get().
-                                if (throwable != null) {
-                                    Utils.displayError(getApplication(), "Unable to load renderables", throwable);
-                                    return null;
-                                }
-                                try {
-                                    if (capsuleList.size() != 0) {
-                                        for (int i = 0; i < capsuleList.size(); i++) {
-                                            capsuleRenderableList.add(capsuleLayoutList.get(i).get());
-                                        }
-                                    }
-                                    hasFinishedLoadingRenderable = true;
-
-                                } catch (InterruptedException |
-                                         ExecutionException ex) {
-                                    Utils.displayError(getApplication(), "Unable to load renderables", ex);
-                                }
-                                return null;
-                            });
-
-            //AR 객체 렌더링
-            arSceneView
-                    .getScene()
-                    .addOnUpdateListener(
-                            (FrameTime frameTime) -> {
-                                // 모형을 로딩한 후에 다시 다음 작업을 진행
-                                if (!hasFinishedLoadingRenderable) {
-                                    return;
-                                }
-
-                                if (locationScene == null) {
-                                    try {
-                                        locationScene = new LocationScene(getApplication(), getParent(), arSceneView);
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    locationScene.setOffsetOverlapping(false);  // 겹치는 모형에 이동량을 더할 지 설정
-                                }
-
-                                // ArFrame 가져오기
-                                Frame frame = arSceneView.getArFrame();
-                                if (frame == null) {
-                                    return;
-                                }
-
-                                // Frame이 추적 중일 때 다시 시작
-                                if (frame.getCamera().getTrackingState() != TrackingState.TRACKING) {
-                                    return;
-                                }
-
-                                // locationScene이 비어 있지 않고 모형이 설치되어 있지 않다면
-                                if (locationScene != null && !hasFinishedSetRenderable) {
-                                    LocationMarker[] locationMarker = new LocationMarker[capsuleList.size()];
-
-                                    try {
-                                        Thread.sleep(13);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    for (int i = 0; i < capsuleList.size(); i++) {
-                                        //이미지를 렌더링할 노드 생성
-                                        Node imageNode = new Node();
-                                        imageNode.setRenderable(capsuleRenderableList.get(i));
-
-                                        // 노드 위치 및 크기 설정
-                                        imageNode.setLocalPosition(new Vector3(0.0f, 0.0f, -1.0f));
-                                        imageNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-
-                                        // 노드를 위치 마커에 찍어서 씬에 추가
-                                        locationMarker[i] = new LocationMarker(capsuleList.get(i).getLongitude(), capsuleList.get(i).getLatitude(), imageNode);
-                                        locationScene.mLocationMarkers.add(locationMarker[i]);
-
-                                        hasFinishedSetRenderable = true; //캡슐 배치 완료
-                                    }
-                                }
-
-                                //locationScene
-                                if (locationScene != null) {
-                                    locationScene.processFrame(frame);
-                                }
-
-                                //트래킹 관련
-                                if (loadingMessageSnackbar != null) {
-                                    for (Plane plane : frame.getUpdatedTrackables(Plane.class)) {
-                                        if (plane.getTrackingState() == TrackingState.TRACKING) {
-                                            hideLoadingMessage();
-                                        }
-                                    }
-                                }
-
-                            });
-        }
+//        capsuleList.add(new MapAroundCapsuleRes(1, false, true,false, 36.3552217, 127.2979467));
+//        capsuleList.add(new MapAroundCapsuleRes(2, false, true,false, 36.3552217, 127.2979467));
+//        capsuleList.add(new MapAroundCapsuleRes(3, false, true,false, 36.3552217, 127.2979467));
 
     }
 
