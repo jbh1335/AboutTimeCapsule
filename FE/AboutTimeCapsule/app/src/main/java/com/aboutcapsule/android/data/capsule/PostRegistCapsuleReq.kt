@@ -4,15 +4,12 @@ import com.google.gson.annotations.SerializedName
 
 data class PostRegistCapsuleReq(
 
-//    @SerializedName("member_id_list")
     var memberIdList : ArrayList<Int>,
 
     var title : String ,
 
-    @SerializedName("range_type")
     var rangeType : String ,
 
-    @SerializedName("is_group")
     var isGroup : Boolean ,
 
     var latitude : Double,

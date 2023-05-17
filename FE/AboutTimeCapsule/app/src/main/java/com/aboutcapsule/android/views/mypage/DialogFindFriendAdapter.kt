@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.aboutcapsule.android.data.mypage.SearchMemberRes
-import com.aboutcapsule.android.databinding.FindFriendRecyclerItemBinding
 import com.aboutcapsule.android.databinding.MyPageSearchDialogItemBinding
 import com.bumptech.glide.Glide
 

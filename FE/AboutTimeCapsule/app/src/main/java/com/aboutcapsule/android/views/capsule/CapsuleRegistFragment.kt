@@ -15,13 +15,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
 import com.aboutcapsule.android.databinding.FragmentCapsuleRegistBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.mainpage.CapsuleMapFragment
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -39,10 +45,17 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
         lateinit var navController: NavController
         private lateinit var mMap : GoogleMap
         lateinit var markerOptions: MarkerOptions
+        private var isGroup : Boolean = false
+        private var lat : Double = 0.0
+        private var lng : Double = 0.0
+        private lateinit var address : String
+        private var radioBtn :String= ""
+        private lateinit var viewModel : CapsuleViewModel
 
-        var radioBtn :String= ""
-        var editTitle : String = ""
-    }
+         private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+         private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
+
+     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +84,8 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
         // 캡슐 생성하기 버튼 클릭 시
         submitBtnClickListner()
 
+        // 주소 ,위도, 경도 넘겨 받아옴
+        getBundleData()
 
 
         return binding.root
@@ -89,18 +104,40 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
         navController = navHostFragment.navController
     }
 
+    private fun getBundleData(){
+        // 친구 찾기 페이지 가버리면 날라가서 shared로 받음
+        lat = GlobalAplication.preferences.getString("lat","-1").toDouble()
+        lng = GlobalAplication.preferences.getString("lng","-1").toDouble()
+        address = GlobalAplication.preferences.getString("address","null")
+    }
+
     // TODO : (개인) 캡슐 생성버튼 클릭 시 , 캡슐생성 api 보내고 페이지 이동
     private fun submitBtnClickListner(){
-        // editText 값이 destroy() 시에는 찍히는데 그전에 제출 버튼 클릭시에는 공백으로 찍히는 이유 찾기 ,,
-        editTitle = binding.capsuleRegistTitle.text.toString().trim()
+
         binding.capsuleRegistRegistbtn.setOnClickListener{
-//            if(editTitle.isEmpty() || editTitle.length<11){
-//                Toast.makeText(requireContext(),"제목의 길이는 1~10글자로 작성 가능합니다.",Toast.LENGTH_SHORT).show()
-//            }else{
-//                Log.d("submitData", editTitle)
-//                Log.d("submitData", radioBtn)
-//            }
-            navController.navigate(R.id.action_capsuleRegistFragment_to_articleRegistFragment)
+
+            val title = binding.capsuleRegistTitle.editableText.toString()
+
+            if(radioBtn == ""){
+                Toast.makeText(requireContext(),"공개 범위를 설정해주세요",Toast.LENGTH_SHORT).show()
+            }else if (title.isEmpty() || title.length > 30) {
+                Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                val memberlist = ArrayList<Int>(memberId)
+                Log.d("success in radio","${radioBtn}")
+                val repository = CapsuleRepo()
+                val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+                viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(
+                    CapsuleViewModel::class.java)
+                var postRegistCapsuleData = PostRegistCapsuleReq(memberlist,title, radioBtn, isGroup,
+                    lat,
+                    lng,
+                   address
+                )
+               viewModel.addCapsule(postRegistCapsuleData)
+
+                navController.navigate(R.id.action_capsuleRegistFragment_to_articleRegistFragment)
+            }
         }
     }
 
@@ -109,9 +146,17 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
         binding.radiogruop3type.setOnCheckedChangeListener{ group , checkedId ->
             when(checkedId){
                 R.id.radio_3type_all -> radioBtn = "ALL"
-                R.id.radio_3type_friend -> radioBtn = "FREIND"
+                R.id.radio_3type_friend -> radioBtn = "FRIEND"
                 R.id.radio_3type_mine -> radioBtn = "PRIVATE"
             }
+        }
+
+        if(radioBtn =="ALL"){ // 선택후 친구 찾으러 갔을 경우 체크 상태로 유지
+            binding.radiogruop3type.check(R.id.radio_3type_all)
+        }else if (radioBtn =="FRIEND"){
+            binding.radiogruop3type.check(R.id.radio_3type_friend)
+        }else if(radioBtn =="PRIVATE"){
+            binding.radiogruop3type.check(R.id.radio_3type_mine)
         }
     }
 
