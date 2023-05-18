@@ -68,9 +68,7 @@ class CapsuleBoardFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_group,container,false)
-
-        getBundleData()
-
+        getDataFromBack()
         getCalendarDate()
 
         redirectPage()
@@ -83,7 +81,7 @@ class CapsuleBoardFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-        getDataFromBack()
+        getBundleData()
 
         setNavigation()
 
@@ -103,14 +101,16 @@ class CapsuleBoardFragment : Fragment() {
             requireArguments().clear() // 다음 데이터를 위해 일단 날려주기
         }else {
             // 그룹캡슐 등록 데이터
-            capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
+            capsuleId = GlobalAplication.preferences.getInt("capsuleId", -1)
             lat = GlobalAplication.preferences.getString("lat", "null").toDouble()
             lng = GlobalAplication.preferences.getString("lng", "null").toDouble()
+            Log.d("그룹","$capsuleId , $lat ,$lng")
         }
     }
 
     // memory 정보 받아오기 최초 렌더링
     fun getDataFromBack() {
+
         val repository = MemoryRepo()
         val memoryViewModelFactory = MemoryViewModelFactory(repository)
         memoryViewModel = ViewModelProvider  (this, memoryViewModelFactory).get(MemoryViewModel::class.java)
@@ -119,6 +119,7 @@ class CapsuleBoardFragment : Fragment() {
         memoryViewModel.getCapsuleMemory(memoryReq)
         memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
             uiSetting(it)
+
 
         })
     }
