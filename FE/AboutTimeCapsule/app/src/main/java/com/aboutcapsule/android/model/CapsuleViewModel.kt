@@ -47,6 +47,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var capsuleInMapDetailDatas : MutableLiveData<PostMapCapsuleDetailRes> = MutableLiveData()
     var capsuleDetailDatas : MutableLiveData<PostCapsuleDetailRes> = MutableLiveData()
     var aroundPopularPlaceList :MutableLiveData<PostAroundPopularPlaceRes> = MutableLiveData()
+    var isCapsuleRegister = MutableLiveData<Boolean>()
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
@@ -70,6 +71,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
 
                 GlobalAplication.preferences.setInt("capsuleId",dataObjects) // 캡슐 생성 시 id 가지고 추억 생성하기로 가기
 
+                isCapsuleRegister.value = true
                 Log.d(TAG,"addCapsule : 응답 성공 / $dataObjects") // 캡슐 ID
             }else{
                 Log.d(TAG,"addCapsule : 응답 실패 / ${response.message()}" )
