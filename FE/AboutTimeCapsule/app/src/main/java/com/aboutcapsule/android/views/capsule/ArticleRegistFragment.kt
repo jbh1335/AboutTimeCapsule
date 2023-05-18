@@ -164,10 +164,14 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                     bundle.putInt("capsuleId", capsuleId)
                     bundle.putDouble("lat", lat)
                     bundle.putDouble("lng", lng)
-                    navController.navigate(
-                        R.id.action_articleRegistFragment_to_capsuleGroupFragment,
-                        bundle
-                    )
+                    Log.d("추억 등록할 때, capsuleId", "${GlobalAplication.preferences.getInt("capsuleId", -1)}")
+                    memoryViewModel.isRegister.observe(viewLifecycleOwner) {
+                        navController.navigate(
+                            R.id.action_articleRegistFragment_to_capsuleGroupFragment,
+                            bundle
+                        )
+                    }
+
                 } else { // 최초 그룹이 아닐 경우
                     val openDateString = binding.openAvailDate.text.toString()
                     if (openDateString.trim() == "지정하신날짜") {
@@ -194,10 +198,14 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                         bundle.putInt("capsuleId", capsuleId)
                         bundle.putDouble("lat", lat)
                         bundle.putDouble("lng", lng)
-                        navController.navigate(
-                            R.id.action_articleRegistFragment_to_capsuleGroupFragment,
-                            bundle
-                        )
+                        memoryViewModel.isRegister.observe(viewLifecycleOwner) {
+                            navController.navigate(
+                                R.id.action_articleRegistFragment_to_capsuleGroupFragment,
+                                bundle
+                            )
+                        }
+
+
 
                     }
                 }

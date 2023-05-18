@@ -167,6 +167,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
         // 캡슐 생성하기 버튼 클릭 시, view 띄워주기
         registBtnToggle()
 
+
     }
 
     // 상단바 벨 사라지게 / 페이지 전환 시 다시 생성
@@ -218,6 +219,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             GlobalAplication.preferences.setString("ar_lng", lastKnownLocation!!.longitude.toString())
             navController.navigate(R.id.action_mapMainFragment_to_arActivity)
         }
+
     }
 
     // 네비게이션 세팅
@@ -398,6 +400,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
                         Log.d("사용자 위치 : 위도 / 전역변수 ", "${lastKnownLocation?.latitude}")
                         Log.d("사용자 위치 : 경도 / 전역변수 ", "${lastKnownLocation?.longitude}")
 
+                        callingApi()
+
                     } else {
                         Log.d(TAG, "접근이 어려워 기본 지정 위치로 출력 ")
                         Log.e(TAG, "Exception: %s", task.exception)
@@ -439,6 +443,18 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
 
     }
 
+    fun callingApi(){
+        val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+        if(view!= null ) {
+            viewModel.getAroundCapsuleInMap(datas)
+            viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner) {
+                setMarkers(it.mapAroundCapsuleResList)
+            }
+        } else{
+            Log.d("체크","체크 ")
+        }
+    }
+
     // 콜백
     private val locationCallback = object : LocationCallback(){
         override fun onLocationResult(locationResult: LocationResult) {
@@ -459,15 +475,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
                     .fillColor(Color.parseColor("#88B0E0E6"))
                 previousCircle = mMap.addCircle(currCircle) // 새로운 반경원 추가
 
-                val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
-                if(view!= null ) {
-                    viewModel.getAroundCapsuleInMap(datas)
-                    viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner) {
-                        setMarkers(it.mapAroundCapsuleResList)
-                    }
-                } else{
-                    Log.d("체크","체크 ")
-                }
+
             }
         }
     }
@@ -491,7 +499,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
 
         for(i in 0 until list.size){
             var curr = list[i]
-
+            Log.d("marker","$curr")
             var isAllowedDistance = curr.isAllowedDistance
             var isLocked = curr.isLocked
             var isMine = curr.isMine
