@@ -69,15 +69,9 @@ class CapsuleBoardFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_group,container,false)
 
-        Log.d("캡슐보드","$capsuleId /$lat / $lng")
+        getBundleData()
 
         getCalendarDate()
-
-        // 맵에서 넘어온 데이터들 ( 다이얼로그 열기버튼 클릭 시 ,)
-        capsuleId = requireArguments().getInt("capsuleId")
-        lat =requireArguments().getDouble("lat")
-        lng =requireArguments().getDouble("lng")
-
 
         redirectPage()
 
@@ -89,17 +83,30 @@ class CapsuleBoardFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-        Log.d("넘어옴" , "$capsuleId /$lat / $lng")
-
         getDataFromBack()
 
         setNavigation()
 
         callingApi()
 
-        setSpinner()
+    }
 
-        findGroupOrMe()
+    fun getBundleData(){
+        // 맵에서 넘어온 데이터들 ( 다이얼로그 열기버튼 클릭 시 ,)
+        val bundleCapsuleId = requireArguments().getInt("capsuleId",-1)
+        val bundleLat =requireArguments().getDouble("lat",-1.0)
+        val bundleLng =requireArguments().getDouble("lng",-1.0)
+        if(bundleCapsuleId != -1){
+            capsuleId = bundleCapsuleId
+            lat = bundleLat
+            lng = bundleLng
+            requireArguments().clear() // 다음 데이터를 위해 일단 날려주기
+        }else {
+            // 그룹캡슐 등록 데이터
+            capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
+            lat = GlobalAplication.preferences.getString("lat", "null").toDouble()
+            lng = GlobalAplication.preferences.getString("lng", "null").toDouble()
+        }
     }
 
     // memory 정보 받아오기 최초 렌더링
@@ -107,57 +114,82 @@ class CapsuleBoardFragment : Fragment() {
         val repository = MemoryRepo()
         val memoryViewModelFactory = MemoryViewModelFactory(repository)
         memoryViewModel = ViewModelProvider  (this, memoryViewModelFactory).get(MemoryViewModel::class.java)
-//       Log.d("체크" , "$capsuleId / $currentUser / $lat /$lng")
+        Log.d("체크 getDataFromBack" , "$capsuleId / $currentUser / $lat /$lng")
         val memoryReq = MemoryReq(capsuleId, currentUser, lat, lng)
         memoryViewModel.getCapsuleMemory(memoryReq)
         memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
             uiSetting(it)
+
         })
     }
 
     private fun uiSetting(memoryRes : MemoryRes) {
-        binding.capsuleTitle.text = memoryRes.capsuleTitle
-        binding.capsulePlace.text = memoryRes.address
-        Glide.with(this).load(R.drawable.redcapsule).into(binding.capsuleImg)
-        binding.capsuleRegistBtn.setOnClickListener {
-            val dateString = binding.openAvailDate.text.toString()
-            Log.d("데이트스트링", "${dateString}")
-            memoryRes.rangeType
-            if (dateString == "지정하신 날짜 ") {
-                Toast.makeText(requireContext(), "날짜를 지정해 주세요.", Toast.LENGTH_SHORT).show()
-            } else {
-                val openDateString = binding.openAvailDate.text.toString()
-                val dataPattern = "yyyy년 M월 d일"
-                val formatter = DateTimeFormatter.ofPattern(dataPattern)
-                val localDate = LocalDate.parse(openDateString, formatter).toString()
-                memoryViewModel.sealMemoryFirst(GroupOpenDateReq(capsuleId, localDate))
+        val isFirst = memoryRes.isFirstGroup // 최초 생성인지 아닌지 ( 그룹캡슐 최초 생성 체크용 )
+        val isMine = memoryRes.isCapsuleMine // 내 게시물인지 아닌지 ( + 버튼 게시글 추가 버튼 체크용 )
+        val isGroup = memoryRes.isGroup // 그룹인지 아닌지 체크
 
+        setSpinner(isGroup)
+
+        if(isFirst){ // 최초 생성의 경우
+            binding.dateCommentlayout.visibility=View.VISIBLE // 달력 버튼
+            binding.capsuleRegistBtn.visibility=View.VISIBLE // 추억 봉인 버튼
+            binding.fabBtn.visibility=View.VISIBLE // + 버튼
+
+            binding.capsuleRegistBtn.setOnClickListener {
+                val dateString = binding.openAvailDate.text.toString()
+                Log.d("데이트스트링", "${dateString}")
+                memoryRes.rangeType
+                if (dateString == "지정하신 날짜 ") {
+                    Toast.makeText(requireContext(), "날짜를 지정해 주세요.", Toast.LENGTH_SHORT).show()
+                } else {
+                    val openDateString = binding.openAvailDate.text.toString()
+                    val dataPattern = "yyyy년 M월 d일"
+                    val formatter = DateTimeFormatter.ofPattern(dataPattern)
+                    val localDate = LocalDate.parse(openDateString, formatter).toString()
+                    memoryViewModel.sealMemoryFirst(GroupOpenDateReq(capsuleId, localDate))
+
+                }
             }
 
+        } else { // 최초 생성 아닌 경우
+            if(isMine){ // 내가 수정 ,작성할 수 있는 게시물의 경우
+                binding.dateCommentlayout.visibility=View.GONE // 달력 버튼
+                binding.capsuleRegistBtn.visibility=View.GONE // 추억 봉인 버튼
+                binding.fabBtn.visibility=View.VISIBLE // + 버튼
+                binding.fabBtn.visibility=View.VISIBLE // 게시글 작성 버튼 제거
+                binding.deleteBtn.visibility=View.VISIBLE // 삭제버튼 제거
+                binding.spinnerOpenRange.visibility=View.VISIBLE // 공개범위 수정 버튼 제거
+
+
+            } else { // 남의 게시물의 경우
+                binding.dateCommentlayout.visibility=View.GONE // 달력 버튼
+                binding.capsuleRegistBtn.visibility=View.GONE // 추억 봉인 버튼
+                binding.fabBtn.visibility=View.GONE // 게시글 작성 버튼 제거
+                binding.deleteBtn.visibility=View.GONE // 삭제버튼 제거
+                binding.spinnerOpenRange.visibility=View.GONE // 공개범위 수정 버튼 제거
+
+            }
         }
 
-        // 그룹 캡슐일 때, 최초로 생성한 캡슐이면 버튼이 있음
-        if (memoryRes.isFirstGroup == false) {
-            binding.dateCommentlayout.visibility = View.GONE
-            binding.capsuleRegistBtn.visibility = View.GONE
-        }else {
-            binding.dateCommentlayout.visibility = View.VISIBLE
-            binding.capsuleRegistBtn.visibility = View.VISIBLE
+        if(isGroup) { // 그룹일 때
+            binding.groupSign.visibility=View.VISIBLE // 그룹 버튼
+            binding.memberlistSign.visibility=View.VISIBLE // 멤버 목록 버튼
+            binding.privateSign.visibility=View.GONE // 개인 버튼
+        }else{ // 그룹이 아닐 경우
+            binding.groupSign.visibility=View.GONE // 그룹 버튼
+            binding.memberlistSign.visibility=View.GONE // 멤버 목록 버튼
+            binding.privateSign.visibility=View.VISIBLE // 개인 버튼
         }
-        if (memoryRes.isCapsuleMine == false) {
-            binding.fabBtn.visibility = View.GONE
-            binding.deleteBtn.visibility = View.GONE
-            binding.spinnerOpenRange.visibility = View.GONE
-        } else {
-            binding.fabBtn.visibility = View.VISIBLE
-            binding.deleteBtn.visibility = View.VISIBLE
-            binding.spinnerOpenRange.visibility = View.VISIBLE
-        }
-        memoryUiSetting(memoryRes)
 
+        binding.capsuleTitle.text = memoryRes.capsuleTitle // 제목
+        binding.capsulePlace.text = memoryRes.address // 주소
+        Glide.with(this).load(R.drawable.redcapsule).into(binding.capsuleImg) // 캡슐 사진
+
+        memoryUiSetting()
 
     }
-    fun memoryUiSetting(memoryRes : MemoryRes) {
+
+    fun memoryUiSetting() {
         capsuleArticleInBoardAdapter = CapsuleArticleInBoardAdapter()
         capsuleArticleInBoardAdapter.itemList = memoryViewModel.MemoryResData.value?.memoryDetailDtoList!!.toMutableList()
         binding.boardCommentsRecylcerView.adapter = capsuleArticleInBoardAdapter
@@ -167,12 +199,11 @@ class CapsuleBoardFragment : Fragment() {
 
 
     // 스피너 설정
-    private fun setSpinner (){
+    private fun setSpinner (sign : Boolean) {
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         capsuleViewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
-        var groupOrprivate = true // 그룹,개인 판별
-        if(!groupOrprivate) { // 그룹 일 경우
+        if(sign) { // 그룹 일 경우
             var list = mutableListOf<String>("전체공개", "그룹공개", "공개범위 ▼") // 스피너 목록 placeholder 가장 마지막으로
             var adapter = SpinnerGroupAvailAdapter(
                 requireContext(),
@@ -233,10 +264,10 @@ class CapsuleBoardFragment : Fragment() {
     }
     // 공개범위 (서버로 보내줄 형태로 변환 )
     private fun replaceRange(range :String ): String{
-        if(range.equals("전체공개")) return "ALL"
-        else if(range.equals("친구만")) return "FREIND" // ?
-        else if(range.equals("나만 보기")) return "PRIVATE"
-        else if(range.equals("그룹공개")) return "GROUP"
+        if(range == "전체공개") return "ALL"
+        else if(range == "친구만") return "FRIEND"
+        else if(range == "나만 보기") return "PRIVATE"
+        else if(range == "그룹공개") return "GROUP"
         else return "null"
     }
 
@@ -248,35 +279,6 @@ class CapsuleBoardFragment : Fragment() {
             dipValue,
             resources.displayMetrics
         )
-    }
-
-    // 그룹인지, 개인인지 , 봉인 했는지 ,안했는지 체크 (UI 구성)
-    private fun findGroupOrMe(){
-        // 그룹 , 개인 일 경우
-        val GorA_flag = " " // Group or alone
-        val OorC_flag = " " // Open or close
-        if(GorA_flag.equals(" ")){
-            // 그룹이면서 아직 봉인 했는지 안 했는지 체크
-            if(OorC_flag == " 봉인 일 경우 "){
-                binding.groupSign.visibility=View.VISIBLE
-                binding.privateSign.visibility=View.GONE
-                binding.memberlistSign.visibility=View.VISIBLE
-                binding.dateCommentlayout.visibility=View.VISIBLE
-                binding.capsuleRegistBtn.visibility=View.VISIBLE
-            }else{ // 그룹 캡슐 봉인일 지정 후
-                binding.groupSign.visibility=View.VISIBLE
-                binding.privateSign.visibility=View.GONE
-                binding.memberlistSign.visibility=View.VISIBLE
-                binding.dateCommentlayout.visibility=View.GONE
-                binding.capsuleRegistBtn.visibility=View.GONE
-            }
-        }else { // 개인일 경우
-            binding.groupSign.visibility=View.GONE
-            binding.privateSign.visibility=View.VISIBLE
-            binding.memberlistSign.visibility=View.GONE
-            binding.dateCommentlayout.visibility=View.GONE
-            binding.capsuleRegistBtn.visibility=View.GONE
-        }
     }
 
     private fun redirectPage(){

@@ -14,17 +14,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentNotificationMainBinding
-import com.aboutcapsule.android.factory.AlarmViewModelFactory
-import com.aboutcapsule.android.factory.MemoryViewModelFactory
-import com.aboutcapsule.android.model.AlarmViewModel
-import com.aboutcapsule.android.model.MemoryViewModel
-import com.aboutcapsule.android.repository.AlarmRepo
-import com.aboutcapsule.android.repository.MemoryRepo
-import com.aboutcapsule.android.views.capsule.ArticleRegistFragment
-import com.aboutcapsule.android.views.capsule.ArticleRegistFragment.Companion.memoryViewModel
 
 
 class NotificationMainFragment : Fragment() {
@@ -32,9 +23,7 @@ class NotificationMainFragment : Fragment() {
     lateinit var binding : FragmentNotificationMainBinding
     lateinit var navController : NavController
     lateinit var notificationAdapter : NotificationAdapter
-    companion object {
-        lateinit var alarmViewModel: AlarmViewModel
-    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,14 +52,6 @@ class NotificationMainFragment : Fragment() {
         bellToggle(false)
         super.onDestroy()
     }
-
-    private fun callingApi(){
-        val alarmRepo = AlarmRepo()
-        val AlarmViewModelFactory = AlarmViewModelFactory(alarmRepo)
-        alarmViewModel = ViewModelProvider(this, AlarmViewModelFactory).get(AlarmViewModel::class.java)
-
-    }
-
 
     // 알림들 (view)
     private fun setNotificationView(){

@@ -1,6 +1,5 @@
 package com.aboutcapsule.android.util
 
-import com.aboutcapsule.android.service.AlarmSerivce
 import com.aboutcapsule.android.service.Arservice
 import com.aboutcapsule.android.service.CapsuleService
 import com.aboutcapsule.android.service.MemberService
@@ -17,8 +16,7 @@ class RetrofitManager {
         private const val memberPort = "api/member/"
         private const val capsulePort = "api/capsule/"
         private const val oauthPort = "api/oauth/"
-        private const val alarmPort = "api/alarm"
-        private const val memoryPort = "api/capsule/memory/"
+        private const val alarmPort = "api/alarm/"
 
     }
 
@@ -60,7 +58,7 @@ class RetrofitManager {
     object memoryInstance {
         private val retrofit by lazy{
             Retrofit.Builder()
-                .baseUrl(BASE_URL + memoryPort)
+                .baseUrl(BASE_URL + capsulePort)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -82,17 +80,6 @@ class RetrofitManager {
         }
         val api: Arservice by lazy {
             retrofit.create(Arservice::class.java)
-        }
-    }
-    object alarmInstance {
-        private val retrofit by lazy {
-            Retrofit.Builder()
-                .baseUrl(BASE_URL + alarmPort)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        }
-        val api: AlarmSerivce by lazy {
-            retrofit.create(AlarmSerivce::class.java)
         }
     }
 
