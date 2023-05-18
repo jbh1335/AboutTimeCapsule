@@ -110,7 +110,6 @@ class CapsuleBoardFragment : Fragment() {
 
     // memory 정보 받아오기 최초 렌더링
     fun getDataFromBack() {
-
         val repository = MemoryRepo()
         val memoryViewModelFactory = MemoryViewModelFactory(repository)
         memoryViewModel = ViewModelProvider  (this, memoryViewModelFactory).get(MemoryViewModel::class.java)
