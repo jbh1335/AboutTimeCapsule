@@ -190,7 +190,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             // 미열람
             if(!isOpened) {
                 // 잠김 여부
-                if(memorySize > 0 && LocalDate.now().isBefore(openDate)) isLocked = true;
+                if(memorySize > 0 && openDate != null && LocalDate.now().isBefore(openDate)) isLocked = true;
 
                 unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
                         .capsuleId(capsuleId)
