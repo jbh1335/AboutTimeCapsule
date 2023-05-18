@@ -20,8 +20,7 @@ import retrofit2.http.Path
 interface MemoryService {
     @Multipart
     @POST("memory/regist")
-    suspend fun registerMemory(@Part multipartFileList: List<MultipartBody.Part>,
-                               @Part("memoryRegistReq") memoryRegistReq : RequestBody): Response<ResponseBody>
+    suspend fun registerMemory(@Part multipartFileList: List<MultipartBody.Part>, @Part("memoryRegistReq") memoryRegistReq : RequestBody): Response<ResponseBody>
 
     @POST("memory")
     suspend fun getCapsuleMemory(@Body memoryReq: MemoryReq) :Response<ResponseBody>

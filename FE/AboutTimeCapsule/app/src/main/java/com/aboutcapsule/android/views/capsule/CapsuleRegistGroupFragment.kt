@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -53,6 +54,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
        private lateinit var address : String
        private lateinit var viewModel : CapsuleViewModel
        private lateinit var groupmemberNames : String
+
+       private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
 
        private var memberNameList : ArrayList<String>? = null
        private var memberIdList : MutableList<Int>? = null
@@ -119,6 +122,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         lat = GlobalAplication.preferences.getString("lat","-1").toDouble()
         lng = GlobalAplication.preferences.getString("lng","-1").toDouble()
         address = GlobalAplication.preferences.getString("address","null")
+        Log.d("캡슐등록Frag", "lat: ${lat}, lng: ${lng}, address: ${address}")
     }
 
     // TODO : (그룹캡슐) 캡슐 생성버튼 클릭 시 , 캡슐생성 api 보내고 페이지 이동
@@ -131,6 +135,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 //            Log.d("리스트",tmp.toString())
             lat // 위도
             lng // 경도
+            Log.d("Lat", "lat: ${lat}")
             Log.d("radio", "$radioBtn")
             Log.d("APi_edittext", "$title")
             Log.d("APi_address", "$address")
@@ -143,6 +148,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT).show()
             }else {
                 val memberlist =arguments?.getIntegerArrayList("memberIdList")
+                memberlist?.add(0,memberId)
                 Log.d("success in radio","$radioBtn")
                 val repository = CapsuleRepo()
                 val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
@@ -150,8 +156,15 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 var postRegistCapsuleData = PostRegistCapsuleReq(memberlist!!,title, radioBtn, isGroup,lat,lng,address)
                 viewModel.addCapsule(postRegistCapsuleData)
 
-                var bundle = bundleOf("capsuleTitle" to title)
-            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_capsuleGroupFragment, bundle)
+                Log.d("capsule","${GlobalAplication.preferences.getString("capsuleId","-1")}")
+                viewModel.isCapsuleRegister.observe(viewLifecycleOwner) {
+                    if (it == true) {
+                        var bundle = bundleOf("capsuleTitle" to title)
+                        navController.navigate(R.id.action_capsuleRegistGroupFragment_to_capsuleGroupFragment, bundle)
+                    }
+                }
+
+
             }
         }
     }

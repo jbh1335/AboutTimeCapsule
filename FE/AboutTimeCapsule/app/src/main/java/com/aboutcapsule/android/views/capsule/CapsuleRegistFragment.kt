@@ -94,7 +94,6 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setNavigation()
     }
 
@@ -125,6 +124,7 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
                 Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT).show()
             } else {
                 val memberlist = ArrayList<Int>(memberId)
+                memberlist.add(memberId)
                 Log.d("success in radio","${radioBtn}")
                 val repository = CapsuleRepo()
                 val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
@@ -136,7 +136,7 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
                    address
                 )
                viewModel.addCapsule(postRegistCapsuleData)
-                val bundle = bundleOf("capsuleTitle" to  title)
+                val bundle = bundleOf("capsuleTitle" to  title,"isGroup" to false) // 그룹 여부도 보내줌
                 navController.navigate(R.id.action_capsuleRegistFragment_to_articleRegistFragment, bundle)
             }
         }

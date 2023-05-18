@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.model
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,20 +34,26 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.atomic.AtomicReference
 
 class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     private var TAG = "CapsuleViewModel"
     var myCapsuleList : MutableLiveData<GetCapsuleListRes> = MutableLiveData()
     var friendCapsuleList : MutableLiveData<GetCapsuleListRes> = MutableLiveData()
+
+    var capsuleId : Int = 0
+
     var visitedCapsuleList : MutableLiveData<GetVisitedListRes> = MutableLiveData()
     var groupMemberList : MutableLiveData<GetGroupMemberRes> = MutableLiveData()
     var aroundCapsuleList : MutableLiveData<GetAroundCapsuleListRes> = MutableLiveData()
+
     var friendList : MutableLiveData<GetFriendListRes> = MutableLiveData()
     var capsuleCountDatas : MutableLiveData<GetCapsuleCountRes> = MutableLiveData()
     var aroundCapsuleInMapList : MutableLiveData<GetMapRes> = MutableLiveData()
     var capsuleInMapDetailDatas : MutableLiveData<PostMapCapsuleDetailRes> = MutableLiveData()
     var capsuleDetailDatas : MutableLiveData<PostCapsuleDetailRes> = MutableLiveData()
     var aroundPopularPlaceList :MutableLiveData<PostAroundPopularPlaceRes> = MutableLiveData()
+    var isCapsuleRegister = MutableLiveData<Boolean>()
     companion object{
         lateinit var unopenedCapsuleDtoList : MutableList<UnopenedCapsuleDto>
         lateinit var openedCapsuleDtoList : MutableList<OpenedCapsuleDto>
@@ -55,7 +62,6 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
         lateinit var aroundCapsuleDtoList: MutableList<AroundCapsuleDto>
         lateinit var myfriendDtoList : MutableList<FriendDto>
         lateinit var aroundCapsuleInMapAroundCapsuleList : MutableList<MapAroundCapsuleRes>
-
     }
 
     // 캡슐 등록
@@ -69,6 +75,8 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 val dataObjects = jsonObject.getInt("data")
 
                 GlobalAplication.preferences.setInt("capsuleId",dataObjects) // 캡슐 생성 시 id 가지고 추억 생성하기로 가기
+
+                isCapsuleRegister.value = true
 
                 Log.d(TAG,"addCapsule : 응답 성공 / $dataObjects") // 캡슐 ID
             }else{

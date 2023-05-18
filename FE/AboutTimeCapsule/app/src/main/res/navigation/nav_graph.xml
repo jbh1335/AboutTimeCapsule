@@ -121,6 +121,9 @@
         <action
             android:id="@+id/action_articleRegistFragment_to_capsuleGroupFragment"
             app:destination="@id/capsuleGroupFragment" />
+        <action
+            android:id="@+id/action_articleRegistFragment_to_mainPageMainFragment"
+            app:destination="@id/mainPageMainFragment" />
     </fragment>
     <fragment
         android:id="@+id/notificationMainFragment"
@@ -158,7 +161,6 @@
             android:id="@+id/action_myAllFriendsFragment_to_myPageMainFragment"
             app:destination="@id/myPageMainFragment" />
     </fragment>
-        tools:layout="@layout/fragment_my_all_friends"/>
     <fragment
         android:id="@+id/capsuleGroupFragment"
         android:name="com.aboutcapsule.android.views.capsule.CapsuleBoardFragment"
@@ -170,12 +172,10 @@
         <action
             android:id="@+id/action_capsuleGroupFragment_to_articleRegistFragment"
             app:destination="@id/articleRegistFragment" />
+        <action
+            android:id="@+id/action_capsuleGroupFragment_to_mainPageMainFragment"
+            app:destination="@id/mainPageMainFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/arFragment"
-        android:name="com.aboutcapsule.android.views.ar.ArFragment"
-        android:label="ArFragment"
-        tools:layout="@layout/fragment_ar"/>
     <activity
         android:id="@+id/arActivity"
         android:name="com.aboutcapsule.android.views.ar.ArActivity"

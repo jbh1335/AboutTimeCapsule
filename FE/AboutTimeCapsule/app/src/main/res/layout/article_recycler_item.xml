@@ -5,7 +5,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/defaultBackColor"
         tools:context=".views.capsule.CapsuleArticleFragment">
 
@@ -98,12 +98,12 @@
 
             <ImageView
                 android:id="@+id/article_recylcer_item_contentimg"
+                android:scaleType="fitCenter"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginBottom="28dp"
-                android:background="@drawable/my_page_img_frame"
                 android:src="@drawable/sunglass"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +126,8 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginBottom="6dp"
-                android:text="5"
+                android:text="0"
+                tools:text="5"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.264"
@@ -136,6 +137,7 @@
 
 <!-- visibility gone 으로 설정 -> 말풍선 버튼 클릭하면 댓글들 나오게 설정  -->
         <FrameLayout
+            android:visibility="gone"
             android:id="@+id/article_recylcer_item_comments_frame"
             android:layout_width="match_parent"
             android:layout_height="400dp"
@@ -149,7 +151,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/article_recylcer_item_comments_recylcer_view"
                 android:layout_width="match_parent"
-                android:layout_height="290dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:orientation="vertical"
@@ -159,6 +161,7 @@
         </FrameLayout>
 
         <EditText
+            android:visibility="gone"
             android:id="@+id/write_comment"
             android:layout_width="280dp"
             android:layout_height="45dp"
@@ -173,6 +176,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:visibility="gone"
             android:id="@+id/regist_comment_btn"
             android:layout_width="50dp"
             android:layout_height="45dp"
