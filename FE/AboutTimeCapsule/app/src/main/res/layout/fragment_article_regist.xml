@@ -32,7 +32,7 @@
                 android:layout_marginTop="18dp"
                 android:text="제목" />
 
-            <TextView
+            <EditText
                 android:id="@+id/article_regist_title"
                 android:layout_width="290dp"
                 android:layout_height="match_parent"

@@ -30,6 +30,7 @@ import com.aboutcapsule.android.factory.MemoryViewModelFactory
 import com.aboutcapsule.android.model.MemoryViewModel
 import com.aboutcapsule.android.repository.MemoryRepo
 import com.aboutcapsule.android.util.GlobalAplication
+import com.aboutcapsule.android.views.MainActivity
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.gun0912.tedpermission.PermissionListener
@@ -56,21 +57,32 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         lateinit var navController: NavController
         private var picture_flag = 0
         private var fileAbsolutePath: String? = null
-        private var bellFlag: Boolean = true
         private var flag = false
         private var currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
-        private var lat = 0.0
-        private var lng = 0.0
 
         // 갤러리에서 데이터(사진) 가져올 때 사용
         lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+        private lateinit var whoAreYouFlag : String  // Board로 갈때 분기처리용
+        private lateinit var title : String
+        private var capsuleId : Int = 0
     }
+
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_article_regist,container,false)
+
+        // 바텀 네비 숨기기
+        bottomNavToggle(true)
+
+        // 상단 벨 숨기기
+        bellToggle(true)
 
         return binding.root
     }
@@ -103,38 +115,50 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
     fun redirectPage(){
         // 분기처리 해서 그룹 or 개인 캡슐 페이지로 이동
-//        binding.articleRegistRegistbtn.setOnClickListener{
-//            navController.navigate(R.id.action_articleRegistFragment_to_capsuleMineFragment)
-//        }
 
-        binding.articleRegistRegistbtn.setOnClickListener{
-            val openDateString = binding.openAvailDate.text.toString()
-            if (openDateString.trim() == "지정하신날짜") {
-                Toast.makeText(requireContext(), "날짜를 지정해주세요", Toast.LENGTH_SHORT).show()
-            } else {
-                val memberId = currentUser
-                val capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
-                val title = binding.articleRegistTitle.text.toString()
-                val content = binding.articleContent.text.toString()
-                val dataPattern = "yyyy년 M월 d일"
-                val formatter = DateTimeFormatter.ofPattern(dataPattern)
-                val localDate = LocalDate.parse(openDateString, formatter).toString()
-                Log.d("localDate", "${localDate}")
+//        if(whoAreYouFlag == "group") { // 그룹
+            binding.articleRegistRegistbtn.setOnClickListener {
+                binding.dateCommentlayout.visibility=View.VISIBLE
+                val openDateString = binding.openAvailDate.text.toString()
+                if (openDateString.trim() == "지정하신날짜") {
+                    Toast.makeText(requireContext(), "날짜를 지정해주세요", Toast.LENGTH_SHORT).show()
+                } else {
+                    val memberId = currentUser
+                    val capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
+                    val title = binding.articleRegistTitle.text.toString()
+                    val content = binding.articleContent.text.toString()
+                    val dataPattern = "yyyy년 M월 d일"
+                    val formatter = DateTimeFormatter.ofPattern(dataPattern)
+                    val localDate = LocalDate.parse(openDateString, formatter).toString()
+                    Log.d("localDate", "${localDate}")
 
-                val memoryRegistReq = MemoryRegistReq(memberId, capsuleId, title, content, localDate)
-                val memoryReqJson = Gson().toJson(memoryRegistReq)
-                val memoryReqBody = memoryReqJson.toRequestBody("application/json".toMediaTypeOrNull())
-                Log.d("프래그먼트image", "${imageList}")
-                Log.d("프래그먼트req", "${memoryRegistReq}")
-                memoryViewModel.registerMemory(imageList, memoryReqBody)
-                val bundle = bundleOf()
-                bundle.putInt("capsuleId", capsuleId)
-                bundle.putDouble("lat", lat)
-                bundle.putDouble("lng", lng)
-                navController.navigate(R.id.action_articleRegistFragment_to_capsuleGroupFragment, bundle)
+                    val memoryRegistReq =
+                        MemoryRegistReq(memberId, capsuleId, title, content, localDate)
+                    val memoryReqJson = Gson().toJson(memoryRegistReq)
+                    val memoryReqBody =
+                        memoryReqJson.toRequestBody("application/json".toMediaTypeOrNull())
+                    Log.d("프래그먼트image", "${imageList}")
+                    Log.d("프래그먼트req", "${memoryRegistReq}")
+                    memoryViewModel.registerMemory(imageList, memoryReqBody)
+                    val bundle = bundleOf()
+                    bundle.putInt("capsuleId", capsuleId)
+                    navController.navigate(
+                        R.id.action_articleRegistFragment_to_capsuleGroupFragment,
+                        bundle
+                    )
+                }
             }
-
-        }
+//        }else { // 개인
+//            binding.articleRegistRegistbtn.setOnClickListener{
+//                binding.dateCommentlayout.visibility=View.GONE
+//                val memberId = currentUser
+//                val capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
+//                val title = binding.articleRegistTitle.text.toString()
+//                val content = binding.articleContent.text.toString()
+//
+//
+//            }
+//        }
     }
 
     // 네비게이션 세팅
@@ -197,7 +221,6 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
             posBtn.setTextColor(textColor)
             negBtn.setTextColor(textColor)
         }
-
     }
 
     // 상단바 벨 사라지게 / 페이지 전환 시 다시 생성
@@ -272,6 +295,12 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         picture_flag = 1
     }
 
+    // 바텀 네비 숨기기 토글
+    private fun bottomNavToggle(sign : Boolean){
+        val mainActivity = activity as MainActivity
+        mainActivity.hideBottomNavi(sign)
+    }
+
     // 갤러리 관련 권한 체크
     fun checkPer_gallery(permis: PermissionListener){
         TedPermission.create()
@@ -291,14 +320,18 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
     // 번들 값 가져오기
     private fun getBundle() {
-        binding.articleRegistTitle.text = requireArguments().getString("capsuleTitle")
-        lat = requireArguments().getDouble("lat")
-        lng = requireArguments().getDouble("lng")
+//        title = requireArguments().getString("capsuleTitle")!!
+//        binding.articleRegistTitle.text = title
+//        whoAreYouFlag = requireArguments().getString("whoAreYouFlag","noValue")
+        capsuleId = GlobalAplication.preferences.getInt("registCapsuleId",-1)
     }
 
     override fun onDestroy() {
         // 상단 벨 다시 살리기
         bellToggle(false)
+
+        // 바텀 네비 다시 살리기
+        bottomNavToggle(false)
 
         super.onDestroy()
     }

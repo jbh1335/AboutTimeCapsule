@@ -140,8 +140,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
             } else if(groupmemberNames==""){
                 Toast.makeText(requireContext(),"그룹 멤버를 추가해주세요",Toast.LENGTH_SHORT).show()
             }else if (title.isEmpty() || title.length > 30) {
-                Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT).show()
             }else {
                 val memberlist =arguments?.getIntegerArrayList("memberIdList")
                 Log.d("success in radio","$radioBtn")
@@ -151,18 +150,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 var postRegistCapsuleData = PostRegistCapsuleReq(memberlist!!,title, radioBtn, isGroup,lat,lng,address)
                 viewModel.addCapsule(postRegistCapsuleData)
 
-//            Log.d("APi_submit","$memberIdList")
-//            Log.d("APi_submit","$title")
-//            Log.d("APi_submit","$tmp")
-//            Log.d("APi_submit","$radioBtn")
-//            Log.d("APi_submit","$lat")
-//            Log.d("APi_submit","$lng")
-//            Log.d("APi_submit","$isGroup")
-//            Log.d("APi_submit","$address")
-                var bundle = bundleOf("capsuleTitle" to binding.capsuleRegistGroupTitle.text.toString())
-                bundle.putDouble("lat", lat)
-                bundle.putDouble("lng", lng)
-            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment, bundle)
+                var bundle = bundleOf("capsuleTitle" to title)
+            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_capsuleGroupFragment, bundle)
             }
         }
     }

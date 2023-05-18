@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,14 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentNotificationMainBinding
+import com.aboutcapsule.android.factory.AlarmViewModelFactory
+import com.aboutcapsule.android.factory.MemoryViewModelFactory
+import com.aboutcapsule.android.model.AlarmViewModel
+import com.aboutcapsule.android.model.MemoryViewModel
+import com.aboutcapsule.android.repository.AlarmRepo
+import com.aboutcapsule.android.repository.MemoryRepo
+import com.aboutcapsule.android.views.capsule.ArticleRegistFragment
+import com.aboutcapsule.android.views.capsule.ArticleRegistFragment.Companion.memoryViewModel
 
 
 class NotificationMainFragment : Fragment() {
@@ -24,7 +33,7 @@ class NotificationMainFragment : Fragment() {
     lateinit var navController : NavController
     lateinit var notificationAdapter : NotificationAdapter
     companion object {
-        var bellFlag: Boolean = true
+        lateinit var alarmViewModel: AlarmViewModel
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +42,7 @@ class NotificationMainFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_notification_main,container,false)
 
-        bellToggle(bellFlag)
+        bellToggle(true)
 
         return binding.root
 
@@ -51,9 +60,17 @@ class NotificationMainFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        bellToggle(bellFlag)
+        bellToggle(false)
         super.onDestroy()
     }
+
+    private fun callingApi(){
+        val alarmRepo = AlarmRepo()
+        val AlarmViewModelFactory = AlarmViewModelFactory(alarmRepo)
+        alarmViewModel = ViewModelProvider(this, AlarmViewModelFactory).get(AlarmViewModel::class.java)
+
+    }
+
 
     // 알림들 (view)
     private fun setNotificationView(){
@@ -88,10 +105,8 @@ class NotificationMainFragment : Fragment() {
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
-            bellFlag=false
         }else{
             bell?.visibility = View.VISIBLE
-            bellFlag=true
         }
     }
 

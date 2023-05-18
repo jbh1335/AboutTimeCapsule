@@ -58,8 +58,8 @@ class CapsuleBoardFragment : Fragment() {
         private lateinit var memoryViewModel: MemoryViewModel
         private lateinit var capsuleViewModel : CapsuleViewModel
         private lateinit var capsuleArticleInBoardAdapter: CapsuleArticleInBoardAdapter
-        var lat = 0.0
-        var lng = 0.0
+        private var lat = 0.0
+        private var lng = 0.0
     }
 
     override fun onCreateView(
@@ -73,7 +73,7 @@ class CapsuleBoardFragment : Fragment() {
 
         getCalendarDate()
 
-        // 맵에서 넘어온 데이터들 ( 다이얼로그 열기버튼 클릭 시 , )
+        // 맵에서 넘어온 데이터들 ( 다이얼로그 열기버튼 클릭 시 ,)
         capsuleId = requireArguments().getInt("capsuleId")
         lat =requireArguments().getDouble("lat")
         lng =requireArguments().getDouble("lng")
@@ -86,6 +86,8 @@ class CapsuleBoardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
 
         Log.d("넘어옴" , "$capsuleId /$lat / $lng")
 
@@ -105,6 +107,7 @@ class CapsuleBoardFragment : Fragment() {
         val repository = MemoryRepo()
         val memoryViewModelFactory = MemoryViewModelFactory(repository)
         memoryViewModel = ViewModelProvider  (this, memoryViewModelFactory).get(MemoryViewModel::class.java)
+//       Log.d("체크" , "$capsuleId / $currentUser / $lat /$lng")
         val memoryReq = MemoryReq(capsuleId, currentUser, lat, lng)
         memoryViewModel.getCapsuleMemory(memoryReq)
         memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
@@ -119,6 +122,7 @@ class CapsuleBoardFragment : Fragment() {
         binding.capsuleRegistBtn.setOnClickListener {
             val dateString = binding.openAvailDate.text.toString()
             Log.d("데이트스트링", "${dateString}")
+            memoryRes.rangeType
             if (dateString == "지정하신 날짜 ") {
                 Toast.makeText(requireContext(), "날짜를 지정해 주세요.", Toast.LENGTH_SHORT).show()
             } else {
