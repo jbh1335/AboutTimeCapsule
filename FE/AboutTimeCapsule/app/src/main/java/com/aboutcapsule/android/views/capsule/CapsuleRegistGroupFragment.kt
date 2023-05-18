@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -158,8 +159,10 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 //            Log.d("APi_submit","$lng")
 //            Log.d("APi_submit","$isGroup")
 //            Log.d("APi_submit","$address")
-
-            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment)
+                var bundle = bundleOf("capsuleTitle" to binding.capsuleRegistGroupTitle.text.toString())
+                bundle.putDouble("lat", lat)
+                bundle.putDouble("lng", lng)
+            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_articleRegistFragment, bundle)
             }
         }
     }
