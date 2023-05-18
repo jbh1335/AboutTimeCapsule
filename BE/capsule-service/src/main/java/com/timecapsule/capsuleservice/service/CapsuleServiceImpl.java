@@ -8,7 +8,6 @@ import com.timecapsule.capsuleservice.dto.*;
 import com.timecapsule.capsuleservice.exception.CustomException;
 import com.timecapsule.capsuleservice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@Slf4j
 @Service("capsuleService")
 @RequiredArgsConstructor
 public class CapsuleServiceImpl implements CapsuleService {
@@ -544,7 +542,6 @@ public class CapsuleServiceImpl implements CapsuleService {
                     capsule.getLatitude(), capsule.getLongitude(), "meter");
             boolean isAllowedDistance = (distance <= 100);
 
-            log.info("capsuleId: {} {} {}", capsule, capsule.getTitle(), isLocked);
             mapResList.add(MapRes.builder()
                     .capsuleId(capsule.getId())
                     .isLocked(isLocked)
