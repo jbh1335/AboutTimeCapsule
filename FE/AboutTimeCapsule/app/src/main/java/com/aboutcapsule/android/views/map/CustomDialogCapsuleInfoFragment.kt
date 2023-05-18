@@ -3,16 +3,12 @@ package com.aboutcapsule.android.views.map
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import com.aboutcapsule.android.R
 import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.databinding.FragmentCustomDialogCapsuleInfoBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
@@ -25,21 +21,12 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
 
     private var binding : FragmentCustomDialogCapsuleInfoBinding? = null
     private lateinit var viewModel : CapsuleViewModel
-    private lateinit var navController: NavController
-
     // -- sharedPerferenced --
     private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
     private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
 
-
-    // bundle 값
-    private  var capsuleId :Int = 0
-    private var lat : Double = 0.0
-    private var lng : Double = 0.0
-
     // callback 객체
     private var callback : DialogCallback? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,18 +37,9 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
 
         setDialog()
 
-        setNavigation()
-
         callingApi()
 
         return binding?.root
-    }
-
-
-    // 네비게이션 세팅
-    private fun setNavigation(){
-        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
     }
 
     fun setCallback(callback: DialogCallback){
@@ -72,14 +50,13 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
     }
 
 
-
     private fun callingApi(){
 
         val bundle = arguments
         if(bundle != null) {
-             capsuleId = bundle.getInt("capsuleId")
-             lat = bundle.getDouble("lat")
-             lng = bundle.getDouble("lng")
+            val capsuleId = bundle.getInt("capsuleId")
+            val lat = bundle.getDouble("lat")
+            val lng = bundle.getDouble("lng")
 
             val data = MapCapsuleDetailReq(capsuleId,memberId,lat,lng)
 
@@ -91,9 +68,9 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
             viewModel.capsuleInMapDetailDatas.observe(viewLifecycleOwner){
                 var isGroup = it.isGroup // 그룹 여부
                 var isLocked = it.isLocked // 잠김 여부
-                var openDate = it.openDate // 오픈 날짜 ( LocalDate타입 )
+                var openDate = it.openDate // 오픈 날짜
                 var memberName =it.memberNickname // 멤버 이름
-                var leftTime = it.leftTime // 남은 시간
+                var remainTime = it.leftTime // 남은 시간
 
                 if(isLocked) {// 잠겨있을 경우
                     binding?.xBtn?.visibility=View.GONE
@@ -108,7 +85,7 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
                     }
                     binding?.capsuleInfoOpendate?.visibility=View.GONE
                     binding?.capsuleInfoAvailDate?.visibility=View.VISIBLE
-                    binding?.capsuleInfoAvailDate?.text=leftTime
+                    binding?.capsuleInfoAvailDate?.text=remainTime
 
                     binding?.capsuleinfoDialogBtn!!.setOnClickListener { // 닫기 버튼
                         dismiss()
@@ -126,25 +103,23 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
                     }
                     binding?.capsuleInfoOpendate?.visibility=View.VISIBLE
                     binding?.capsuleInfoAvailDate?.visibility=View.GONE
-                    binding?.capsuleInfoOpendate?.text=openDate
+                    binding?.capsuleInfoAvailDate?.text=openDate
 
                     binding?.xBtn!!.setOnClickListener {
                         dismiss()
                     }
                     binding?.capsuleinfoDialogBtn?.setOnClickListener{
                         // 상세 페이지로 이동 !
-                        // 열기 버튼 클릭했는지 판단용 클릭리스너
-
                         callback?.onDialogDismissed(capsuleId)
-
                         dismiss()
                     }
+
                 }
             }
+
         }
+
     }
-
-
 
     // 다이얼로그 테두리 설정
     private fun setDialog(){
@@ -152,7 +127,10 @@ class CustomDialogCapsuleInfoFragment : DialogFragment() {
         //  테두리 둥글게 만들기 위한 설정
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
     }
+
+
 
     override fun onDestroy() {
         // 다이얼로그 없애기
