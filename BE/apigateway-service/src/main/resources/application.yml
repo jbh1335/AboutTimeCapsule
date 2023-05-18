@@ -1,5 +1,10 @@
 server:
-  port: 80
+  port: 443
+  ssl:
+    enabled: true
+    key-store-password: b302capsule
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
 
 eureka:
   instance:

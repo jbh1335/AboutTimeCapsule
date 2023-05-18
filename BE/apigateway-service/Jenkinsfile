@@ -39,7 +39,7 @@ pipeline {
         }
         stage('Run New image') {
             steps {
-                sh 'docker run --name timecapsule-apigateway -d -p 80:80 rink645/timecapsule-apigateway'
+                sh 'docker run --name timecapsule-apigateway -d -p 443:443 rink645/timecapsule-apigateway'
                 echo 'Run New member image'
             }
         }
