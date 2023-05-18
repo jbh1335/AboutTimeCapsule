@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -39,6 +40,7 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.time.LocalDate
@@ -242,13 +244,16 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                 if(picture_flag == 1){
                     it.data?.data?.let { uri ->
                         val imageUri: Uri? = it.data?.data
-                        val imagefile: String?  = imageUri?.path
-
 
                         if(imageUri != null){
                             imageList = ArrayList<MultipartBody.Part>()
-                            val multipartBody = convertUrlToMultipart(imagefile!!)
-                            imageList.add(multipartBody)
+                            val filePath: String = getRealPathFromUri(imageUri!!)
+                            val imageFile = File(filePath)
+                            val requestBody: RequestBody = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                            val multipartBodyPart: MultipartBody.Part = MultipartBody.Part.createFormData("image",
+                                 "${currentUser}${imageUri}.jpg", requestBody)
+//                            val multipartBody = convertUrlToMultipart(imagefile!!)
+                            imageList.add(multipartBodyPart)
                             activity?.applicationContext?.let { it1 ->
                                 Glide.with(it1).load(imageUri).override(500,500)
                                     .into(binding.selectedPhoto)
@@ -259,6 +264,18 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                 }
             }
         }
+    }
+    fun getRealPathFromUri(uri: Uri) : String {
+        var realPath = ""
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor: Cursor? = requireActivity().contentResolver.query(uri, proj, null, null, null)
+        if (cursor != null) {
+            val columnIndex: Int = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.moveToFirst()
+            realPath = cursor.getString(columnIndex)
+            cursor.close()
+        }
+        return realPath
     }
 
     override fun onClick(v: View?) {
@@ -315,7 +332,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         // URL을 통해 이미지 파일을 가져오는 요청을 생성
         val requestBody = url.toRequestBody("image/*".toMediaTypeOrNull())
         // MultipartBody.Part로 변환
-        return MultipartBody.Part.createFormData("image", "${currentUser}${url}.jpg", requestBody)
+        return MultipartBody.Part.createFormData("image", "${currentUser}${url}", requestBody)
     }
 
     // 번들 값 가져오기
