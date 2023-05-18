@@ -120,7 +120,6 @@ class CapsuleBoardFragment : Fragment() {
         memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
             uiSetting(it)
 
-
         })
     }
 
