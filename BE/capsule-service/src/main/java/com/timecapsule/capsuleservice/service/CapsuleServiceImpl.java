@@ -418,7 +418,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             // 미열람
             if(!isOpened) {
                 // 잠김 여부
-                if(memorySize > 0 && LocalDate.now().isBefore(openDate)) isLocked = true;
+                if(memorySize > 0 && openDate!= null && LocalDate.now().isBefore(openDate)) isLocked = true;
 
                 unopenedCapsuleDtoList.add(UnopenedCapsuleDto.builder()
                         .capsuleId(capsuleId)
@@ -535,7 +535,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             if(memorySize > 0) {
                 openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
-                if(!isOpened && openDate!= null && LocalDate.now().isBefore(openDate)) isLocked = true;
+                if(!isOpened && openDate != null && LocalDate.now().isBefore(openDate)) isLocked = true;
             }
 
             int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
@@ -612,7 +612,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         if(memorySize > 0) {
             openDate = (isOpened) ? memoryList.get(0).getOpenDate() : memoryList.get(memorySize-1).getOpenDate();
-            if(openDate!= null && LocalDate.now().isBefore(openDate)) {
+            if(openDate != null && LocalDate.now().isBefore(openDate)) {
                 isLocked = true;
                 // 남은 시간 구하기
                 LocalDateTime openDateTime = openDate.atStartOfDay();
