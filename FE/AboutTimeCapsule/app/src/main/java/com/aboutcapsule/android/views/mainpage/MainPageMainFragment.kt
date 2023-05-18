@@ -102,7 +102,11 @@ class MainPageMainFragment : Fragment() {
         settingView()
 
     }
-
+    // 바텀 네비 숨기기 토글
+    private fun bottomNavToggle(sign : Boolean){
+        val mainActivity = activity as MainActivity
+        mainActivity.hideBottomNavi(sign)
+    }
     // 리사이클러 뷰 두개 세팅
     private fun settingView(){
 

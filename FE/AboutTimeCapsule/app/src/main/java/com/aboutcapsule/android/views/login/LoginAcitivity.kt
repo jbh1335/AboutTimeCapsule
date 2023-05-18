@@ -66,7 +66,8 @@ class LoginAcitivity : AppCompatActivity() {
                     val jwtToken = viewModel.loginInstance.value?.accessToken
                     val refreshToken = viewModel.loginInstance.value?.refreshToken
                     Log.d("jwtToken", "${jwtToken}")
-                    GlobalAplication.preferences.setInt("currentUser", viewModel.loginInstance.value!!.id)
+                    GlobalAplication.preferences.setInt("currentUser", 1)
+                    GlobalAplication.preferences.setString("currentUserNickname", "덕명동불주먹")
                     if (nickname.equals("null")) {
                         GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
                         supportFragmentManager
@@ -113,7 +114,8 @@ class LoginAcitivity : AppCompatActivity() {
                         val jwtToken = viewModel.loginInstance.value?.accessToken
                         val refreshToken = viewModel.loginInstance.value?.refreshToken
                         Log.d("jwtToken", "${jwtToken}")
-                        GlobalAplication.preferences.setInt("currentUser", viewModel.loginInstance.value!!.id)
+                        GlobalAplication.preferences.setInt("currentUser", 1)
+                        GlobalAplication.preferences.setString("currentUserNickname", "덕명동불주먹")
                         if (nickname.equals("null")) {
                             GlobalAplication.preferences.setString("tempAccessToken", jwtToken!!)
                             supportFragmentManager
