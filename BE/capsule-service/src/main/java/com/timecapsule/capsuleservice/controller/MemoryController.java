@@ -17,7 +17,7 @@ public class MemoryController {
 
     @PostMapping("/regist")
     public SuccessRes<Integer> registMemory(
-            @RequestPart(value = "multipartFileList", required = false) List<MultipartFile> multipartFileList,
+            @RequestPart(value = "image", required = false) List<MultipartFile> multipartFileList,
             @RequestPart MemoryRegistReq memoryRegistReq) {
         return memoryService.registMemory(multipartFileList, memoryRegistReq);
     }
