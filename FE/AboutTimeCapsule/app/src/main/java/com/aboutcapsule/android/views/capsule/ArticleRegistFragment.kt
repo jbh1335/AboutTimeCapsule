@@ -153,7 +153,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                     val content = binding.articleContent.text.toString()
 
                     val memoryRegistReq =
-                        MemoryRegistReq(memberId, capsuleId, title, content, "null")
+                        MemoryRegistReq(memberId, capsuleId, title, content, null)
                     val memoryReqJson = Gson().toJson(memoryRegistReq)
                     val memoryReqBody =
                         memoryReqJson.toRequestBody("application/json".toMediaTypeOrNull())
@@ -225,13 +225,10 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                     Log.d("프래그먼트image", "${imageList}")
                     Log.d("프래그먼트req", "${memoryRegistReq}")
                     memoryViewModel.registerMemory(imageList, memoryReqBody)
-                    val bundle = bundleOf()
-                    bundle.putInt("capsuleId", capsuleId)
-                    bundle.putDouble("lat", lat)
-                    bundle.putDouble("lng", lng)
+
                     navController.navigate(
-                        R.id.action_articleRegistFragment_to_capsuleGroupFragment,
-                        bundle
+                        R.id.action_articleRegistFragment_to_mainPageMainFragment
+
                     )
                 }
             }

@@ -69,10 +69,9 @@ class CapsuleBoardFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_group,container,false)
+
         getDataFromBack()
         getCalendarDate()
-
-
 
         return binding.root
     }
@@ -81,8 +80,6 @@ class CapsuleBoardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-
-
 
         setNavigation()
 
@@ -99,6 +96,9 @@ class CapsuleBoardFragment : Fragment() {
             capsuleId = bundleCapsuleId
             lat = bundleLat
             lng = bundleLng
+            GlobalAplication.preferences.setInt("capsuleId", capsuleId)
+            GlobalAplication.preferences.setString("lat", "${lat}")
+            GlobalAplication.preferences.setString("lng", "$lng")
             requireArguments().clear() // 다음 데이터를 위해 일단 날려주기
         }else {
             // 그룹캡슐 등록 데이터
@@ -151,7 +151,7 @@ class CapsuleBoardFragment : Fragment() {
                     val formatter = DateTimeFormatter.ofPattern(dataPattern)
                     val localDate = LocalDate.parse(openDateString, formatter).toString()
                     memoryViewModel.sealMemoryFirst(GroupOpenDateReq(capsuleId, localDate))
-
+                    navController.navigate(R.id.action_capsuleGroupFragment_to_mainPageMainFragment)
                 }
             }
 

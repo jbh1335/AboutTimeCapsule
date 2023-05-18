@@ -121,6 +121,9 @@
         <action
             android:id="@+id/action_articleRegistFragment_to_capsuleGroupFragment"
             app:destination="@id/capsuleGroupFragment" />
+        <action
+            android:id="@+id/action_articleRegistFragment_to_mainPageMainFragment"
+            app:destination="@id/mainPageMainFragment" />
     </fragment>
     <fragment
         android:id="@+id/notificationMainFragment"
@@ -169,6 +172,9 @@
         <action
             android:id="@+id/action_capsuleGroupFragment_to_articleRegistFragment"
             app:destination="@id/articleRegistFragment" />
+        <action
+            android:id="@+id/action_capsuleGroupFragment_to_mainPageMainFragment"
+            app:destination="@id/mainPageMainFragment" />
     </fragment>
     <activity
         android:id="@+id/arActivity"
