@@ -86,13 +86,12 @@ public class MemberServiceImpl implements MemberService{
             });
         }
 
-        if(friendCnt > 6) friendList.subList(0, 6).clear();
+        if(friendCnt > 6) friendList = friendList.subList(0, 6);
         friendList.forEach(friend -> friendDtoList.add(FriendDto.builder()
                 .friendMemberId(friend.getId())
                 .nickname(friend.getNickname())
                 .profileImageUrl(friend.getProfileImageUrl())
                 .build()));
-
 
         MypageRes mypageRes = MypageRes.builder()
                 .friendId(friendId)
