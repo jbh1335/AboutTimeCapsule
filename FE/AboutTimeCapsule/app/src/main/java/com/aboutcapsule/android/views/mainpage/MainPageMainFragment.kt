@@ -1,8 +1,10 @@
 package com.aboutcapsule.android.views.mainpage
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.location.LocationRequest
@@ -15,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -24,6 +27,7 @@ import androidx.navigation.Navigation
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.data.capsule.AroundCapsuleDto
 import com.aboutcapsule.android.data.capsule.AroundCapsuleReq
+import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
@@ -35,7 +39,13 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 
 class MainPageMainFragment : Fragment() {
 
@@ -45,13 +55,14 @@ class MainPageMainFragment : Fragment() {
         lateinit var section2adapter: Section2Adapter
         lateinit var section3adapter: Section3Adapter
 
-        private lateinit var viewModel : CapsuleViewModel
+        private lateinit var viewModel: CapsuleViewModel
 
-        private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
-        private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
+        private var memberId = GlobalAplication.preferences.getInt("currentUser", -1)
+        private var userNickname =
+            GlobalAplication.preferences.getString("currentUserNickname", "null")
 
-        private var lat : Double = 0.0
-        private var lng : Double = 0.0
+        private var lat: Double = 0.0
+        private var lng: Double = 0.0
     }
 
     override fun onCreateView(
@@ -60,6 +71,7 @@ class MainPageMainFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_main, container, false)
+
 
 //      최초 렌더링시, 말풍선 비활성화
         binding.section2Banner.visibility = View.INVISIBLE
@@ -79,12 +91,8 @@ class MainPageMainFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
-
         // 리사이클러뷰 세팅
         setSection3View()
-
-        // 리사이클러뷰 요소 클릭 시 이동
-//        setSection2Click()
 
         // 버튼 클릭시 페이지 전환
         redirectPages()
@@ -94,7 +102,6 @@ class MainPageMainFragment : Fragment() {
         settingView()
 
     }
-
 
     // 리사이클러 뷰 두개 세팅
     private fun settingView(){
@@ -110,6 +117,7 @@ class MainPageMainFragment : Fragment() {
                 binding.mainSection1Capsule2.text = it.capsuleCountRes.friendCapsuleCnt.toString()
                 binding.mainSection1Capsule3.text = it.capsuleCountRes.openCapsuleCnt.toString()
         }
+
 
         // 2번째 , 내 주변의 타임 캡슐 세팅
         memberId = 1 // 임시
@@ -143,7 +151,7 @@ class MainPageMainFragment : Fragment() {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10.0f, locationListener)
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10.0f, locationListener)
     }
     val locationListener = object : android.location.LocationListener {
         override fun onLocationChanged(location: Location) {
@@ -155,6 +163,10 @@ class MainPageMainFragment : Fragment() {
 
         override fun onLocationChanged(locations: MutableList<Location>) {
             super.onLocationChanged(locations)
+            for(i in 0 until locations.size){
+                lat =locations.get(i).latitude
+                lng =locations.get(i).longitude
+            }
             //위치가 변경되어 위치가 일괄 전달될 때 호출됩니다.
         }
         override fun onProviderDisabled(provider: String) {
@@ -251,10 +263,10 @@ class MainPageMainFragment : Fragment() {
         var itemList = mutableListOf<Section3Data>()
 
         itemList.apply {
-            add(Section3Data(R.drawable.sunglass, "투썸 플레이스1"))
-            add(Section3Data(R.drawable.heartimg, "삼성 화재 유성연수원1"))
-            add(Section3Data(R.drawable.sunglass, "투썸 플레이스2"))
-            add(Section3Data(R.drawable.heartimg, "삼성 화재 유성연수원2"))
+            add(Section3Data(R.drawable.sunglass, "투썸 플레이스"))
+            add(Section3Data(R.drawable.heartimg, "삼성 화재 유성연수원"))
+            add(Section3Data(R.drawable.sunglass, "한밭 대학교"))
+            add(Section3Data(R.drawable.heartimg, "옥녀봉"))
         }
         return itemList
     }
