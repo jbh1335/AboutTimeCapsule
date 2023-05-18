@@ -120,6 +120,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
         lat = GlobalAplication.preferences.getString("lat","-1").toDouble()
         lng = GlobalAplication.preferences.getString("lng","-1").toDouble()
         address = GlobalAplication.preferences.getString("address","null")
+        Log.d("캡슐등록Frag", "lat: ${lat}, lng: ${lng}, address: ${address}")
     }
 
     // TODO : (그룹캡슐) 캡슐 생성버튼 클릭 시 , 캡슐생성 api 보내고 페이지 이동
@@ -132,6 +133,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
 //            Log.d("리스트",tmp.toString())
             lat // 위도
             lng // 경도
+            Log.d("Lat", "lat: ${lat}")
             Log.d("radio", "$radioBtn")
             Log.d("APi_edittext", "$title")
             Log.d("APi_address", "$address")
@@ -150,18 +152,16 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
                 var postRegistCapsuleData = PostRegistCapsuleReq(memberlist!!,title, radioBtn, isGroup,lat,lng,address)
                 viewModel.addCapsule(postRegistCapsuleData)
-                val capsuleId = viewModel.getCapsuleId()
-                if(capsuleId!=null){
-                    
-                }
-
-                    if(capsuleId != null){
-                })
 
                 Log.d("capsule","${GlobalAplication.preferences.getString("capsuleId","-1")}")
+                viewModel.isCapsuleRegister.observe(viewLifecycleOwner) {
+                    if (it == true) {
+                        var bundle = bundleOf("capsuleTitle" to title)
+                        navController.navigate(R.id.action_capsuleRegistGroupFragment_to_capsuleGroupFragment, bundle)
+                    }
+                }
 
-                var bundle = bundleOf("capsuleTitle" to title)
-            navController.navigate(R.id.action_capsuleRegistGroupFragment_to_capsuleGroupFragment, bundle)
+
             }
         }
     }

@@ -78,7 +78,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_article_regist,container,false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_article_regist, container,false)
 
         // 바텀 네비 숨기기
         bottomNavToggle(true)
@@ -327,12 +327,6 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
             ).check()
-    }
-    private fun convertUrlToMultipart(url: String): MultipartBody.Part {
-        // URL을 통해 이미지 파일을 가져오는 요청을 생성
-        val requestBody = url.toRequestBody("image/*".toMediaTypeOrNull())
-        // MultipartBody.Part로 변환
-        return MultipartBody.Part.createFormData("image", "${currentUser}${url}", requestBody)
     }
 
     // 번들 값 가져오기
