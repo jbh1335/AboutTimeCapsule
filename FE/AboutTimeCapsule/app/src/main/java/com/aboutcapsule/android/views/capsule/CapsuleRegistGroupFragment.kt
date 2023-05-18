@@ -55,6 +55,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
        private lateinit var viewModel : CapsuleViewModel
        private lateinit var groupmemberNames : String
 
+       private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+
        private var memberNameList : ArrayList<String>? = null
        private var memberIdList : MutableList<Int>? = null
 
@@ -146,6 +148,7 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 Toast.makeText(requireContext(), "제목길이는 1~30글자로 작성 가능합니다.", Toast.LENGTH_SHORT).show()
             }else {
                 val memberlist =arguments?.getIntegerArrayList("memberIdList")
+                memberlist?.add(0,memberId)
                 Log.d("success in radio","$radioBtn")
                 val repository = CapsuleRepo()
                 val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
