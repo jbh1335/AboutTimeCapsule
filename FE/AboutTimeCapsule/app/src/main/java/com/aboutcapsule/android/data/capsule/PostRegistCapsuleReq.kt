@@ -8,7 +8,9 @@ data class PostRegistCapsuleReq(
 
     var title : String ,
 
+
     var rangeType : String ,
+
 
     var isGroup : Boolean ,
 

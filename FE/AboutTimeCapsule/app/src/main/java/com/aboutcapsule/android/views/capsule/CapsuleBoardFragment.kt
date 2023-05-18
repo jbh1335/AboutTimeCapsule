@@ -12,21 +12,39 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.memory.GroupOpenDateReq
+import com.aboutcapsule.android.data.memory.MemoryReq
+import com.aboutcapsule.android.data.memory.MemoryRes
 import com.aboutcapsule.android.databinding.FragmentCapsuleGroupBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.factory.MemoryViewModelFactory
+import com.aboutcapsule.android.factory.MyPageViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.model.MemoryViewModel
+import com.aboutcapsule.android.model.MyPageViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.repository.MemoryRepo
+import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.util.SpinnerGroupAvailAdapter
+import com.aboutcapsule.android.views.mainpage.CapsuleOpenedAdapter
 import com.aboutcapsule.android.views.mainpage.MainPageMainFragment
 import com.aboutcapsule.android.views.mainpage.MainPageVisitedCapsuleMapFragment
+import com.aboutcapsule.android.views.mypage.MyPageFriendRequestAdapter
+import com.bumptech.glide.Glide
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 class CapsuleBoardFragment : Fragment() {
@@ -34,10 +52,14 @@ class CapsuleBoardFragment : Fragment() {
     companion object{
         lateinit var binding : FragmentCapsuleGroupBinding
         lateinit var navController: NavController
-
+        private var capsuleId :Int= 0
+        private var currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
         private var flag = false // 달력 visible 체크용
-
-        private lateinit var viewModel : CapsuleViewModel
+        private lateinit var memoryViewModel: MemoryViewModel
+        private lateinit var capsuleViewModel : CapsuleViewModel
+        private lateinit var capsuleArticleInBoardAdapter: CapsuleArticleInBoardAdapter
+        var lat = 0.0
+        var lng = 0.0
     }
 
     override fun onCreateView(
@@ -50,10 +72,10 @@ class CapsuleBoardFragment : Fragment() {
         getCalendarDate()
 
         // 맵에서 넘어온 데이터들 ( 다이얼로그 열기버튼 클릭 시 , )
-        var capsuleId = requireArguments().getInt("capsuleId")
-        var lat =requireArguments().getDouble("lat")
-        var lng =requireArguments().getDouble("lng")
-        Log.d("넘어옴" , "$capsuleId /$lat / $lng")
+        capsuleId = requireArguments().getInt("capsuleId")
+        lat =requireArguments().getDouble("lat")
+        lng =requireArguments().getDouble("lng")
+
 
         redirectPage()
 
@@ -62,6 +84,10 @@ class CapsuleBoardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.d("넘어옴" , "$capsuleId /$lat / $lng")
+
+        getDataFromBack()
 
         setNavigation()
 
@@ -72,12 +98,73 @@ class CapsuleBoardFragment : Fragment() {
         findGroupOrMe()
     }
 
+    // memory 정보 받아오기 최초 렌더링
+    fun getDataFromBack() {
+        val repository = MemoryRepo()
+        val memoryViewModelFactory = MemoryViewModelFactory(repository)
+        memoryViewModel = ViewModelProvider  (this, memoryViewModelFactory).get(MemoryViewModel::class.java)
+        val memoryReq = MemoryReq(capsuleId, currentUser, lat, lng)
+        memoryViewModel.getCapsuleMemory(memoryReq)
+        memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
+            uiSetting(it)
+        })
+    }
+
+    private fun uiSetting(memoryRes : MemoryRes) {
+        binding.capsuleTitle.text = memoryRes.capsuleTitle
+        binding.capsulePlace.text = memoryRes.address
+        Glide.with(this).load(R.drawable.redcapsule).into(binding.capsuleImg)
+        binding.capsuleRegistBtn.setOnClickListener {
+            val dateString = binding.openAvailDate.text.toString()
+            Log.d("데이트스트링", "${dateString}")
+            if (dateString == "지정하신 날짜 ") {
+                Toast.makeText(requireContext(), "날짜를 지정해 주세요.", Toast.LENGTH_SHORT).show()
+            } else {
+                val openDateString = binding.openAvailDate.text.toString()
+                val dataPattern = "yyyy년 M월 d일"
+                val formatter = DateTimeFormatter.ofPattern(dataPattern)
+                val localDate = LocalDate.parse(openDateString, formatter).toString()
+                memoryViewModel.sealMemoryFirst(GroupOpenDateReq(capsuleId, localDate))
+
+            }
+
+        }
+
+        // 그룹 캡슐일 때, 최초로 생성한 캡슐이면 버튼이 있음
+        if (memoryRes.isFirstGroup == false) {
+            binding.dateCommentlayout.visibility = View.GONE
+            binding.capsuleRegistBtn.visibility = View.GONE
+        }else {
+            binding.dateCommentlayout.visibility = View.VISIBLE
+            binding.capsuleRegistBtn.visibility = View.VISIBLE
+        }
+        if (memoryRes.isCapsuleMine == false) {
+            binding.fabBtn.visibility = View.GONE
+            binding.deleteBtn.visibility = View.GONE
+            binding.spinnerOpenRange.visibility = View.GONE
+        } else {
+            binding.fabBtn.visibility = View.VISIBLE
+            binding.deleteBtn.visibility = View.VISIBLE
+            binding.spinnerOpenRange.visibility = View.VISIBLE
+        }
+        memoryUiSetting(memoryRes)
+
+
+    }
+    fun memoryUiSetting(memoryRes : MemoryRes) {
+        capsuleArticleInBoardAdapter = CapsuleArticleInBoardAdapter()
+        capsuleArticleInBoardAdapter.itemList = memoryViewModel.MemoryResData.value?.memoryDetailDtoList!!.toMutableList()
+        binding.boardCommentsRecylcerView.adapter = capsuleArticleInBoardAdapter
+//        binding.boardCommentsRecylcerView.layoutManager =
+//            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    }
+
 
     // 스피너 설정
     private fun setSpinner (){
         val repository = CapsuleRepo()
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+        capsuleViewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
         var groupOrprivate = true // 그룹,개인 판별
         if(!groupOrprivate) { // 그룹 일 경우
             var list = mutableListOf<String>("전체공개", "그룹공개", "공개범위 ▼") // 스피너 목록 placeholder 가장 마지막으로
@@ -96,7 +183,7 @@ class CapsuleBoardFragment : Fragment() {
                     } else { // 스피너 목록 클릭 시 ( 범위 설정 api )
                         var text = binding.spinnerOpenRange.getItemAtPosition(position)
                         Log.d("스피너", "$text")
-                        viewModel.modifyCapsule(1, replaceRange(text.toString()))  //  "수정할 캡슐 번호 , 범위 "
+                        capsuleViewModel.modifyCapsule(1, replaceRange(text.toString()))  //  "수정할 캡슐 번호 , 범위 "
                     }
                 }
                 override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -129,7 +216,7 @@ class CapsuleBoardFragment : Fragment() {
                     } else { // 스피너 목록 클릭 시 ( 범위 설정 api )
                         var text = binding.spinnerOpenRange.getItemAtPosition(position)
                         Log.d("스피너", "$text")
-                        viewModel.modifyCapsule(1, replaceRange(text.toString())) //  "수정할 캡슐 번호 , 범위 "
+                        capsuleViewModel.modifyCapsule(1, replaceRange(text.toString())) //  "수정할 캡슐 번호 , 범위 "
                     }
                 }
                 override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -197,6 +284,7 @@ class CapsuleBoardFragment : Fragment() {
         binding.memberlistSign.setOnClickListener{
             val dialog = CustomDialogMemberList()
             GlobalAplication.preferences.setInt("memberlist_capsuleId",1); // 캡슐 아이디 넘겨주기
+            // TODO: 캡슐 ID 넣어주기
             dialog.show(parentFragmentManager, "customDialog")
         }
 
@@ -213,8 +301,9 @@ class CapsuleBoardFragment : Fragment() {
         binding.deleteBtn.setOnClickListener{
             val repository = CapsuleRepo()
             val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
-            viewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
-            viewModel.removeCapsule(1) // 삭제후 리다이렉트 로직 작성 , "삭제할 캡슐 번호 "
+            capsuleViewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
+            capsuleViewModel.removeCapsule(capsuleId) // 삭제후 리다이렉트 로직 작성 , "삭제할 캡슐 번호 "
+
         }
     }
 
@@ -224,6 +313,7 @@ class CapsuleBoardFragment : Fragment() {
         CapsuleRegistFragment.navController = navHostFragment.navController
     }
 
+    // 달력 표기
     private fun getCalendarDate(){
 
         binding.dateCommentlayout.setOnClickListener {
@@ -283,6 +373,7 @@ class CapsuleBoardFragment : Fragment() {
         }
 
     }
+
 
 
 }
