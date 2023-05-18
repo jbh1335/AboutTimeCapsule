@@ -17,13 +17,16 @@ import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
 
-class MainPageVistiedCapsuleListFragment : Fragment() {
+class MainPageVistiedCapsuleListFragment : Fragment() , MainPageVisitedFragment.DataPassListner {
 
     lateinit var binding: FragmentCapsuleVistiedBinding
     lateinit var navController: NavController
-    lateinit var visitedAdapter: CapsuleOpenedAdapter
+    lateinit var visitedAdapter: VisitedAdapter
 
     private lateinit var viewModel: CapsuleViewModel
+
+    private var latitude : Double = 0.0
+    private var longitude : Double = 0.0
 
 
     override fun onCreateView(
@@ -49,10 +52,23 @@ class MainPageVistiedCapsuleListFragment : Fragment() {
         fun onItemClick(position:Int)
     }
 
+
     // 방문한 캡슐 ( view )
     private fun setVisitedView(data : MutableList<OpenedCapsuleDto>) {
 
-//        visitedAdapter = CapsuleOpenedAdapter()
+        visitedAdapter = VisitedAdapter(object : OnVisitedItemClickListener{
+            override fun onItemClick(position: Int) {
+                val dialog = CustomDialogMainpage()
+                val bundle = Bundle()
+                val capsuleId = viewModel.myCapsuleList.value?.openedCapsuleDtoList?.get(position)!!.capsuleId
+
+                bundle.putInt("capsuleId", capsuleId)
+                bundle.putDouble("lat", latitude)
+                bundle.putDouble("lng", longitude)
+                dialog.arguments = bundle
+                dialog.show(parentFragmentManager, "customDialog")
+            }
+        })
 
         var gridManager = GridLayoutManager(context, 3)
         visitedAdapter.itemList = data
@@ -77,5 +93,10 @@ class MainPageVistiedCapsuleListFragment : Fragment() {
         val navHostFragment =
             requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+    }
+
+    override fun onDataPass(lat: Double, lng: Double) {
+        latitude = lat
+        longitude = lng
     }
 }

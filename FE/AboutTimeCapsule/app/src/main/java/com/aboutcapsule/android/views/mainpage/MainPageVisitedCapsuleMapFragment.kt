@@ -26,7 +26,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 
-class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
+class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
+    MainPageVisitedFragment.DataPassListner {
     private val TAG = "VisitedCapsuleMapFragment"
     companion object {
         lateinit var binding: FragmentMainPageVisitedCapsuleMapBinding
@@ -36,6 +37,9 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
         lateinit var mapMarkers : MutableList<MapInfoDto>
 
         private lateinit var viewModel : CapsuleViewModel
+
+        private var latitude : Double = 0.0
+        private var longitude : Double = 0.0
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +48,7 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_visited_capsule_map,container,false)
 
-
+        mapMarkers = mutableListOf()
         binding.visitedMapFragment.onCreate(savedInstanceState)
         binding.visitedMapFragment.getMapAsync(this)
 
@@ -73,6 +77,7 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
         viewModel.getVisitedCapsuleList(1)
         viewModel.visitedCapsuleList.observe(viewLifecycleOwner) {
                     Log.d(TAG, "${it.mapInfoDtoList}")
+
                     mapMarkers = it.mapInfoDtoList
                 }
     }
@@ -83,7 +88,6 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
        mMap = map
 
         val defalutPos = LatLng(35.894332,127.9)
-
         for(i in 0 until mapMarkers.size ) {
 
             var currLatLng = LatLng(mapMarkers[i].latitude,mapMarkers[i].longitude)
@@ -146,6 +150,11 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback {
     override fun onDestroy() {
       binding.visitedMapFragment.onDestroy()
         super.onDestroy()
+    }
+
+    override fun onDataPass(lat: Double, lng: Double) {
+        latitude = lat
+        longitude = lng
     }
 
 }

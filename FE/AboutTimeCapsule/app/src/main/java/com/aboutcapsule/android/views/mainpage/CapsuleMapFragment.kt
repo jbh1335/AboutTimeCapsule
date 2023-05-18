@@ -39,6 +39,9 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
         private lateinit var viewModel : CapsuleViewModel
 
         lateinit var mapMarkers : MutableList<MapInfoDto>
+
+        private var userLat : Double = 0.0
+        private var userLng : Double = 0.0
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +52,7 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_map,container,false)
 
-
+        mapMarkers = mutableListOf()
         binding.mainpageMapFragment.onCreate(savedInstanceState)
         binding.mainpageMapFragment.getMapAsync(this)
 
@@ -73,8 +76,10 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
     }
 
     // 뷰페이저 페이지에서 넘어온 데이터 받아서 api 통신 ( 나 , 친구 분기처리 )
-    override fun onDataPass(data: String) {
+    override fun onDataPass(data: String,lat : Double, lng : Double) {
         findHost = data
+        userLat = lat
+        userLng = lng
     }
 
     // onDataPass로 MainPageMyCapsuleFragment에서 넘겨받은 분기처리 정보 받은 후 api 통신

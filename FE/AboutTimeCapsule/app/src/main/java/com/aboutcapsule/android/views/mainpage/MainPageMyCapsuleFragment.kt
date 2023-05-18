@@ -40,6 +40,9 @@ class MainPageMyCapsuleFragment : Fragment() {
         private lateinit var  tabLayout : TabLayout
         private lateinit var pagerAdapter : PagerFragmentStateAdapter
 
+        private var lat : Double = 0.0
+        private var lng : Double = 0.0
+
         private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
         private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
     }
@@ -52,6 +55,8 @@ class MainPageMyCapsuleFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_my_capsule,container,false)
 
+        getData()
+
         viewPager = binding.viewPagerLayout
         tabLayout = binding.tabLayout
 
@@ -61,6 +66,7 @@ class MainPageMyCapsuleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         setViewPager()
 
         // 나의 캡슐 or 친구의 캡슐 분기정보 뷰페이저 프래그먼트에 전달
@@ -69,6 +75,11 @@ class MainPageMyCapsuleFragment : Fragment() {
         // 툴바 뒤로가기 버튼 세팅
         setToolbar()
 
+    }
+
+    fun getData(){
+        lat = requireArguments().getDouble("lat")
+        lng = requireArguments().getDouble("lng")
     }
 
     // TODO : 내캡슐 or 친구의 캡슐 api 불러오기 ( 분기처리 완료 )
@@ -90,13 +101,13 @@ class MainPageMyCapsuleFragment : Fragment() {
 
     // 자식한테 데이터 보내주기 위한 커스텀 인터페이스 정의 및 데이터 연결
     interface DataPassListner{
-        fun onDataPass(data: String)
+        fun onDataPass(data: String,lat : Double, lng : Double)
     }
     fun sendDataToFragment(data: String) {
         val capsuleFragment = pagerAdapter.fragments[0] as? CapsuleListFragment
-        capsuleFragment?.onDataPass(data)
+        capsuleFragment?.onDataPass(data,lat,lng)
         val capsuleMapFragment = pagerAdapter.fragments[1] as? CapsuleMapFragment
-        capsuleMapFragment?.onDataPass(data)
+        capsuleMapFragment?.onDataPass(data,lat,lng)
     }
 
     private fun setViewPager(){

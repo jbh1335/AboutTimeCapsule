@@ -560,7 +560,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             bundle.putDouble("lng" , lastKnownLocation!!.longitude)
             dialog.arguments = bundle
         dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
-            
+
         }
 
        return true

@@ -1,5 +1,6 @@
 package com.aboutcapsule.android.util
 
+import com.aboutcapsule.android.service.AlarmSerivce
 import com.aboutcapsule.android.service.Arservice
 import com.aboutcapsule.android.service.CapsuleService
 import com.aboutcapsule.android.service.MemberService
@@ -10,10 +11,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitManager {
     companion object {
 
-        private const val BASE_URL = "http://k8b302.p.ssafy.io/"
+        private const val BASE_URL = "https://k8b302.p.ssafy.io/"
         private const val memberPort = "api/member/"
         private const val capsulePort = "api/capsule/"
         private const val oauthPort = "api/oauth/"
+        private const val alarmPort = "api/alarm"
     }
 
 
@@ -51,7 +53,7 @@ class RetrofitManager {
             retrofit.create(CapsuleService::class.java)
         }
     }
-    object ArInstance {
+    object arInstance {
         private val retrofit by lazy {
             Retrofit.Builder()
                 .baseUrl(BASE_URL + capsulePort)
@@ -60,6 +62,17 @@ class RetrofitManager {
         }
         val api: Arservice by lazy {
             retrofit.create(Arservice::class.java)
+        }
+    }
+    object alarmInstance {
+        private val retrofit by lazy {
+            Retrofit.Builder()
+                .baseUrl(BASE_URL + alarmPort)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+        val api: AlarmSerivce by lazy {
+            retrofit.create(AlarmSerivce::class.java)
         }
     }
 

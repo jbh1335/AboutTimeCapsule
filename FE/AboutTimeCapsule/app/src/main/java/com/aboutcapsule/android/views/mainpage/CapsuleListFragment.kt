@@ -31,8 +31,8 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
     companion object{
         private lateinit var findHost : String // 분기처리 정보 넘겨받음 , api 판별용
         private lateinit var viewModel : CapsuleViewModel
-        private var lat : Double = 0.0 //좌 표
-        private var lng : Double = 0.0 //좌 표
+        private var latitude : Double = 0.0 //좌 표
+        private var longitude : Double = 0.0 //좌 표
 
         private const val TAG = "CapsuleListFragment"
     }
@@ -51,7 +51,6 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
 
 //        Log.d("캡슐리스트프래그먼트" ,MainActivity.preferences.getString("meOrFriend","notKey"))
 
-        setData()
 
         setNavigation()
 
@@ -62,15 +61,13 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
     }
 
     // 뷰페이저 페이지에서 넘어온 데이터 받아서 api 통신 ( 나 , 친구 분기처리 )
-    override fun onDataPass(data: String) {
+    override fun onDataPass(data: String, lat : Double , lng : Double) {
         findHost = data
+        latitude=lat
+        longitude=lng
     }
     // onDataPass로 MainPageMyCapsuleFragment에서 넘겨받은 분기처리 정보 받은 후 api 통신
 
-    fun setData(){
-        lat = requireArguments().getDouble("lat")
-        lng = requireArguments().getDouble("lng")
-    }
     private fun callingApi(){
 
         val repository = CapsuleRepo()
@@ -111,8 +108,8 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
                         val capsuleId = viewModel.myCapsuleList.value?.unopenedCapsuleDtoList?.get(position)!!.capsuleId
 
                         bundle.putInt("capsuleId", capsuleId)
-                        bundle.putDouble("lat", lat)
-                        bundle.putDouble("lng", lng)
+                        bundle.putDouble("lat", latitude)
+                        bundle.putDouble("lng", longitude)
                         dialog.arguments = bundle
                         dialog.show(parentFragmentManager, "customDialog")
                     }
@@ -122,8 +119,8 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
                         val capsuleId = viewModel.friendCapsuleList.value?.unopenedCapsuleDtoList?.get(position)!!.capsuleId
 
                         bundle.putInt("capsuleId", capsuleId)
-                        bundle.putDouble("lat", lat)
-                        bundle.putDouble("lng", lng)
+                        bundle.putDouble("lat", latitude)
+                        bundle.putDouble("lng", longitude)
                         dialog.arguments = bundle
                         dialog.show(parentFragmentManager, "customDialog")
                     }
@@ -155,8 +152,8 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
                         val capsuleId = viewModel.myCapsuleList.value?.openedCapsuleDtoList?.get(position)!!.capsuleId
 
                         bundle.putInt("capsuleId", capsuleId)
-                        bundle.putDouble("lat", lat)
-                        bundle.putDouble("lng", lng)
+                        bundle.putDouble("lat", latitude)
+                        bundle.putDouble("lng", longitude)
                         dialog.arguments = bundle
                         dialog.show(parentFragmentManager, "customDialog")
                     }
@@ -166,8 +163,8 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
                         val capsuleId = viewModel.friendCapsuleList.value?.openedCapsuleDtoList?.get(position)!!.capsuleId
 
                         bundle.putInt("capsuleId", capsuleId)
-                        bundle.putDouble("lat", lat)
-                        bundle.putDouble("lng", lng)
+                        bundle.putDouble("lat", latitude)
+                        bundle.putDouble("lng", longitude)
                         dialog.arguments = bundle
                         dialog.show(parentFragmentManager, "customDialog")
                     }
