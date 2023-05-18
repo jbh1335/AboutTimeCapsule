@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -151,6 +152,8 @@ class CapsuleRegistGroupFragment : Fragment() ,OnMapReadyCallback{
                 viewModel = ViewModelProvider  (this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
                 var postRegistCapsuleData = PostRegistCapsuleReq(memberlist!!,title, radioBtn, isGroup,lat,lng,address)
                 viewModel.addCapsule(postRegistCapsuleData)
+
+                Log.d("capsule","${GlobalAplication.preferences.getString("capsuleId","-1")}")
                 viewModel.isCapsuleRegister.observe(viewLifecycleOwner) {
                     if (it == true) {
                         var bundle = bundleOf("capsuleTitle" to title)
