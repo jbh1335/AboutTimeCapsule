@@ -31,12 +31,12 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
     fun registerMemory(imageList: ArrayList<MultipartBody.Part>,memoryRegistReq: RequestBody) {
         viewModelScope.launch {
             val response = repository.registerMemory(imageList, memoryRegistReq)
-            Log.d("이미지파일리스트", "${ArticleRegistFragment.imageList}")
+            Log.d("이미지파일리스트", "${imageList}")
             Log.d("이미지파일", "${memoryRegistReq}")
             if (response.isSuccessful) {
                 Log.d("response", "${response.code()}")
             } else {
-                Log.e("추억등록실패", "${response.code()} / ${response.message()}")
+                Log.e("ㄴ추억등록실패", "${response.code()} / ${response.message()}")
             }
         }
     }
@@ -47,7 +47,7 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
 
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
-                Log.d("겟캡슐메모리", "${response.body()}")
+                Log.d("겟캡슐메모리", "${response.body()?.string()}")
                 val jsonObject = JSONObject(jsonString)
                 val dataObjects = jsonObject.getJSONObject("data")
                 val capsuleTitle = dataObjects.getString("capsuleTitle")

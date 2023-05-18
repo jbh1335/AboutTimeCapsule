@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -68,10 +69,9 @@ class CapsuleBoardFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_group,container,false)
+
         getDataFromBack()
         getCalendarDate()
-
-        redirectPage()
 
         return binding.root
     }
@@ -80,8 +80,6 @@ class CapsuleBoardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-
-        getBundleData()
 
         setNavigation()
 
@@ -98,6 +96,9 @@ class CapsuleBoardFragment : Fragment() {
             capsuleId = bundleCapsuleId
             lat = bundleLat
             lng = bundleLng
+            GlobalAplication.preferences.setInt("capsuleId", capsuleId)
+            GlobalAplication.preferences.setString("lat", "${lat}")
+            GlobalAplication.preferences.setString("lng", "$lng")
             requireArguments().clear() // 다음 데이터를 위해 일단 날려주기
         }else {
             // 그룹캡슐 등록 데이터
@@ -110,6 +111,7 @@ class CapsuleBoardFragment : Fragment() {
 
     // memory 정보 받아오기 최초 렌더링
     fun getDataFromBack() {
+        getBundleData()
         val repository = MemoryRepo()
         val memoryViewModelFactory = MemoryViewModelFactory(repository)
         memoryViewModel = ViewModelProvider  (this, memoryViewModelFactory).get(MemoryViewModel::class.java)
@@ -118,6 +120,8 @@ class CapsuleBoardFragment : Fragment() {
         memoryViewModel.getCapsuleMemory(memoryReq)
         memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
             uiSetting(it)
+
+            redirectPage(it)
 
 
         })
@@ -147,7 +151,7 @@ class CapsuleBoardFragment : Fragment() {
                     val formatter = DateTimeFormatter.ofPattern(dataPattern)
                     val localDate = LocalDate.parse(openDateString, formatter).toString()
                     memoryViewModel.sealMemoryFirst(GroupOpenDateReq(capsuleId, localDate))
-
+                    navController.navigate(R.id.action_capsuleGroupFragment_to_mainPageMainFragment)
                 }
             }
 
@@ -281,7 +285,7 @@ class CapsuleBoardFragment : Fragment() {
         )
     }
 
-    private fun redirectPage(){
+    private fun redirectPage(memoryRes : MemoryRes){
         // 상단 툴바 알림페이지로 리다이렉트
         val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         notiBtn?.setOnClickListener{
@@ -298,7 +302,12 @@ class CapsuleBoardFragment : Fragment() {
 
         // 하단 '+'버튼 클릭 시 (Floating Action Btn )
         binding.fabBtn.setOnClickListener{
-            navController.navigate(R.id.action_capsuleGroupFragment_to_articleRegistFragment)
+            val isFristGroup = memoryRes.isFirstGroup
+            val isGroup = memoryRes.isGroup
+            val bundle = bundleOf()
+            bundle.putBoolean("isFirstGroup", isFristGroup)
+            bundle.putBoolean("isGroup", isGroup)
+            navController.navigate(R.id.action_capsuleGroupFragment_to_articleRegistFragment, bundle)
         }
     }
 

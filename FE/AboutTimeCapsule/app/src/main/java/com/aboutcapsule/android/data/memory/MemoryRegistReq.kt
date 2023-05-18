@@ -1,6 +1,7 @@
 package com.aboutcapsule.android.data.memory
 
 import com.google.gson.annotations.SerializedName
+import org.jetbrains.annotations.Nullable
 import java.time.LocalDate
 
 data class MemoryRegistReq(
@@ -8,5 +9,5 @@ data class MemoryRegistReq(
     val capsuleId: Int,
     val title: String,
     val content: String,
-    val openDate: String,
+    val openDate: String?,
 )
