@@ -68,7 +68,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 val jsonObject = JSONObject(jsonString)
                 val dataObjects = jsonObject.getInt("data")
 
-                GlobalAplication.preferences.setInt("registCapsuleId",dataObjects) // 캡슐 생성 시 id 가지고 추억 생성하기로 가기
+                GlobalAplication.preferences.setInt("capsuleId",dataObjects) // 캡슐 생성 시 id 가지고 추억 생성하기로 가기
 
                 Log.d(TAG,"addCapsule : 응답 성공 / $dataObjects") // 캡슐 ID
             }else{
@@ -277,8 +277,9 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 groupMemberList.value = getGroupMemberRes
 
                 Log.d(TAG, "getGroupMemberList : 응답 성공 / $jsonObject ")
+            }else {
+                Log.d(TAG, "getGroupMemberList : 응답 실패/ ${response.message()}")
             }
-            Log.d(TAG, "getGroupMemberList : 응답 실패/ ${response.message()}")
         }
     }
 
