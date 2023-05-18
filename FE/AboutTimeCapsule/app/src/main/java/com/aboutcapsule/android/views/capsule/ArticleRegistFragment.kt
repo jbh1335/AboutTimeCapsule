@@ -226,9 +226,9 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                             imageList = ArrayList<MultipartBody.Part>()
                             val filePath: String = getRealPathFromUri(imageUri!!)
                             val imageFile = File(filePath)
-                            val requestBody: RequestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+                            val requestBody: RequestBody = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
                             val multipartBodyPart: MultipartBody.Part = MultipartBody.Part.createFormData("image",
-                                 "${currentUser}${imageUri}", requestBody)
+                                 "${currentUser}${imageUri}.jpg", requestBody)
 //                            val multipartBody = convertUrlToMultipart(imagefile!!)
                             imageList.add(multipartBodyPart)
                             activity?.applicationContext?.let { it1 ->
