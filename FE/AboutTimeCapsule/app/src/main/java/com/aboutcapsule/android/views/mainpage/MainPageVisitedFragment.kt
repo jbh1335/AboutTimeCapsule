@@ -25,6 +25,10 @@ class MainPageVisitedFragment : Fragment() {
     lateinit var navController: NavController
     private lateinit var  viewPager : ViewPager2
     private lateinit var  tabLayout : TabLayout
+    private lateinit var pagerAdapter : PagerFragmentStateAdapter
+
+    private var lat : Double = 0.0 //좌 표
+    private var lng : Double = 0.0 //좌 표
 
 
     override fun onCreateView(
@@ -42,10 +46,28 @@ class MainPageVisitedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setViewPager()
+
         setNavigation()
+
         setToolbar()
 
+        setData()
+
+        sendDataToFragment()
+
+
         redirectPage()
+    }
+
+
+    // 자식한테 데이터 보내주기 위한 커스텀 인터페이스 정의 및 데이터 연결
+    interface DataPassListner{
+        fun onDataPass(lat : Double, lng : Double)
+    }
+
+    fun setData(){
+        lat = requireArguments().getDouble("lat")
+        lng = requireArguments().getDouble("lng")
     }
 
     // 네비게이션 세팅
@@ -54,10 +76,16 @@ class MainPageVisitedFragment : Fragment() {
         navController = navHostFragment.navController
     }
 
+    fun sendDataToFragment() {
+        val mainPageVisitedListFragment =pagerAdapter.fragments[0] as? MainPageVistiedCapsuleListFragment
+        mainPageVisitedListFragment?.onDataPass(lat, lng)
+        val mainPageVisitedMapFragment = pagerAdapter.fragments[1] as? MainPageVisitedCapsuleMapFragment
+        mainPageVisitedMapFragment?.onDataPass(lat, lng)
+    }
     // 뷰페이저 세팅
     private fun setViewPager(){
         //       뷰페이저 ( 목록보기, 지도보기 )
-        val pagerAdapter = PagerFragmentStateAdapter(requireActivity())
+        pagerAdapter = PagerFragmentStateAdapter(requireActivity())
 
         pagerAdapter.addFragment(MainPageVistiedCapsuleListFragment())
         pagerAdapter.addFragment(MainPageVisitedCapsuleMapFragment())

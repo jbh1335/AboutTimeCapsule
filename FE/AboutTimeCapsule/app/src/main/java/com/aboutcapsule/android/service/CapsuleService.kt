@@ -1,5 +1,8 @@
 package com.aboutcapsule.android.service
 
+import com.aboutcapsule.android.data.capsule.AroundCapsuleReq
+import com.aboutcapsule.android.data.capsule.AroundPopularPlaceReq
+import com.aboutcapsule.android.data.capsule.CapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.MapAroundCapsuleReq
 import com.aboutcapsule.android.data.capsule.MapCapsuleDetailReq
 import com.aboutcapsule.android.data.capsule.PostRegistCapsuleReq
@@ -35,8 +38,8 @@ interface CapsuleService {
     @GET("group/{capsuleId}")
     suspend fun findGroupMember(@Path("capsuleId") capsuleId:Int) : Response<ResponseBody>
 
-    @GET("around")
-    suspend fun findAroundCapsule(@Query("memberId") memberId: Int, @Query("latitude") latitude : Double,@Query("longitude") longitude : Double ) : Response<ResponseBody>
+    @POST("around")
+    suspend fun findAroundCapsule(@Body aroundCapsuleReq : AroundCapsuleReq) : Response<ResponseBody>
 
     @GET("friend/{memberId}")
     suspend fun findFriendList(@Path("memberId") memberId : Int ): Response<ResponseBody>
@@ -49,4 +52,11 @@ interface CapsuleService {
 
     @POST("map/capsuleDetail")
     suspend fun findCapsuleInMapDetail(@Body mapCapsuleDetailReq : MapCapsuleDetailReq) : Response<ResponseBody>
+
+    @POST("capsuleDetail")
+    suspend fun findCapsuleDetail(@Body capsuleDetailReq: CapsuleDetailReq) : Response<ResponseBody>
+
+    @POST("around/popular")
+    suspend fun findAroundPopularPlace(@Body aroundPopularPlaceReq: AroundPopularPlaceReq) : Response<ResponseBody>
+
 }

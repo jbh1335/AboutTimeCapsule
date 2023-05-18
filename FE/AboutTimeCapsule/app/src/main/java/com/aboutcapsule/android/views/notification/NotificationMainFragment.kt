@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
 import com.aboutcapsule.android.databinding.FragmentNotificationMainBinding
 
@@ -23,9 +23,7 @@ class NotificationMainFragment : Fragment() {
     lateinit var binding : FragmentNotificationMainBinding
     lateinit var navController : NavController
     lateinit var notificationAdapter : NotificationAdapter
-    companion object {
-        var bellFlag: Boolean = true
-    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,7 +31,7 @@ class NotificationMainFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_notification_main,container,false)
 
-        bellToggle(bellFlag)
+        bellToggle(true)
 
         return binding.root
 
@@ -51,7 +49,7 @@ class NotificationMainFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        bellToggle(bellFlag)
+        bellToggle(false)
         super.onDestroy()
     }
 
@@ -88,10 +86,8 @@ class NotificationMainFragment : Fragment() {
         var bell = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         if(sign) {
             bell?.visibility = View.GONE
-            bellFlag=false
         }else{
             bell?.visibility = View.VISIBLE
-            bellFlag=true
         }
     }
 

@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.location.LocationRequest
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +22,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.capsule.AroundCapsuleDto
+import com.aboutcapsule.android.data.capsule.AroundCapsuleReq
 import com.aboutcapsule.android.databinding.FragmentMainPageMainBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
@@ -31,6 +35,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 
 class MainPageMainFragment : Fragment() {
 
@@ -45,6 +50,8 @@ class MainPageMainFragment : Fragment() {
         private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
         private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
 
+        private var lat : Double = 0.0
+        private var lng : Double = 0.0
     }
 
     override fun onCreateView(
@@ -61,6 +68,7 @@ class MainPageMainFragment : Fragment() {
 
 //        물음표 버튼 토글버틀
         bannerToggle()
+
         return binding.root
 
     }
@@ -71,12 +79,12 @@ class MainPageMainFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
+
         // 리사이클러뷰 세팅
-        setSection2View()
         setSection3View()
 
         // 리사이클러뷰 요소 클릭 시 이동
-        setSection2Click()
+//        setSection2Click()
 
         // 버튼 클릭시 페이지 전환
         redirectPages()
@@ -84,6 +92,7 @@ class MainPageMainFragment : Fragment() {
         setLocationUpdates()
 
         settingView()
+
     }
 
 
@@ -94,7 +103,7 @@ class MainPageMainFragment : Fragment() {
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider  (this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
         Log.d("dd","getCapsule _ frag : $memberId " )
-        // 1번째 , 캡슐 수 가져오기
+        // 1번째 , 캡슐 수
         viewModel.getCapsuleCount(memberId) // 멤버 ID 넣어주기
         viewModel.capsuleCountDatas.observe(viewLifecycleOwner){
                 binding.mainSection1Capsule1.text = it.capsuleCountRes.myCapsuleCnt.toString()
@@ -103,7 +112,13 @@ class MainPageMainFragment : Fragment() {
         }
 
         // 2번째 , 내 주변의 타임 캡슐 세팅
-//        viewModel.getAroundCapsuleList(memberId,)
+        memberId = 1 // 임시
+        Log.d("main/2section" ,"$memberId / $lat / $lng")
+        var aroundCapsuleReq = AroundCapsuleReq(memberId,lat,lng)
+        viewModel.getAroundCapsuleList(aroundCapsuleReq)
+        viewModel.aroundCapsuleList.observe(viewLifecycleOwner){
+            setAroundCapsule(it.aroundCapsuleDtoList)
+        }
 
 
         // 3번째 , 내 주변의 인기장소 세팅
@@ -128,14 +143,14 @@ class MainPageMainFragment : Fragment() {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10.0f, locationListener)
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10.0f, locationListener)
     }
     val locationListener = object : android.location.LocationListener {
         override fun onLocationChanged(location: Location) {
             // 위치가 변경되었을 때 호출됩니다.
-            val latitude = location.latitude
-            val longitude = location.longitude
-            Log.d("메인페이지 위치", "$latitude  $longitude" )
+            lat = location.latitude
+            lng = location.longitude
+            Log.d("메인페이지 위치", "$lat  $lng" )
         }
 
         override fun onLocationChanged(locations: MutableList<Location>) {
@@ -158,13 +173,24 @@ class MainPageMainFragment : Fragment() {
         }
     }
 
-    private fun setSection2View(){
+    // 내 주변 캡슐 아이템 세팅 및 , 데이터 클릭 리스너 생성
+    private fun setAroundCapsule(list : MutableList<AroundCapsuleDto>){
 
+        section2adapter = Section2Adapter(object : OnItemClickListener{
+            override fun onItemClick(position: Int) {
+                val dialog=CustomDialogMainpage()
+                val bundle = Bundle()
+                val capsuleId = viewModel.aroundCapsuleList.value?.aroundCapsuleDtoList?.get(position)!!.capsuleId
+                bundle.putInt("capsuleId",capsuleId)
+                bundle.putDouble("lat",lat)
+                bundle.putDouble("lng",lng)
+                dialog.arguments = bundle
+                dialog.show(parentFragmentManager,"customDialog")
+            }
+        })
 
-        val section2DataList = getSection2datas()
-        section2adapter = Section2Adapter()
         //       어댑터에 api로 받아온 데이터 넘겨주기
-        section2adapter.itemList = section2DataList
+        section2adapter.itemList = list
         binding.section2RecyclerView.adapter = section2adapter
     }
 
@@ -176,17 +202,8 @@ class MainPageMainFragment : Fragment() {
         binding.section3RecyclerView.adapter = section3adapter
     }
 
-    //      TODO: 내 주변의 타임캡슐 요소 하나 클릭시 이동 필요한 데이터 가지고 넘어가기 ( 위,경도 시간,유저이름,거리,댓글수?  )
-    private fun setSection2Click(){
-        //            val intent = Intent(this.context,이동할 장소 )
-        section2adapter.setOnItemClickListner(object : Section2Adapter.OnItemClickListner {
-            override fun onItemClick(view: View, position: Int) {
-                //                    intent.putExtra("이동한 페이지에서 인식할 이름",데이터 )
-                //                    페이지 이동
-                val dialog = CustomDialogMainpage()
-                dialog.show(parentFragmentManager, "customDialog")
-            }
-        })
+    interface OnItemClickListener{
+        fun onItemClick(position:Int)
     }
 
     //  물음표 버튼 토글 로직
@@ -206,23 +223,20 @@ class MainPageMainFragment : Fragment() {
     private fun redirectPages() {
         // 나의 캡슐 페이지로 이동 ( 마이캡슐 페이지로 이동, 분기처리해서 api 불러오기 )
         binding.mainSection1Capsule1img.setOnClickListener {
-            val bundle = bundleOf("apiName" to "myCapsuleApi" )
-//            MainActivity.preferences.getEditor().remove("meOrFriend")
-//            MainActivity.preferences.setString("meOrFriend","myCapsuleApi")
+            val bundle = bundleOf("apiName" to "myCapsuleApi" , "lat" to lat ,"lng" to lng)
             navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
         }
 
         // 친구의 캡슐 ( 마이캡슐 페이지로 이동 , 분기처리해서 api 불러오기 )
         binding.mainSection1Capsule2img.setOnClickListener{
-//            MainActivity.preferences.getEditor().remove("meOrFriend")
-//            MainActivity.preferences.setString("meOrFriend","friendApi")
-            val bundle = bundleOf("apiName" to "friendApi")
+            val bundle = bundleOf("apiName" to "friendApi" , "lat" to lat , "lng" to lng)
             navController.navigate(R.id.action_mainPageMainFragment_to_mainPageMyCapsuleFragment,bundle)
         }
 
         // 나의 방문 캡슐 기록
         binding.mainSection1Capsule3img.setOnClickListener{
-            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageVisitedFragment)
+            val bundle = bundleOf("lat" to lat , "lng" to lng)
+            navController.navigate(R.id.action_mainPageMainFragment_to_mainPageVisitedFragment,bundle)
         }
 
         // 상단 툴바 알림페이지로 리다이렉트
@@ -230,20 +244,6 @@ class MainPageMainFragment : Fragment() {
         notiBtn?.setOnClickListener{
             navController.navigate(R.id.action_mainPageMainFragment_to_notificationMainFragment)
         }
-    }
-
-    //   TODO: retrofit으로 내 주변의 타임캡슐 데이터 가져오기
-    private fun getSection2datas(): MutableList<Section2Data> {
-        var itemList = mutableListOf<Section2Data>()
-
-        for (i in 1..10) {
-            var username = "유저${i}님의 캡슐"
-            var userpos = "장소 ${i}"
-            var img = R.drawable.redcapsule
-            val tmp = Section2Data(img, username, userpos)
-            itemList.add(tmp)
-        }
-        return itemList
     }
 
     //    TODO: retrofit으로 내 주변의 인기장소 데이터 가져오기

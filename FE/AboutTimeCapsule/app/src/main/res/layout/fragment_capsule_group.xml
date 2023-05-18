@@ -99,7 +99,7 @@
                             android:layout_height="50dp"
                             android:layout_marginLeft="10dp"
                             android:layout_gravity="center_vertical"
-                            android:textSize="35sp"
+                            android:textSize="25sp"
                             android:text="제목"/>
                         <TextView
                             android:id="@+id/capsule_place"
@@ -203,9 +203,9 @@
                 android:id="@+id/board_comments_recylcer_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:orientation="vertical"
-                tools:listitem="@layout/article_recycler_item"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/article_recycler_item" />
         </LinearLayout>
     </ScrollView>
 </layout>

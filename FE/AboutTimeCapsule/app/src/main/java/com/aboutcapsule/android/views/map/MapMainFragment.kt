@@ -2,7 +2,9 @@ package com.aboutcapsule.android.views.map
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -17,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
@@ -62,9 +65,11 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.Locale
 
+
 class MapMainFragment : Fragment() ,OnMapReadyCallback
     ,OnMyLocationButtonClickListener ,OnMyLocationClickListener ,OnRequestPermissionsResultCallback
     , OnMarkerClickListener , CustomDialogCapsuleInfoFragment.DialogCallback{
+
 
     companion object{
         lateinit var binding : FragmentMapMainBinding
@@ -185,7 +190,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
         // 개인 캡슐 클릭 시
         binding.capsuleRegistAloneBtn.setOnClickListener {
             var bundle = bundleOf( "lat" to "${lastKnownLocation?.latitude}" , "lng" to "${lastKnownLocation?.longitude}" )
-            navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistFragment)
+            navController.navigate(R.id.action_mapMainFragment_to_capsuleRegistFragment,bundle)
         }
 
         // 그룹 캡슐 클릭 시
@@ -279,7 +284,6 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
 
         // 사용자의 위치,카메라 가져오기
         getDeviceLocation()
-
 
     }
 
@@ -547,13 +551,14 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             val isAllowedDistance = tag.first
             val capsuleId = tag.second
             Log.d("마커 값","$isAllowedDistance / $capsuleId")
-        val dialog = CustomDialogCapsuleInfoFragment()
-        val bundle = Bundle()
-        bundle.putInt("capsuleId",capsuleId)
-        bundle.putDouble("lat" , lastKnownLocation!!.latitude)
-        bundle.putDouble("lng" , lastKnownLocation!!.longitude)
-        dialog.arguments = bundle
+
+            val dialog = CustomDialogCapsuleInfoFragment()
             dialog.setCallback(this) // 콜백 인터페이스 설정
+            val bundle = Bundle()
+            bundle.putInt("capsuleId",capsuleId)
+            bundle.putDouble("lat" , lastKnownLocation!!.latitude)
+            bundle.putDouble("lng" , lastKnownLocation!!.longitude)
+            dialog.arguments = bundle
         dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
 
         }
@@ -604,14 +609,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             bundle.putDouble("lng", lastKnownLocation!!.longitude)
             isRedirect=-1
 
-//            navController.popBackStack(navController.graph.startDestinationId,false)
-//            val fragmentManager = requireActivity().supportFragmentManager
-//            val fragmentTransaction = fragmentManager.beginTransaction()
-//            fragmentTransaction.remove(this)
             navController.navigate(R.id.action_mapMainFragment_to_capsuleGroupFragment,bundle)
-//            fragmentTransaction.commit()
         }
-
     }
 
     override fun onDialogDismissed(data: Int) {

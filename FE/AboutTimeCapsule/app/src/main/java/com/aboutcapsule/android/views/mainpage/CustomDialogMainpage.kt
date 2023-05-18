@@ -10,21 +10,42 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.capsule.CapsuleDetailReq
 import com.aboutcapsule.android.databinding.FragmentCustomDialogMainpageBinding
+import com.aboutcapsule.android.factory.CapsuleViewModelFactory
+import com.aboutcapsule.android.model.CapsuleViewModel
+import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
+import com.aboutcapsule.android.views.map.MapMainFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 
-class CustomDialogMainpage : DialogFragment(), OnMapReadyCallback  {
+class CustomDialogMainpage() : DialogFragment(), OnMapReadyCallback  {
     companion object{
         private var binding : FragmentCustomDialogMainpageBinding? = null
         private lateinit var mMap : GoogleMap
+        // 마커
+        private lateinit var marker : Marker
+        // 마커 옵션
         private lateinit var markerOptions : MarkerOptions
+
+        private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+        private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
+
+        private  var resLat : Double = 0.0
+        private  var resLng : Double = 0.0
+        private var userLat : Double = 0.0
+        private var userLng : Double = 0.0
+        private var isLocked : Boolean = false
+        private lateinit var viewModel : CapsuleViewModel
     }
 
     override fun onCreateView(
@@ -37,7 +58,45 @@ class CustomDialogMainpage : DialogFragment(), OnMapReadyCallback  {
 
         setDialog()
 
+        callingApi()
+
         return binding?.root
+
+    }
+
+    private fun callingApi(){
+
+        val bundle = arguments
+        if(bundle != null) {
+            val capsuleId = bundle.getInt("capsuleId")
+            userLat = bundle.getDouble("lat")
+            userLng = bundle.getDouble("lng")
+
+            val repository = CapsuleRepo()
+            val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
+            viewModel = ViewModelProvider  (this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
+
+            viewModel.getCapsuleDetail(CapsuleDetailReq(capsuleId,memberId,userLat,userLng))
+            viewModel.capsuleDetailDatas.observe(viewLifecycleOwner){
+               isLocked = it.isLocked
+               val leftTime = it.leftTime
+               val name = it.memberNickname
+               val capsuleId = it.capsuleId
+               val address = it.address
+               val distance = it.distance
+               resLat = it.latitude
+               resLng = it.longitude
+                if(isLocked){ // 잠겨 있을 경우
+                    binding!!.dialogUserRemainTime.visibility=View.VISIBLE
+                    binding?.dialogUserRemainTime!!.text=leftTime
+                }else{
+                    binding!!.dialogUserRemainTime.visibility=View.GONE
+                }
+                binding!!.dialogUsername.text="${name}님의 캡슐"
+                binding!!.dialogUserDistance.text="${distance}m 떨어져 있어요"
+
+            }
+        }
 
     }
 
@@ -57,21 +116,27 @@ class CustomDialogMainpage : DialogFragment(), OnMapReadyCallback  {
     // 지도 띄워주기
     // onCreateView에서 getMapAsync(this) 사용허가를 구하면 안드로이드가 메서드 실행
     override fun onMapReady(map: GoogleMap) {
-       mMap = map
-
-//        TODO : API로 받아온 좌표 넣어줘서 지도 띄워주기
-        val deajeonSS = LatLng(36.355038,127.298297)
+        mMap = map
 
         markerOptions = MarkerOptions()
+        val user = LatLng(userLat, userLng)
+        setCustomMarker(R.drawable.mine_marker)
+        marker = mMap.addMarker(markerOptions.position(user))!!
 
-        setCustomMarker()
+        markerOptions = MarkerOptions()
+        val place = LatLng(resLat, resLng)
+        if(isLocked){
+            setCustomMarker(R.drawable.locked_marker)
+        }else{
+            setCustomMarker(R.drawable.friend_marker)
+        }
+        marker = mMap.addMarker(markerOptions.position(place))!!
 
-        map.addMarker(markerOptions.position(deajeonSS).title("대전 캠퍼스 "))
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(deajeonSS,16f))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(user,14f))
     }
 
-    fun setCustomMarker(){
-        var bitmapdraw : BitmapDrawable = resources.getDrawable(R.drawable.friend_marker) as BitmapDrawable
+    fun setCustomMarker(img : Int){
+        var bitmapdraw : BitmapDrawable = resources.getDrawable(img) as BitmapDrawable
         var bitmap = bitmapdraw.bitmap
         var customMarker = Bitmap.createScaledBitmap(bitmap,90,120,false)
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
