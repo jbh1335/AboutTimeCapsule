@@ -1,5 +1,6 @@
 package com.aboutcapsule.android.util
 
+import com.aboutcapsule.android.service.AlramService
 import com.aboutcapsule.android.service.Arservice
 import com.aboutcapsule.android.service.CapsuleService
 import com.aboutcapsule.android.service.MemberService
@@ -12,11 +13,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitManager {
     companion object {
 
-        private const val BASE_URL = "https://k8b302.p.ssafy.io/"
-        private const val memberPort = "api/member/"
-        private const val capsulePort = "api/capsule/"
-        private const val oauthPort = "api/oauth/"
-        private const val memoryPort = "api/capsule/memory/"
+        private const val BASE_URL = "https://k8b302.p.ssafy.io/api/"
+        private const val memberPort = "member/"
+        private const val capsulePort = "capsule/"
+        private const val oauthPort = "oauth/"
+        private const val memoryPort = "capsule/memory/"
+        private const val alramPort = "alram/"
     }
 
 
@@ -79,6 +81,17 @@ class RetrofitManager {
         }
         val api: Arservice by lazy {
             retrofit.create(Arservice::class.java)
+        }
+    }
+    object AlramInstance {
+        private val retrofit by lazy {
+            Retrofit.Builder()
+                .baseUrl(BASE_URL + alramPort)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+        val api : AlramService by lazy {
+            retrofit.create(AlramService::class.java)
         }
     }
 
