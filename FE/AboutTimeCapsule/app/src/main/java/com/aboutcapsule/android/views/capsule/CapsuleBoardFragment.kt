@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -20,7 +21,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.aboutcapsule.android.R
+import com.aboutcapsule.android.data.memory.GroupOpenDateReq
 import com.aboutcapsule.android.data.memory.MemoryReq
 import com.aboutcapsule.android.data.memory.MemoryRes
 import com.aboutcapsule.android.databinding.FragmentCapsuleGroupBinding
@@ -35,9 +38,13 @@ import com.aboutcapsule.android.repository.MemoryRepo
 import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.util.SpinnerGroupAvailAdapter
+import com.aboutcapsule.android.views.mainpage.CapsuleOpenedAdapter
 import com.aboutcapsule.android.views.mainpage.MainPageMainFragment
 import com.aboutcapsule.android.views.mainpage.MainPageVisitedCapsuleMapFragment
+import com.aboutcapsule.android.views.mypage.MyPageFriendRequestAdapter
 import com.bumptech.glide.Glide
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 class CapsuleBoardFragment : Fragment() {
@@ -50,6 +57,9 @@ class CapsuleBoardFragment : Fragment() {
         private var flag = false // 달력 visible 체크용
         private lateinit var memoryViewModel: MemoryViewModel
         private lateinit var capsuleViewModel : CapsuleViewModel
+        private lateinit var capsuleArticleInBoardAdapter: CapsuleArticleInBoardAdapter
+        var lat = 0.0
+        var lng = 0.0
     }
 
     override fun onCreateView(
@@ -62,10 +72,10 @@ class CapsuleBoardFragment : Fragment() {
         getCalendarDate()
 
         // 맵에서 넘어온 데이터들 ( 다이얼로그 열기버튼 클릭 시 , )
-        var capsuleId = requireArguments().getInt("capsuleId")
-        var lat =requireArguments().getDouble("lat")
-        var lng =requireArguments().getDouble("lng")
-        Log.d("넘어옴" , "$capsuleId /$lat / $lng")
+        capsuleId = requireArguments().getInt("capsuleId")
+        lat =requireArguments().getDouble("lat")
+        lng =requireArguments().getDouble("lng")
+
 
         redirectPage()
 
@@ -74,6 +84,8 @@ class CapsuleBoardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.d("넘어옴" , "$capsuleId /$lat / $lng")
 
         getDataFromBack()
 
@@ -91,10 +103,7 @@ class CapsuleBoardFragment : Fragment() {
         val repository = MemoryRepo()
         val memoryViewModelFactory = MemoryViewModelFactory(repository)
         memoryViewModel = ViewModelProvider  (this, memoryViewModelFactory).get(MemoryViewModel::class.java)
-        val latitude = 0.0
-        val longitude = 0.0
-        // TODO: latitude와 longitude 값 받아오는 거 구현해야함.
-        val memoryReq = MemoryReq(capsuleId, currentUser, latitude, longitude)
+        val memoryReq = MemoryReq(capsuleId, currentUser, lat, lng)
         memoryViewModel.getCapsuleMemory(memoryReq)
         memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
             uiSetting(it)
@@ -105,14 +114,28 @@ class CapsuleBoardFragment : Fragment() {
         binding.capsuleTitle.text = memoryRes.capsuleTitle
         binding.capsulePlace.text = memoryRes.address
         Glide.with(this).load(R.drawable.redcapsule).into(binding.capsuleImg)
+        binding.capsuleRegistBtn.setOnClickListener {
+            val dateString = binding.openAvailDate.text.toString()
+            Log.d("데이트스트링", "${dateString}")
+            if (dateString == "지정하신 날짜 ") {
+                Toast.makeText(requireContext(), "날짜를 지정해 주세요.", Toast.LENGTH_SHORT).show()
+            } else {
+                val openDateString = binding.openAvailDate.text.toString()
+                val dataPattern = "yyyy년 M월 d일"
+                val formatter = DateTimeFormatter.ofPattern(dataPattern)
+                val localDate = LocalDate.parse(openDateString, formatter).toString()
+                memoryViewModel.sealMemoryFirst(GroupOpenDateReq(capsuleId, localDate))
 
+            }
+
+        }
 
         // 그룹 캡슐일 때, 최초로 생성한 캡슐이면 버튼이 있음
         if (memoryRes.isFirstGroup == false) {
-            binding.datepickComment.visibility = View.GONE
+            binding.dateCommentlayout.visibility = View.GONE
             binding.capsuleRegistBtn.visibility = View.GONE
         }else {
-            binding.datepickComment.visibility = View.VISIBLE
+            binding.dateCommentlayout.visibility = View.VISIBLE
             binding.capsuleRegistBtn.visibility = View.VISIBLE
         }
         if (memoryRes.isCapsuleMine == false) {
@@ -124,8 +147,16 @@ class CapsuleBoardFragment : Fragment() {
             binding.deleteBtn.visibility = View.VISIBLE
             binding.spinnerOpenRange.visibility = View.VISIBLE
         }
+        memoryUiSetting(memoryRes)
 
 
+    }
+    fun memoryUiSetting(memoryRes : MemoryRes) {
+        capsuleArticleInBoardAdapter = CapsuleArticleInBoardAdapter()
+        capsuleArticleInBoardAdapter.itemList = memoryViewModel.MemoryResData.value?.memoryDetailDtoList!!.toMutableList()
+        binding.boardCommentsRecylcerView.adapter = capsuleArticleInBoardAdapter
+//        binding.boardCommentsRecylcerView.layoutManager =
+//            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
 
@@ -271,8 +302,8 @@ class CapsuleBoardFragment : Fragment() {
             val repository = CapsuleRepo()
             val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
             capsuleViewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
-            capsuleViewModel.removeCapsule(1) // 삭제후 리다이렉트 로직 작성 , "삭제할 캡슐 번호 "
-            // TODO: CapsuleId 받아서 1 대신 넣어주기
+            capsuleViewModel.removeCapsule(capsuleId) // 삭제후 리다이렉트 로직 작성 , "삭제할 캡슐 번호 "
+
         }
     }
 
@@ -342,6 +373,7 @@ class CapsuleBoardFragment : Fragment() {
         }
 
     }
+
 
 
 }

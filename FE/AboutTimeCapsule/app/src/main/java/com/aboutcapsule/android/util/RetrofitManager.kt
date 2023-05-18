@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitManager {
     companion object {
 
-        private const val BASE_URL = "http://k8b302.p.ssafy.io/"
+        private const val BASE_URL = "https://k8b302.p.ssafy.io/"
         private const val memberPort = "api/member/"
         private const val capsulePort = "api/capsule/"
         private const val oauthPort = "api/oauth/"
@@ -57,7 +57,7 @@ class RetrofitManager {
     object memoryInstance {
         private val retrofit by lazy{
             Retrofit.Builder()
-                .baseUrl(BASE_URL + memoryPort)
+                .baseUrl(BASE_URL + capsulePort)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

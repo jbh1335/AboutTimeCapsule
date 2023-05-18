@@ -46,8 +46,8 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
             val response = repository.getCapsuleMemory(memoryReq)
 
             if (response.isSuccessful) {
-                Log.d("getCapsuleMemory", "${response.body().toString()}")
                 val jsonString = response.body()?.string()
+                Log.d("겟캡슐메모리", "${response.body()?.string()}")
                 val jsonObject = JSONObject(jsonString)
                 val dataObjects = jsonObject.getJSONObject("data")
                 val capsuleTitle = dataObjects.getString("capsuleTitle")
@@ -127,6 +127,8 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
     }
     fun sealMemoryFirst(groupOpenDateReq: GroupOpenDateReq) {
         viewModelScope.launch {
+            Log.d("추억등록 데이터 확인", "${groupOpenDateReq}")
+            Log.d("추억등록 데이터 확인", "${groupOpenDateReq.openDate}")
             val response = repository.sealMemoryFirst(groupOpenDateReq)
             if (response.isSuccessful) {
                 Log.d("추억 등록 성공", "${response.code()} / ${response.message()}")

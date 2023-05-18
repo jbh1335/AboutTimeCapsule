@@ -81,9 +81,6 @@ class MyPageMainFragment : Fragment() {
             // 모든 친구 보기로 이동
             searchFriendUser()
         })
-
-
-
     }
     // 유저 프로필정보 가져오기
     fun getMyPageProfileInfo(getMyPageRes: GetMyPageRes) {

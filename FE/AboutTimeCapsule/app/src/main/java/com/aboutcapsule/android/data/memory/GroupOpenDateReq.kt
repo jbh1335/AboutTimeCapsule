@@ -4,5 +4,5 @@ import java.time.LocalDate
 
 data class GroupOpenDateReq(
     val capsuleId: Int,
-    val openDate:LocalDate,
+    val openDate: String,
 )

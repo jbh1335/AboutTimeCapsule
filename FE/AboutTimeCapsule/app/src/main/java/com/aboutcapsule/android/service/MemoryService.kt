@@ -19,18 +19,18 @@ import retrofit2.http.Path
 
 interface MemoryService {
     @Multipart
-    @POST("regist")
+    @POST("memory/regist")
     suspend fun registerMemory(@Part multipartFileList: List<MultipartBody.Part>,
                                @Part("memoryRegistReq") memoryRegistReq : RequestBody): Response<ResponseBody>
 
-    @POST("/")
+    @POST("memory")
     suspend fun getCapsuleMemory(@Body memoryReq: MemoryReq) :Response<ResponseBody>
 
-    @POST("comment/regist")
+    @POST("memory/comment/regist")
     suspend fun postMemoryComment(@Body postCommentReq: PostCommentReq) : Response<ResponseBody>
-    @GET("comment/{memoryId}")
+    @GET("memory/comment/{memoryId}")
     suspend fun getMemoryComments(@Path("memoryId") memoryId: Int) : Response<ResponseBody>
 
-    @PATCH("openDate")
+    @PATCH("memory/openDate")
     suspend fun sealMemoryFirst(@Body groupOpenDateReq: GroupOpenDateReq) : Response<ResponseBody>
 }
