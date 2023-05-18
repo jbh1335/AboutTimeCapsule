@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.view.menu.MenuView.ItemView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -71,7 +72,7 @@ class CapsuleBoardFragment : Fragment() {
         getDataFromBack()
         getCalendarDate()
 
-        redirectPage()
+
 
         return binding.root
     }
@@ -119,6 +120,8 @@ class CapsuleBoardFragment : Fragment() {
         memoryViewModel.getCapsuleMemory(memoryReq)
         memoryViewModel.MemoryResData.observe(viewLifecycleOwner, Observer {
             uiSetting(it)
+
+            redirectPage(it)
 
 
         })
@@ -282,7 +285,7 @@ class CapsuleBoardFragment : Fragment() {
         )
     }
 
-    private fun redirectPage(){
+    private fun redirectPage(memoryRes : MemoryRes){
         // 상단 툴바 알림페이지로 리다이렉트
         val notiBtn = activity?.findViewById<ImageView>(R.id.toolbar_bell)
         notiBtn?.setOnClickListener{
@@ -299,7 +302,12 @@ class CapsuleBoardFragment : Fragment() {
 
         // 하단 '+'버튼 클릭 시 (Floating Action Btn )
         binding.fabBtn.setOnClickListener{
-            navController.navigate(R.id.action_capsuleGroupFragment_to_articleRegistFragment)
+            val isFristGroup = memoryRes.isFirstGroup
+            val isGroup = memoryRes.isGroup
+            val bundle = bundleOf()
+            bundle.putBoolean("isFirstGroup", isFristGroup)
+            bundle.putBoolean("isGroup", isGroup)
+            navController.navigate(R.id.action_capsuleGroupFragment_to_articleRegistFragment, bundle)
         }
     }
 
