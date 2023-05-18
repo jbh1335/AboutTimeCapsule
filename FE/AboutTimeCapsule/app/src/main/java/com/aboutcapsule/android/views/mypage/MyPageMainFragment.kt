@@ -75,16 +75,12 @@ class MyPageMainFragment : Fragment() {
             }
             //하단 친구 요청 이미지 렌더링
             if (it.friendRequestDtoList != null) {
-                Log.d("friendRequestDtoList in frag", "${it.friendRequestDtoList}")
                 getMyPageFriendRequestList(it.friendRequestDtoList)
                 moveToFriendProfileFromMyPageFriendThumbnail()
             }
             // 모든 친구 보기로 이동
             searchFriendUser()
         })
-
-
-
     }
     // 유저 프로필정보 가져오기
     fun getMyPageProfileInfo(getMyPageRes: GetMyPageRes) {

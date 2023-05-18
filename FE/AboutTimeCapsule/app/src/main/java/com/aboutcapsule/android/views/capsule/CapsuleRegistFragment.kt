@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -135,8 +136,8 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
                    address
                 )
                viewModel.addCapsule(postRegistCapsuleData)
-
-                navController.navigate(R.id.action_capsuleRegistFragment_to_articleRegistFragment)
+                val bundle = bundleOf("capsuleTitle" to  title)
+                navController.navigate(R.id.action_capsuleRegistFragment_to_articleRegistFragment, bundle)
             }
         }
     }
