@@ -5,7 +5,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/defaultBackColor"
         tools:context=".views.capsule.CapsuleArticleFragment">
 
@@ -126,7 +126,8 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginBottom="6dp"
-                android:text="5"
+                android:text="0"
+                tools:text="5"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.264"
