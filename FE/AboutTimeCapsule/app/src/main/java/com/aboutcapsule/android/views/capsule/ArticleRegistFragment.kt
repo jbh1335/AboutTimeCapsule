@@ -58,30 +58,26 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
         private lateinit var binding: FragmentArticleRegistBinding
         lateinit var navController: NavController
         private var picture_flag = 0
-        private var fileAbsolutePath: String? = null
         private var flag = false
         private var currentUser = GlobalAplication.preferences.getInt("currentUser", -1)
 
         // 갤러리에서 데이터(사진) 가져올 때 사용
         lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
-        private lateinit var whoAreYouFlag : String  // Board로 갈때 분기처리용
-        private lateinit var title : String
+        private var isGroup : Boolean = false // Board로 갈때 분기처리용
+        private var isFirstGroup : Boolean = false // 최초 캡슐일 때
+        private var title : String =""
         private var capsuleId : Int = 0
+        private var lat : Double = 0.0
+        private var lng : Double = 0.0
     }
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_article_regist, container,false)
-
-        // 바텀 네비 숨기기
-        bottomNavToggle(true)
 
         // 상단 벨 숨기기
         bellToggle(true)
@@ -91,10 +87,16 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 바텀 네비 숨기기
+        bottomNavToggle(true)
+
         navController = Navigation.findNavController(view)
+
         getDataFromBack()
 
     }
+
     fun getDataFromBack() {
         val memoryRepo = MemoryRepo()
         val memoryViewModelFactory = MemoryViewModelFactory(memoryRepo)
@@ -112,21 +114,101 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
         setNavigation()
 
+        setPage()
+
         redirectPage()
     }
 
-    fun redirectPage(){
-        // 분기처리 해서 그룹 or 개인 캡슐 페이지로 이동
+    private fun setPage(){
+        isGroup = requireArguments().getBoolean("isGroup",false)  // 그룹 여부
+        isFirstGroup = requireArguments().getBoolean("isFirstGroup",false) // 그룹인데 봉인 하기 전인지 여부
+        title=requireArguments().getString("capsuleTitle","null") // 제목 있을 경우
 
-//        if(whoAreYouFlag == "group") { // 그룹
-            binding.articleRegistRegistbtn.setOnClickListener {
+        if(isGroup){ // 그룹 일 경우
+            if(isFirstGroup) { // 봉인 전 게시물일 경우
+                binding.dateCommentlayout.visibility=View.GONE
+                binding.articleRegistTitle.hint = "제목을 입력하세요"
+            }else { // 봉인 후 게시물일 경우
                 binding.dateCommentlayout.visibility=View.VISIBLE
+                binding.articleRegistTitle.hint = "제목을 입력하세요"
+            }
+        }else { // 개인 일 경우
+            binding.dateCommentlayout.visibility=View.VISIBLE
+            binding.articleRegistTitle.setText(title)
+        }
+    }
+
+
+    fun redirectPage() {
+        lat = requireArguments().getDouble("lat", -1.0)
+        lng = requireArguments().getDouble("lng", -1.0)
+
+        // 추억 생성하기 버튼 클릭 시 ,
+        binding.articleRegistRegistbtn.setOnClickListener {
+            if (isGroup) { // 그룹
+                if (isFirstGroup) { // 최초 그룹 일경우
+                    val memberId = currentUser
+                    val capsuleId = GlobalAplication.preferences.getInt("capsuleId", -1)
+                    val title = binding.articleRegistTitle.text.toString()
+                    val content = binding.articleContent.text.toString()
+
+                    val memoryRegistReq =
+                        MemoryRegistReq(memberId, capsuleId, title, content, "null")
+                    val memoryReqJson = Gson().toJson(memoryRegistReq)
+                    val memoryReqBody =
+                        memoryReqJson.toRequestBody("application/json".toMediaTypeOrNull())
+                    Log.d("프래그먼트image", "${imageList}")
+                    Log.d("프래그먼트req", "${memoryRegistReq}")
+                    memoryViewModel.registerMemory(imageList, memoryReqBody)
+                    val bundle = bundleOf()
+                    bundle.putInt("capsuleId", capsuleId)
+                    bundle.putDouble("lat", lat)
+                    bundle.putDouble("lng", lng)
+                    navController.navigate(
+                        R.id.action_articleRegistFragment_to_capsuleGroupFragment,
+                        bundle
+                    )
+                } else { // 최초 그룹이 아닐 경우
+                    val openDateString = binding.openAvailDate.text.toString()
+                    if (openDateString.trim() == "지정하신날짜") {
+                        Toast.makeText(requireContext(), "날짜를 지정해주세요", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val memberId = currentUser
+                        val capsuleId = GlobalAplication.preferences.getInt("capsuleId", -1)
+                        val title = binding.articleRegistTitle.text.toString()
+                        val content = binding.articleContent.text.toString()
+                        val dataPattern = "yyyy년 M월 d일"
+                        val formatter = DateTimeFormatter.ofPattern(dataPattern)
+                        val localDate = LocalDate.parse(openDateString, formatter).toString()
+                        Log.d("localDate", "${localDate}")
+
+                        val memoryRegistReq =
+                            MemoryRegistReq(memberId, capsuleId, title, content, localDate)
+                        val memoryReqJson = Gson().toJson(memoryRegistReq)
+                        val memoryReqBody =
+                            memoryReqJson.toRequestBody("application/json".toMediaTypeOrNull())
+                        Log.d("프래그먼트image", "${imageList}")
+                        Log.d("프래그먼트req", "${memoryRegistReq}")
+                        memoryViewModel.registerMemory(imageList, memoryReqBody)
+                        val bundle = bundleOf()
+                        bundle.putInt("capsuleId", capsuleId)
+                        bundle.putDouble("lat", lat)
+                        bundle.putDouble("lng", lng)
+                        navController.navigate(
+                            R.id.action_articleRegistFragment_to_capsuleGroupFragment,
+                            bundle
+                        )
+
+                    }
+                }
+            } else {  // 개인
+
                 val openDateString = binding.openAvailDate.text.toString()
                 if (openDateString.trim() == "지정하신날짜") {
                     Toast.makeText(requireContext(), "날짜를 지정해주세요", Toast.LENGTH_SHORT).show()
                 } else {
                     val memberId = currentUser
-                    val capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
+                    val capsuleId = GlobalAplication.preferences.getInt("capsuleId", -1)
                     val title = binding.articleRegistTitle.text.toString()
                     val content = binding.articleContent.text.toString()
                     val dataPattern = "yyyy년 M월 d일"
@@ -144,23 +226,15 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                     memoryViewModel.registerMemory(imageList, memoryReqBody)
                     val bundle = bundleOf()
                     bundle.putInt("capsuleId", capsuleId)
+                    bundle.putDouble("lat", lat)
+                    bundle.putDouble("lng", lng)
                     navController.navigate(
                         R.id.action_articleRegistFragment_to_capsuleGroupFragment,
                         bundle
                     )
                 }
             }
-//        }else { // 개인
-//            binding.articleRegistRegistbtn.setOnClickListener{
-//                binding.dateCommentlayout.visibility=View.GONE
-//                val memberId = currentUser
-//                val capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
-//                val title = binding.articleRegistTitle.text.toString()
-//                val content = binding.articleContent.text.toString()
-//
-//
-//            }
-//        }
+        }
     }
 
     // 네비게이션 세팅

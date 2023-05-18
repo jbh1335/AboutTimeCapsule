@@ -41,12 +41,12 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
     var myCapsuleList : MutableLiveData<GetCapsuleListRes> = MutableLiveData()
     var friendCapsuleList : MutableLiveData<GetCapsuleListRes> = MutableLiveData()
 
-    val capsuleFlag : MutableLiveData<Boolean> = MutableLiveData()
     var capsuleId : Int = 0
 
     var visitedCapsuleList : MutableLiveData<GetVisitedListRes> = MutableLiveData()
     var groupMemberList : MutableLiveData<GetGroupMemberRes> = MutableLiveData()
     var aroundCapsuleList : MutableLiveData<GetAroundCapsuleListRes> = MutableLiveData()
+
     var friendList : MutableLiveData<GetFriendListRes> = MutableLiveData()
     var capsuleCountDatas : MutableLiveData<GetCapsuleCountRes> = MutableLiveData()
     var aroundCapsuleInMapList : MutableLiveData<GetMapRes> = MutableLiveData()
@@ -74,14 +74,10 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 val jsonObject = JSONObject(jsonString)
                 val dataObjects = jsonObject.getInt("data")
 
-                capsuleFlag.value=false
-                if(dataObjects !=null ){
-                    capsuleId=dataObjects
-//                GlobalAplication.preferences.setInt("capsuleId",dataObjects) // 캡슐 생성 시 id 가지고 추억 생성하기로 가기
-                capsuleFlag.value=true
-                }
+                GlobalAplication.preferences.setInt("capsuleId",dataObjects) // 캡슐 생성 시 id 가지고 추억 생성하기로 가기
 
                 isCapsuleRegister.value = true
+
                 Log.d(TAG,"addCapsule : 응답 성공 / $dataObjects") // 캡슐 ID
             }else{
                 Log.d(TAG,"addCapsule : 응답 실패 / ${response.message()}" )

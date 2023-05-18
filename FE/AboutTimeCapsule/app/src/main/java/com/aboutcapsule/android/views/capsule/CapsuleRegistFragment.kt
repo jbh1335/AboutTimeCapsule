@@ -135,7 +135,7 @@ class CapsuleRegistFragment : Fragment() , OnMapReadyCallback {
                    address
                 )
                viewModel.addCapsule(postRegistCapsuleData)
-                val bundle = bundleOf("capsuleTitle" to  title)
+                val bundle = bundleOf("capsuleTitle" to  title,"isGroup" to false) // 그룹 여부도 보내줌
                 navController.navigate(R.id.action_capsuleRegistFragment_to_articleRegistFragment, bundle)
             }
         }
