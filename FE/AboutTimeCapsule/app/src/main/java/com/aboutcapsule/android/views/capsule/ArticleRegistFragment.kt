@@ -126,7 +126,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
                     Toast.makeText(requireContext(), "날짜를 지정해주세요", Toast.LENGTH_SHORT).show()
                 } else {
                     val memberId = currentUser
-                    val capsuleId = GlobalAplication.preferences.getInt("registCapsuleId", -1)
+                    val capsuleId = GlobalAplication.preferences.getInt("capsuleId", -1)
                     val title = binding.articleRegistTitle.text.toString()
                     val content = binding.articleContent.text.toString()
                     val dataPattern = "yyyy년 M월 d일"
@@ -136,6 +136,7 @@ class ArticleRegistFragment : Fragment(),View.OnClickListener {
 
                     val memoryRegistReq =
                         MemoryRegistReq(memberId, capsuleId, title, content, localDate)
+                    Log.d("메모리레지스트원본" , "${MemoryRegistReq(memberId, capsuleId, title, content, localDate)}")
                     val memoryReqJson = Gson().toJson(memoryRegistReq)
                     val memoryReqBody =
                         memoryReqJson.toRequestBody("application/json".toMediaTypeOrNull())
