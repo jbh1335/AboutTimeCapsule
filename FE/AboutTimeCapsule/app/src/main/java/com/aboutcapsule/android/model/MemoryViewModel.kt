@@ -23,6 +23,7 @@ import java.time.LocalDate
 class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
     var MemoryResData: MutableLiveData<MemoryRes> = MutableLiveData()
     var memoryComments: MutableLiveData<MutableList<CommentRes>> = MutableLiveData()
+    var isRegister = MutableLiveData<Boolean>()
 
     companion object {
 
@@ -35,6 +36,7 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
             Log.d("이미지파일", "${memoryRegistReq}")
             if (response.isSuccessful) {
                 Log.d("response", "${response.code()}")
+                isRegister.value = true
             } else {
                 Log.e("ㄴ추억등록실패", "${response.code()} / ${response.message()}")
             }
@@ -47,7 +49,7 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
 
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
-                Log.d("겟캡슐메모리", "${response.body()?.string()}")
+                Log.d("겟캡슐메모리", "${jsonString}")
                 val jsonObject = JSONObject(jsonString)
                 val dataObjects = jsonObject.getJSONObject("data")
                 val capsuleTitle = dataObjects.getString("capsuleTitle")
@@ -57,6 +59,7 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
                 val isFirstGroup= dataObjects.getBoolean("isFirstGroup")
                 val isCapsuleMine= dataObjects.getBoolean("isCapsuleMine")
                 val memoryDetailDtoList = dataObjects.getJSONArray("memoryDetailDtoList")
+                Log.d("추억가져오니?", "${memoryDetailDtoList}")
                 val memoryDetailDtoListData = ArrayList<MemoryDetailDto>()
                 for (i in 0 until memoryDetailDtoList.length()) {
                     val getArray = memoryDetailDtoList.getJSONObject(i)
@@ -76,10 +79,10 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
                     val createdDateToLocalDate = LocalDate.parse(createdDate)
                     Log.d("createdDate", "${createdDate}")
                     val isLocked= getArray.getBoolean("isLocked")
-                    val isOpend= getArray.getBoolean("isOpend")
+                    val isOpened= getArray.getBoolean("isOpened")
                     val isMemoryMine= getArray.getBoolean("isMemoryMine")
                     val memoryDetail = MemoryDetailDto(memoryId,nickname,memoryTitle,profileImageUrl,content,
-                            imageUrlData,commentCnt, createdDateToLocalDate, isLocked, isOpend, isMemoryMine)
+                            imageUrlData,commentCnt, createdDateToLocalDate, isLocked, isOpened, isMemoryMine)
                     memoryDetailDtoListData.add(memoryDetail)
                 }
                 val memoryRes = MemoryRes(capsuleTitle,isGroup, rangeType, address,

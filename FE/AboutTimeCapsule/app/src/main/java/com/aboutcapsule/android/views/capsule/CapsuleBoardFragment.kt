@@ -39,6 +39,7 @@ import com.aboutcapsule.android.repository.MemoryRepo
 import com.aboutcapsule.android.repository.MypageRepo
 import com.aboutcapsule.android.util.GlobalAplication
 import com.aboutcapsule.android.util.SpinnerGroupAvailAdapter
+import com.aboutcapsule.android.views.MainActivity
 import com.aboutcapsule.android.views.mainpage.CapsuleOpenedAdapter
 import com.aboutcapsule.android.views.mainpage.MainPageMainFragment
 import com.aboutcapsule.android.views.mainpage.MainPageVisitedCapsuleMapFragment
@@ -85,6 +86,12 @@ class CapsuleBoardFragment : Fragment() {
 
         callingApi()
 
+    }
+
+    // 바텀 네비 숨기기 토글
+    private fun bottomNavToggle(sign : Boolean){
+        val mainActivity = activity as MainActivity
+        mainActivity.hideBottomNavi(sign)
     }
 
     fun getBundleData(){
@@ -151,6 +158,7 @@ class CapsuleBoardFragment : Fragment() {
                     val formatter = DateTimeFormatter.ofPattern(dataPattern)
                     val localDate = LocalDate.parse(openDateString, formatter).toString()
                     memoryViewModel.sealMemoryFirst(GroupOpenDateReq(capsuleId, localDate))
+                    bottomNavToggle(true)
                     navController.navigate(R.id.action_capsuleGroupFragment_to_mainPageMainFragment)
                 }
             }
@@ -295,7 +303,7 @@ class CapsuleBoardFragment : Fragment() {
         // 멤버 목록 클릭 시 , 다이얼로그 보여주기
         binding.memberlistSign.setOnClickListener{
             val dialog = CustomDialogMemberList()
-            GlobalAplication.preferences.setInt("memberlist_capsuleId",1); // 캡슐 아이디 넘겨주기
+            GlobalAplication.preferences.setInt("memberlist_capsuleId", capsuleId); // 캡슐 아이디 넘겨주기
             // TODO: 캡슐 ID 넣어주기
             dialog.show(parentFragmentManager, "customDialog")
         }
@@ -307,6 +315,7 @@ class CapsuleBoardFragment : Fragment() {
             val bundle = bundleOf()
             bundle.putBoolean("isFirstGroup", isFristGroup)
             bundle.putBoolean("isGroup", isGroup)
+            Log.d("+버튼 클릭시 캡슐id", "${GlobalAplication.preferences.getInt("capsuleId", -1)}" )
             navController.navigate(R.id.action_capsuleGroupFragment_to_articleRegistFragment, bundle)
         }
     }
@@ -320,7 +329,8 @@ class CapsuleBoardFragment : Fragment() {
             val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
             capsuleViewModel = ViewModelProvider(this, capsuleViewModelFactory).get(CapsuleViewModel::class.java)
             capsuleViewModel.removeCapsule(capsuleId) // 삭제후 리다이렉트 로직 작성 , "삭제할 캡슐 번호 "
-
+            Toast.makeText(requireContext()," 캡슐이 제거 되었습니다 ",Toast.LENGTH_SHORT).show()
+            navController.navigate(R.id.action_capsuleGroupFragment_to_mainPageMainFragment)
         }
     }
 

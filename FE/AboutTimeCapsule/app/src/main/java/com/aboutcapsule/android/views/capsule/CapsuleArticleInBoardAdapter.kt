@@ -31,7 +31,7 @@ class CapsuleArticleInBoardAdapter : RecyclerView.Adapter<CapsuleArticleInBoardA
 
             fun bind(memoryDetailDto: MemoryDetailDto) {
                 Glide.with(itemView).load(memoryDetailDto.profileImageUrl).into(binding.articleRecylcerItemUserimg)
-                Glide.with(itemView).load(memoryDetailDto.imageUrl).into(binding.articleRecylcerItemContentimg)
+                Glide.with(itemView).load(memoryDetailDto.imageUrl[0]).into(binding.articleRecylcerItemContentimg)
                 binding.articleRecylcerItemTitle.text=memoryDetailDto.memoryTitle
                 val dataString = memoryDetailDto.createdDate.toString()
                 val arr = dataString.split("-")
