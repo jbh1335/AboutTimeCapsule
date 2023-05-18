@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class GetFriendListRes(
 
-    @SerializedName("data")
     var friendList : MutableList<FriendDto>
 
 )

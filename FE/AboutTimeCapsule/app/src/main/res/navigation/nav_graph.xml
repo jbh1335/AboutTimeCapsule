@@ -96,8 +96,8 @@
             android:id="@+id/action_capsuleRegistGroupFragment_to_capsuleFindFriendFragment"
             app:destination="@id/capsuleFindFriendFragment" />
         <action
-            android:id="@+id/action_capsuleRegistGroupFragment_to_articleRegistFragment"
-            app:destination="@id/articleRegistFragment" />
+            android:id="@+id/action_capsuleRegistGroupFragment_to_capsuleGroupFragment"
+            app:destination="@id/capsuleGroupFragment" />
     </fragment>
 
     <fragment

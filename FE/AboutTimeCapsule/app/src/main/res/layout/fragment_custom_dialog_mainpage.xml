@@ -17,7 +17,9 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:orientation="vertical">
-
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
             <TextView
                 android:id="@+id/dialog_username"
                 android:layout_width="wrap_content"
@@ -30,17 +32,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="500m 떨어져 있어요"
+                android:layout_marginTop="30dp"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/dialog_userRemainTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="65dp"
                 android:layout_marginBottom="15dp"
                 android:text="2일 3시간 35분 남음"
                 android:textColor="@color/btnColor"
                 android:textSize="18sp" />
+            </FrameLayout>
 
             <FrameLayout
                 android:layout_width="300dp"

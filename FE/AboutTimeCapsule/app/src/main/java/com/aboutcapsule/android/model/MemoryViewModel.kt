@@ -47,7 +47,7 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
 
             if (response.isSuccessful) {
                 val jsonString = response.body()?.string()
-                Log.d("겟캡슐메모리", "${response.body()?.string()}")
+                Log.d("겟캡슐메모리", "${response.body()}")
                 val jsonObject = JSONObject(jsonString)
                 val dataObjects = jsonObject.getJSONObject("data")
                 val capsuleTitle = dataObjects.getString("capsuleTitle")

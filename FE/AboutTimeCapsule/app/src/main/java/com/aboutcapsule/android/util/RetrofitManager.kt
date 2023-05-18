@@ -16,7 +16,8 @@ class RetrofitManager {
         private const val memberPort = "api/member/"
         private const val capsulePort = "api/capsule/"
         private const val oauthPort = "api/oauth/"
-        private const val memoryPort = "api/capsule/memory/"
+        private const val alarmPort = "api/alarm/"
+
     }
 
 
