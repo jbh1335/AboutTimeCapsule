@@ -140,7 +140,7 @@ public class MemberServiceImpl implements MemberService{
         Member toMember = oToMember.orElseThrow(() -> new CustomException(ErrorCode.TOMEMBER_NOT_FOUND));
 
         Optional<Friend> oFriend = friendRepository.findByMemberIds(fromMemberId, toMemberId);
-        Friend friendRequest = oFriend.orElseThrow(() -> new CustomException(ErrorCode.FRIEND_ALREADY_EXISTS));
+        if(oFriend.isPresent()) throw new CustomException(ErrorCode.FRIEND_ALREADY_EXISTS);
 
         Friend friend = friendRepository.save(Friend.builder()
                 .fromMember(fromMember)
