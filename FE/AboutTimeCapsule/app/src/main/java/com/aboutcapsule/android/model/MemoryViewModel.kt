@@ -31,8 +31,8 @@ class MemoryViewModel(val repository : MemoryRepo) : ViewModel() {
     fun registerMemory(imageList: ArrayList<MultipartBody.Part>,memoryRegistReq: RequestBody) {
         viewModelScope.launch {
             val response = repository.registerMemory(imageList, memoryRegistReq)
-            Log.d("viewModel", "${ArticleRegistFragment.imageList}")
-            Log.d("viewModelreq", "${memoryRegistReq}")
+            Log.d("이미지파일리스트", "${ArticleRegistFragment.imageList}")
+            Log.d("이미지파일", "${memoryRegistReq}")
             if (response.isSuccessful) {
                 Log.d("response", "${response.code()}")
             } else {
