@@ -45,8 +45,15 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     public SuccessRes<Integer> registCapsule(CapsuleRegistReq capsuleRegistReq) {
+        String address = capsuleRegistReq.getAddress();
         String buildingName = getKakaoAddress(String.valueOf(capsuleRegistReq.getLongitude()), String.valueOf(capsuleRegistReq.getLatitude()));
-        String address = (buildingName.equals("")) ? capsuleRegistReq.getAddress() : buildingName;
+
+        if(buildingName.equals("")) {
+            String newAddress = address.substring(0, 4);
+            address = newAddress.equals("대한민국") ? address.substring(5, address.length()) : address;
+        } else {
+            address = buildingName;
+        }
 
         Capsule capsule = Capsule.builder()
                 .title(capsuleRegistReq.getTitle())
