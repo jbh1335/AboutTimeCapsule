@@ -1,0 +1,16 @@
+server:
+  port: 8761
+
+  ssl:
+    key-store-password: b302capsule
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+
+spring:
+  application:
+    name: discovery-service
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
