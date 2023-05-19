@@ -116,7 +116,7 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
         }else if(openFlag){
             var bitmapdraw: BitmapDrawable =
-                resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
+                resources.getDrawable(R.drawable.friend_marker) as BitmapDrawable
             var bitmap = bitmapdraw.bitmap
             var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
