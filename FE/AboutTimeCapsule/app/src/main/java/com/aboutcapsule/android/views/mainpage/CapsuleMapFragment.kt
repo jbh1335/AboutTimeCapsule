@@ -18,6 +18,7 @@ import com.aboutcapsule.android.databinding.FragmentCapsuleMapBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -42,19 +43,24 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
 
         private var userLat : Double = 0.0
         private var userLng : Double = 0.0
+
+        private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+        private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
+
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        callingApi() // api 받아오기
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_map,container,false)
 
         mapMarkers = mutableListOf()
         binding.mainpageMapFragment.onCreate(savedInstanceState)
         binding.mainpageMapFragment.getMapAsync(this)
+
+        callingApi() // api 받아오기
 
         return binding.root
     }
@@ -63,10 +69,6 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
         super.onViewCreated(view, savedInstanceState)
 
         setNavigation()
-
-
-//        findHost =  MainActivity.preferences.getString("meOrFriend","notKey")
-//        Log.d("캡슐맵프래그먼트" , findHost)
 
     }
 
@@ -93,18 +95,50 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
         when(findHost){
             "myCapsuleApi" -> {
                 Log.d("api", " 내 캡슐  ")
-                viewModel.getMyCapsuleList(1)
+                viewModel.getMyCapsuleList(memberId)
                 viewModel.myCapsuleList.observe(viewLifecycleOwner){
                     Log.d(TAG,"${it.mapInfoDtoList}")
                     mapMarkers = it.mapInfoDtoList
+                    val defalutPos = LatLng(userLat,userLng)
+
+                    for(i in 0 until mapMarkers.size ) {
+
+                        var currLatLng = LatLng(mapMarkers[i].latitude,mapMarkers[i].longitude)
+                        var capsuleId = mapMarkers[i].capsuleId
+                        var isLock = mapMarkers[i].isLocked
+                        var isOpen = mapMarkers[i].isOpened
+
+                        markerOptions = MarkerOptions()
+                        setCustomOpenMarker(isOpen,isLock)
+                        val marker = mMap.addMarker(markerOptions.position(currLatLng))
+                        marker?.tag = capsuleId
+                    }
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defalutPos,6.8f))
                 }
             }
             "friendApi" -> {
                 Log.d("api", " 친구 캡슐  ")
-                viewModel.getFriendCapsuleList(1)
+                viewModel.getFriendCapsuleList(memberId)
                 viewModel.friendCapsuleList.observe(viewLifecycleOwner){
                     Log.d(TAG,"${it.mapInfoDtoList}")
                     mapMarkers = it.mapInfoDtoList
+                    val defalutPos = LatLng(userLat,userLng)
+
+                    for(i in 0 until mapMarkers.size ) {
+
+                        var currLatLng = LatLng(mapMarkers[i].latitude,mapMarkers[i].longitude)
+                        var capsuleId = mapMarkers[i].capsuleId
+                        var isLock = mapMarkers[i].isLocked
+                        var isOpen = mapMarkers[i].isOpened
+
+                        markerOptions = MarkerOptions()
+                        setCustomOpenMarker(isOpen,isLock)
+                        val marker = mMap.addMarker(markerOptions.position(currLatLng))
+                        marker?.tag = capsuleId
+                    }
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defalutPos,6.8f))
                 }
             }
         }
@@ -115,26 +149,9 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
     override fun onMapReady(map: GoogleMap) {
        mMap = map
 
-        val defalutPos = LatLng(35.894332,127.9)
-
-        for(i in 0 until mapMarkers.size ) {
-
-            var currLatLng = LatLng(mapMarkers[i].latitude,mapMarkers[i].longitude)
-            var capsuleId = mapMarkers[i].capsuleId
-            var isLock = mapMarkers[i].isLocked
-            var isOpen = mapMarkers[i].isOpened
-
-            markerOptions = MarkerOptions()
-            setCustomOpenMarker(isOpen,isLock)
-           val marker = mMap.addMarker(markerOptions.position(currLatLng))
-            marker?.tag = capsuleId
-        }
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defalutPos,6.8f))
     }
 
     fun setCustomOpenMarker(openFlag : Boolean , lockFlag : Boolean){
-
         if(lockFlag) {
             var bitmapdraw: BitmapDrawable =
                 resources.getDrawable(R.drawable.locked_marker) as BitmapDrawable

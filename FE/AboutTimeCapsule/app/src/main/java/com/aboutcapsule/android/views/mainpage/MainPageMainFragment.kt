@@ -61,8 +61,8 @@ class MainPageMainFragment : Fragment() {
         private var userNickname =
             GlobalAplication.preferences.getString("currentUserNickname", "null")
 
-        private var lat: Double = 0.0
-        private var lng: Double = 0.0
+        private var lat: Double =  36.355059
+        private var lng: Double = 127.298374
     }
 
     override fun onCreateView(
@@ -72,6 +72,7 @@ class MainPageMainFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_page_main, container, false)
 
+        binding.mainSection1Title.text="${userNickname}님의 타임 캡슐"
 
 //      최초 렌더링시, 말풍선 비활성화
         binding.section2Banner.visibility = View.INVISIBLE
