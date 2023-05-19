@@ -107,7 +107,7 @@ class CapsuleBoardFragment : Fragment() {
             GlobalAplication.preferences.setString("lat", "${lat}")
             GlobalAplication.preferences.setString("lng", "$lng")
             requireArguments().clear() // 다음 데이터를 위해 일단 날려주기
-        }else {
+        } else {
             // 그룹캡슐 등록 데이터
             capsuleId = GlobalAplication.preferences.getInt("capsuleId", -1)
             lat = GlobalAplication.preferences.getString("lat", "null").toDouble()
