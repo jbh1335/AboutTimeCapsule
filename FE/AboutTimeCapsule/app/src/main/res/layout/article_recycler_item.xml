@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/defaultBackColor"
+        tools:context=".views.capsule.CapsuleArticleFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_1_frame"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/btn_radius"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.448"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <TextView
+                android:id="@+id/article_recylcer_item_title"
+                android:layout_width="320dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="제목 가져올 공간 "
+                android:textSize="25sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/three_dots"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/threedots"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.473"
+                app:layout_constraintStart_toEndOf="@+id/article_recylcer_item_title"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.093" />
+
+
+
+            <ImageView
+                android:id="@+id/article_recylcer_item_userimg"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/my_page_img_frame"
+                android:src="@drawable/sunglass"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/article_recylcer_item_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:text="닉네임"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@+id/article_recylcer_item_userimg"
+                app:layout_constraintTop_toBottomOf="@+id/article_recylcer_item_title" />
+
+            <TextView
+                android:id="@+id/article_recylcer_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="4dp"
+                android:text="0000년 00월 00일"
+                android:textColor="@color/cloudyColor"
+                android:textSize="8sp"
+                app:layout_constraintStart_toEndOf="@+id/article_recylcer_item_userimg"
+                app:layout_constraintTop_toBottomOf="@+id/article_recylcer_item_nickname" />
+
+            <TextView
+                android:id="@+id/article_recylcer_item_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="내용 공간 "
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/article_recylcer_item_userimg"
+                app:layout_constraintVertical_bias="0.05" />
+
+            <ImageView
+                android:id="@+id/article_recylcer_item_contentimg"
+                android:scaleType="fitCenter"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="28dp"
+                android:src="@drawable/sunglass"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/comments_icon"
+                android:layout_width="13dp"
+                android:layout_height="14dp"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/commenticon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.875"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/article_recylcer_item_comments_cnt"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginBottom="6dp"
+                android:text="0"
+                tools:text="5"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.264"
+                app:layout_constraintStart_toEndOf="@+id/comments_icon" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!-- visibility gone 으로 설정 -> 말풍선 버튼 클릭하면 댓글들 나오게 설정  -->
+        <FrameLayout
+            android:visibility="gone"
+            android:id="@+id/article_recylcer_item_comments_frame"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/btn_radius"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraint_1_frame">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/article_recylcer_item_comments_recylcer_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/comments_recycler_item"/>
+
+        </FrameLayout>
+
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/write_comment"
+            android:layout_width="280dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_mypage_radius_chat"
+            android:gravity="bottom"
+            android:hint="댓글을 입력하세요"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/regist_comment_btn"
+            app:layout_constraintHorizontal_bias="0.3"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:visibility="gone"
+            android:id="@+id/regist_comment_btn"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_radius"
+            android:backgroundTint="@color/btnColor"
+            android:fontFamily="@font/onemobile"
+            android:text="입력"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

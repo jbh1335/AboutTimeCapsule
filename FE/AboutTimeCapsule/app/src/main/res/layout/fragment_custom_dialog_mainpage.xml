@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        tools:context=".views.mainpage.CustomDialogMainpage">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
+            <TextView
+                android:id="@+id/dialog_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OOO님의 캡슐"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/dialog_userDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="500m 떨어져 있어요"
+                android:layout_marginTop="30dp"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/dialog_userRemainTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="65dp"
+                android:layout_marginBottom="15dp"
+                android:text="2일 3시간 35분 남음"
+                android:textColor="@color/btnColor"
+                android:textSize="18sp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="300dp"
+                android:layout_height="400dp">
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapDialogFragment"
+                    android:layout_width="300dp"
+                    android:layout_height="400dp"
+                    android:contentDescription="맵 뷰 " />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:contentDescription=" 클릭 막기용 " />
+
+            </FrameLayout>
+
+            <Button
+                android:id="@+id/main_dialog_close_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:backgroundTint="@color/btnColor"
+                android:fontFamily="@font/onemobile"
+                android:text="닫기" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
