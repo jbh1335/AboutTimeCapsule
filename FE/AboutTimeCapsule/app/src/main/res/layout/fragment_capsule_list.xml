@@ -12,13 +12,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/capsule_list_frag_username"
+            android:id="@+id/capsule_list_waiting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"
             android:layout_marginLeft="20dp"
             android:textSize="18dp"
-            android:text="jejuboy님을 기다리고 있어요!"/>
+            tools:text="jejuboy님을 기다리고 있어요!"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/capsule_list_section1_recyclerView"
@@ -32,12 +32,13 @@
             tools:listitem="@layout/capsule_list_recycler_item" />
 
         <TextView
+            android:id="@+id/capsule_list_meeting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:layout_marginLeft="20dp"
             android:textSize="18dp"
-            android:text="jejuboy님과 만났어요!"/>
+            tools:text="jejuboy님과 만났어요!"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/capsule_list_section2_recyclerView"

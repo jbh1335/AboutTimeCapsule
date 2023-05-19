@@ -79,6 +79,22 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
                     Log.d(TAG, "${it.mapInfoDtoList}")
 
                     mapMarkers = it.mapInfoDtoList
+            val defalutPos = LatLng(35.894332,127.9)
+            for(i in 0 until mapMarkers.size ) {
+
+                var currLatLng = LatLng(mapMarkers[i].latitude,mapMarkers[i].longitude)
+                var capsuleId = mapMarkers[i].capsuleId
+                var isLock = mapMarkers[i].isLocked
+                var isOpen = mapMarkers[i].isOpened
+
+                markerOptions = MarkerOptions()
+                setCustomOpenMarker(isOpen,isLock)
+                val marker = mMap.addMarker(markerOptions.position(currLatLng))
+                marker?.tag = capsuleId
+            }
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defalutPos,6.8f))
+
                 }
     }
 
@@ -87,21 +103,7 @@ class MainPageVisitedCapsuleMapFragment : Fragment() , OnMapReadyCallback ,
     override fun onMapReady(map: GoogleMap) {
        mMap = map
 
-        val defalutPos = LatLng(35.894332,127.9)
-        for(i in 0 until mapMarkers.size ) {
 
-            var currLatLng = LatLng(mapMarkers[i].latitude,mapMarkers[i].longitude)
-            var capsuleId = mapMarkers[i].capsuleId
-            var isLock = mapMarkers[i].isLocked
-            var isOpen = mapMarkers[i].isOpened
-
-            markerOptions = MarkerOptions()
-            setCustomOpenMarker(isOpen,isLock)
-           val marker = mMap.addMarker(markerOptions.position(currLatLng))
-            marker?.tag = capsuleId
-        }
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defalutPos,6.8f))
     }
 
     fun setCustomOpenMarker(openFlag : Boolean , lockFlag : Boolean){

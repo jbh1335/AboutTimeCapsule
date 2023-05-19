@@ -28,7 +28,12 @@ class MainActivity : AppCompatActivity() {
         initFirebase()
         bottomNav()
 
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+        binding.navBottom.setupWithNavController(navController)
     }
+
 
     private fun bottomNav() {
         binding.navBottom.setOnNavigationItemSelectedListener { menuItem ->

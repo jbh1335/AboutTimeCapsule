@@ -19,6 +19,7 @@ import com.aboutcapsule.android.databinding.FragmentCapsuleListBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 
 
 class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListner {
@@ -35,6 +36,11 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
         private var longitude : Double = 0.0 //좌 표
 
         private const val TAG = "CapsuleListFragment"
+
+        private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+        private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
+
+
     }
 
     override fun onCreateView(
@@ -42,6 +48,9 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_capsule_list,container,false)
+
+        binding.capsuleListWaitingText.text = "${userNickname}님을 기다리고 있어요!"
+        binding.capsuleListMeetingText.text= "${userNickname}님과 만났어요!"
 
         return binding.root
     }
@@ -78,7 +87,7 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
             "myCapsuleApi" -> {
                 Log.d("api", " 내 캡슐  ")
 
-               viewModel.getMyCapsuleList(1)
+               viewModel.getMyCapsuleList(memberId)
                viewModel.myCapsuleList.observe(viewLifecycleOwner) {
                    setWaitingView(it.unopenedCapsuleDtoList)
                    setMeetView(it.openedCapsuleDtoList)
@@ -87,7 +96,7 @@ class CapsuleListFragment : Fragment() , MainPageMyCapsuleFragment.DataPassListn
             }
             "friendApi" -> {
                 Log.d("api", " 친구 캡슐  ")
-                viewModel.getFriendCapsuleList(1)
+                viewModel.getFriendCapsuleList(memberId)
                 viewModel.friendCapsuleList.observe(viewLifecycleOwner){
                     setWaitingView(it.unopenedCapsuleDtoList)
                     setMeetView(it.openedCapsuleDtoList)
