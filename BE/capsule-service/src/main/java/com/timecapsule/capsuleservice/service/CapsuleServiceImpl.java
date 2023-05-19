@@ -600,7 +600,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         boolean isLocked = false;
         boolean isOpened = memoryOpenMemberRepository.existsByCapsuleIdAndMemberId(capsule.getId(), capsuleDetailReq.getMemberId());
-        boolean isGroup = capsule.getCapsuleMemberList().size() > 0;
+        boolean isGroup = capsule.getCapsuleMemberList().size() > 1;
 
         int distance = (int) distanceService.distance(capsuleDetailReq.getLatitude(), capsuleDetailReq.getLongitude(),
                 capsule.getLatitude(), capsule.getLongitude(), "meter");
