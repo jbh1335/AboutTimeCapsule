@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/defaultBackColor"
+            android:orientation="vertical"
+            tools:context=".views.capsule.CapsuleRegistFragment">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="나의 현재위치"
+                android:textSize="15sp" />
+         <FrameLayout
+             android:layout_width="match_parent"
+             android:layout_height="330dp"
+             android:layout_marginLeft="15dp"
+             android:layout_marginTop="15dp"
+             android:layout_marginRight="10dp">
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/regist_group_Map_Fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="맵 뷰 "/>
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:clickable="true"
+                 android:background="@android:color/transparent"
+                 android:contentDescription="맵 클릭 막기용 "/>
+         </FrameLayout>
+            <RadioGroup
+                android:id="@+id/radiogruop_2type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="240dp"
+                android:layout_marginTop="10dp"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radio_2type_all"
+                    android:layout_width="70dp"
+                    android:layout_height="48dp"
+                    android:buttonTint="@color/black"
+                    android:fontFamily="@font/onemobile"
+                    android:text="전체공개"
+                    android:textSize="8sp" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radio_2type_group"
+                    android:layout_width="70dp"
+                    android:layout_height="48dp"
+                    android:buttonTint="@color/black"
+                    android:fontFamily="@font/onemobile"
+                    android:text="그룹공개"
+                    android:textSize="8sp" />
+            </RadioGroup>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/addMemberBtn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/btn_radius"
+                android:backgroundTint="@color/skyblueBtnColor"
+                android:text="멤버 추가"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/addMemberView"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/btn_radius"
+                android:gravity="center"
+                android:hint="추가된 멤버가 없습니다"
+                android:textColor="@color/btnColor" />
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/bottom_rounded">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="18dp"
+                    android:text="제목" />
+
+                <EditText
+                    android:id="@+id/capsule_regist_group_title"
+                    android:layout_width="290dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="80dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/onemobile"
+                    android:hint="제목을 작성해주세요"
+                    android:textSize="13sp"/>
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/capsule_regist_gruop_registbtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="23dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/btn_radius"
+                android:backgroundTint="@color/btnColor"
+                android:fontFamily="@font/onemobile"
+                android:text="캡슐 생성하기"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>

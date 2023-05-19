@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_grapg"
+    app:startDestination="@id/mainPageMainFragment">
+
+    <fragment
+        android:id="@+id/mainPageMainFragment"
+        android:name="com.aboutcapsule.android.views.mainpage.MainPageMainFragment"
+        android:label="fragment_main_page_main"
+        tools:layout="@layout/fragment_main_page_main" >
+        <action
+            android:id="@+id/action_mainPageMainFragment_to_mainPageMyCapsuleFragment"
+            app:destination="@id/mainPageMyCapsuleFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_to_mainPageVisitedFragment"
+            app:destination="@id/mainPageVisitedFragment" />
+        <action
+            android:id="@+id/action_mainPageMainFragment_self"
+            app:destination="@id/mainPageMainFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/mapMainFragment"
+        android:name="com.aboutcapsule.android.views.map.MapMainFragment"
+        android:label="fragment_map_main"
+        tools:layout="@layout/fragment_map_main" >
+        <action
+            android:id="@+id/action_mapMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleRegistGroupFragment"
+            app:destination="@id/capsuleRegistGroupFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleRegistFragment"
+            app:destination="@id/capsuleRegistFragment" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_arActivity"
+            app:destination="@id/arActivity" />
+        <action
+            android:id="@+id/action_mapMainFragment_to_capsuleGroupFragment"
+            app:destination="@id/capsuleGroupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatMainFragment"
+        android:name="com.aboutcapsule.android.views.chat.ChatMainFragment"
+        android:label="fragment_chat_main"
+        tools:layout="@layout/fragment_chat_main" >
+        <action
+            android:id="@+id/action_chatMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myPageMainFragment"
+        android:name="com.aboutcapsule.android.views.mypage.MyPageMainFragment"
+        android:label="fragment_my_page_main"
+        tools:layout="@layout/fragment_my_page_main" >
+        <action
+            android:id="@+id/action_myPageMainFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_myPageMainFragment_to_myAllFriendsFragment"
+            app:destination="@id/myAllFriendsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainPageMyCapsuleFragment"
+        android:name="com.aboutcapsule.android.views.mainpage.MainPageMyCapsuleFragment"
+        android:label="fragment_my_page_my_capsule"
+        tools:layout="@layout/fragment_main_page_my_capsule">
+        <action
+            android:id="@+id/action_mainPageMyCapsuleFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/capsuleRegistFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleRegistFragment"
+        android:label="fragment_capsule_regist"
+        tools:layout="@layout/fragment_capsule_regist">
+        <action
+            android:id="@+id/action_capsuleRegistFragment_to_articleRegistFragment"
+            app:destination="@id/articleRegistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/capsuleRegistGroupFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleRegistGroupFragment"
+        android:label="fragment_capsule_regist_group"
+        tools:layout="@layout/fragment_capsule_regist_group">
+        <action
+            android:id="@+id/action_capsuleRegistGroupFragment_to_capsuleFindFriendFragment"
+            app:destination="@id/capsuleFindFriendFragment" />
+        <action
+            android:id="@+id/action_capsuleRegistGroupFragment_to_capsuleGroupFragment"
+            app:destination="@id/capsuleGroupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/capsuleFindFriendFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleFindFriendFragment"
+        android:label="fragment_capsule_find_friend"
+        tools:layout="@layout/fragment_capsule_find_friend">
+        <action
+            android:id="@+id/action_capsuleFindFriendFragment_to_capsuleRegistGroupFragment"
+            app:destination="@id/capsuleRegistGroupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/articleRegistFragment"
+        android:name="com.aboutcapsule.android.views.capsule.ArticleRegistFragment"
+        android:label="fragment_article_regist"
+        tools:layout="@layout/fragment_article_regist">
+        <action
+            android:id="@+id/action_articleRegistFragment_to_capsuleMineFragment"
+            app:destination="@id/capsuleMineFragment" />
+        <action
+            android:id="@+id/action_articleRegistFragment_to_capsuleGroupFragment"
+            app:destination="@id/capsuleGroupFragment" />
+        <action
+            android:id="@+id/action_articleRegistFragment_to_mainPageMainFragment"
+            app:destination="@id/mainPageMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationMainFragment"
+        android:name="com.aboutcapsule.android.views.notification.NotificationMainFragment"
+        android:label="fragment_notification_main"
+        tools:layout="@layout/fragment_notification_main">
+       </fragment>
+    <fragment
+        android:id="@+id/mainPageVisitedFragment"
+        android:name="com.aboutcapsule.android.views.mainpage.MainPageVisitedFragment"
+        android:label="fragment_main_page_visited"
+        tools:layout="@layout/fragment_main_page_visited">
+        <action
+            android:id="@+id/action_mainPageVisitedFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/capsuleMineFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleArticleFragment"
+        android:label="fragment_capsule_mine"
+        tools:layout="@layout/fragment_capsule_mine">
+        <action
+            android:id="@+id/action_capsuleMineFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_capsuleMineFragment_to_capsuleModifyFragment"
+            app:destination="@id/capsuleModifyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myAllFriendsFragment"
+        android:name="com.aboutcapsule.android.views.mypage.MyAllFriendsFragment"
+        android:label="fragment_my_all_friends"
+        tools:layout="@layout/fragment_my_all_friends">
+        <action
+            android:id="@+id/action_myAllFriendsFragment_to_myPageMainFragment"
+            app:destination="@id/myPageMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/capsuleGroupFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleBoardFragment"
+        android:label="fragment_capsule_group"
+        tools:layout="@layout/fragment_capsule_group">
+        <action
+            android:id="@+id/action_capsuleGroupFragment_to_notificationMainFragment"
+            app:destination="@id/notificationMainFragment" />
+        <action
+            android:id="@+id/action_capsuleGroupFragment_to_articleRegistFragment"
+            app:destination="@id/articleRegistFragment" />
+        <action
+            android:id="@+id/action_capsuleGroupFragment_to_mainPageMainFragment"
+            app:destination="@id/mainPageMainFragment" />
+    </fragment>
+    <activity
+        android:id="@+id/arActivity"
+        android:name="com.aboutcapsule.android.views.ar.ArActivity"
+        android:label="ArActivity" />
+
+    <fragment
+        android:id="@+id/capsuleModifyFragment"
+        android:name="com.aboutcapsule.android.views.capsule.CapsuleModifyFragment"
+        android:label="fragment_capsule_modify"
+        tools:layout="@layout/fragment_capsule_modify"/>
+
+</navigation>

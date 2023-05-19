@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:id="@+id/friendThumbnailItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/friendThumbnailItemImg"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            />
+        <TextView
+            android:id="@+id/friendThumbnailText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="10dp"
+            android:text="hi"
+            android:textColor="@color/cloudyColor" />
+
+    </LinearLayout>
+
+</layout>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.core.widget.NestedScrollView
+        android:overScrollMode="never"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#EDF2FF"
+            android:orientation="vertical"
+            tools:context=".views.mypage.MyPageMainFragment">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="340dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/btn_radius"
+                android:paddingVertical="20dp">
+
+                <ImageView
+                    android:id="@+id/myPageProfilePicture"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.2" />
+
+                <TextView
+                    android:id="@+id/myPageUserName"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/onemobiletitle"
+                    android:text=""
+                    android:textSize="20dp"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.104"
+                    app:layout_constraintStart_toEndOf="@+id/myPageProfilePicture"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.22" />
+
+                <TextView
+                    android:id="@+id/myPageUserMail"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="#7C7C7C"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.411"
+                    app:layout_constraintStart_toEndOf="@+id/myPageProfilePicture"
+                    app:layout_constraintTop_toBottomOf="@+id/myPageUserName"
+                    app:layout_constraintVertical_bias="0.077" />
+
+                <ImageView
+                    android:id="@+id/profileOptionBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"
+                    android:src="@drawable/vector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.963"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/friendRequestBtn"
+                    android:layout_width="130dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/btn_radius_color"
+                    android:fontFamily="@font/onemobiletitle"
+                    android:text="친구 요청"
+                    android:textSize="13dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.123"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/myPageProfilePicture"
+                    app:layout_constraintVertical_bias="0.2" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/chattingBtn"
+                    android:layout_width="130dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/btn_radius_color"
+                    android:fontFamily="@font/onemobiletitle"
+                    android:text="대화 하기"
+                    android:textSize="13dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.866"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/myPageUserMail"
+                    app:layout_constraintVertical_bias="1.0" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="340dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/btn_radius"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="25dp"
+                        android:fontFamily="@font/onemobiletitle"
+                        android:text="친구"
+                        android:textSize="25dp" />
+
+                    <ImageView
+                        android:id="@+id/searchFriendBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="235dp"
+                        android:layout_marginTop="25dp"
+                        android:src="@drawable/friend_plus" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/friendListLength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="7dp"
+                    android:text="친구 명"
+                    android:textColor="@color/cloudyColor"
+                    android:textSize="14dp" />
+
+                <GridLayout
+                    android:id="@+id/friendListThumbnail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:orientation="horizontal">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/friendListThumbnailItem"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:listitem="@layout/mypage_friend_list_recycler_item">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+                </GridLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/redirectAllFriendPageBtn"
+                    android:layout_width="310dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/btn_radius_skyblue"
+                    android:text="모든 친구 보기"
+                    android:textColor="#364FC7" />
+
+                <LinearLayout
+                    android:id="@+id/friendRequestNumText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="친구 요청"
+                        android:textColor="@color/cloudyColor" />
+
+                    <TextView
+                        android:id="@+id/friendRequestLength"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/red_oval_style"
+                        android:fontFamily="@font/onemobiletitle"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="#C73636"
+                        android:textSize="12dp" />
+
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/myPageFriendRequestView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/mypage_friend_request_recycler_item" />
+            </LinearLayout>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
+</layout>
