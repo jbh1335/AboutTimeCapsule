@@ -281,6 +281,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
         mMap.setOnMyLocationClickListener(this)
         enableMyLocation()
 
+
         // 마커 클릭 이벤트 처리
         mMap.setOnMarkerClickListener(this)
 
@@ -449,7 +450,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             viewModel.getAroundCapsuleInMap(datas)
             viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner) {
                 setMarkers(it.mapAroundCapsuleResList)
-                dontOpenMarker()
+//                dontOpenMarker()
             }
         } else{
             Log.d("체크","체크 ")
@@ -531,7 +532,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
         mMap.setOnMarkerClickListener { marker ->
             val tag = marker.tag as? Pair<Boolean, String>
             if(tag?.first == true ) {
-                Toast.makeText(requireContext(),"100m 이내에서 확인 가능합니다 ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),"100m 이내에서만 확인 가능합니다 ", Toast.LENGTH_SHORT).show()
                 return@setOnMarkerClickListener true
             }else {
                 onMarkerClick(marker)
@@ -574,7 +575,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             val isAllowedDistance = tag.first
             val capsuleId = tag.second
             Log.d("마커 값","$isAllowedDistance / $capsuleId")
-            if(!isAllowedDistance) {
+
                 val dialog = CustomDialogCapsuleInfoFragment()
                 dialog.setCallback(this) // 콜백 인터페이스 설정
                 val bundle = Bundle()
@@ -583,7 +584,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
                 bundle.putDouble("lng", lastKnownLocation!!.longitude)
                 dialog.arguments = bundle
                 dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
-            }
+
         }
 
        return true
