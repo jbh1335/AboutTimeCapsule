@@ -25,7 +25,7 @@ class CapsuleUnOpenedAdapter(private val listener : CapsuleListFragment.OnWaitin
     inner class ViewHolder(val binding: CapsuleListRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root),
         View.OnClickListener{
         fun bind(unopenedCapsuleDto: UnopenedCapsuleDto) {
-            if(!unopenedCapsuleDto.isLocked){
+            if(unopenedCapsuleDto.isLocked){
                 Glide.with(itemView).load(R.drawable.lockimg).into(binding.capsuleListLockOrNewImg)
             }
             Glide.with(itemView).load(R.drawable.redcapsule).into(binding.capsuleListImg)
