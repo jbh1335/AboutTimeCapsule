@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -114,7 +113,16 @@ public class ArActivity extends AppCompatActivity {
                 if(capsuleList.size() != 0) {
                     //capsuleLayoutList 생성
                     for (int i = 0; i < capsuleList.size(); i++) {
-                        capsuleLayoutList.add(ViewRenderable.builder().setView(getApplication(), R.layout.ar_item).build());
+                        if(capsuleList.get(i).isLocked()) { //잠겨있음
+                            capsuleLayoutList.add(ViewRenderable.builder().setView(getApplication(), R.layout.ar_blackcapsule).build());
+                        }else { //안잠김
+                            if(capsuleList.get(i).isMine()) { //나의캡슐
+                                capsuleLayoutList.add(ViewRenderable.builder().setView(getApplication(), R.layout.ar_bluecapsule).build());
+                            }else { //다른 사람
+                                capsuleLayoutList.add(ViewRenderable.builder().setView(getApplication(), R.layout.ar_redcapsule).build());
+                            }
+                        }
+
                     }
 
                     //캡슐 오브젝트 생성
