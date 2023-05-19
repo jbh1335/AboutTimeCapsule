@@ -1,0 +1,81 @@
+server:
+  port: 9003
+  servlet:
+    encoding:
+      charset: UTF-8
+      enable: true
+      force: true
+
+eureka:
+  instance:
+    hostname: k8b302.p.ssafy.io
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: https://k8b302.p.ssafy.io:8761/eureka
+
+spring:
+  application:
+    name: capsule-service
+
+  datasource:
+    driver-cass-name: com.mysql.cj.jdbc.Driver
+    # server
+    url: jdbc:mysql://k8b302.p.ssafy.io:3306/abouttimecapsule?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    username: root
+    password: b302capsule
+
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+        globally_quoted_identifiers: true
+        format_sql: true
+        check_nullability: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  redis:
+#    host: localhost
+    host: k8b302.p.ssafy.io
+    port: 6379
+    password: b302capsule
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA4FLIYWIS5EWVHTV5
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: abouttimecapsule
+    stack:
+      auto: false
+
+kakao:
+  localMap:
+    key: e9329f7adb809f29cfe94b3442fdaae6
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
