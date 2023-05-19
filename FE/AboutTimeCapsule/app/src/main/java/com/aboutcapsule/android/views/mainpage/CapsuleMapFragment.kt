@@ -109,7 +109,7 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
                         var isOpen = mapMarkers[i].isOpened
 
                         markerOptions = MarkerOptions()
-                        setCustomOpenMarker(isOpen,isLock)
+                        setCustomOpenMarker(isOpen,isLock,1)
                         val marker = mMap.addMarker(markerOptions.position(currLatLng))
                         marker?.tag = capsuleId
                     }
@@ -133,7 +133,7 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
                         var isOpen = mapMarkers[i].isOpened
 
                         markerOptions = MarkerOptions()
-                        setCustomOpenMarker(isOpen,isLock)
+                        setCustomOpenMarker(isOpen,isLock,2)
                         val marker = mMap.addMarker(markerOptions.position(currLatLng))
                         marker?.tag = capsuleId
                     }
@@ -151,19 +151,35 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
 
     }
 
-    fun setCustomOpenMarker(openFlag : Boolean , lockFlag : Boolean){
-        if(lockFlag) {
-            var bitmapdraw: BitmapDrawable =
-                resources.getDrawable(R.drawable.locked_marker) as BitmapDrawable
-            var bitmap = bitmapdraw.bitmap
-            var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
-        }else if(openFlag){
-            var bitmapdraw: BitmapDrawable =
-                resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
-            var bitmap = bitmapdraw.bitmap
-            var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
+    fun setCustomOpenMarker(openFlag : Boolean , lockFlag : Boolean,flag : Int){
+        if(flag==1) {
+            if (lockFlag) {
+                var bitmapdraw: BitmapDrawable =
+                    resources.getDrawable(R.drawable.locked_marker) as BitmapDrawable
+                var bitmap = bitmapdraw.bitmap
+                var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
+            } else if (openFlag) {
+                var bitmapdraw: BitmapDrawable =
+                    resources.getDrawable(R.drawable.friend_marker) as BitmapDrawable
+                var bitmap = bitmapdraw.bitmap
+                var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
+            }
+        }else{
+            if (lockFlag) {
+                var bitmapdraw: BitmapDrawable =
+                    resources.getDrawable(R.drawable.locked_marker) as BitmapDrawable
+                var bitmap = bitmapdraw.bitmap
+                var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
+            } else if (openFlag) {
+                var bitmapdraw: BitmapDrawable =
+                    resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
+                var bitmap = bitmapdraw.bitmap
+                var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
+            }
         }
     }
 

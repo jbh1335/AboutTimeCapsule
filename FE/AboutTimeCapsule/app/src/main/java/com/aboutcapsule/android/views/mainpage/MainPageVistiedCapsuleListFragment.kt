@@ -16,6 +16,7 @@ import com.aboutcapsule.android.databinding.FragmentCapsuleVistiedBinding
 import com.aboutcapsule.android.factory.CapsuleViewModelFactory
 import com.aboutcapsule.android.model.CapsuleViewModel
 import com.aboutcapsule.android.repository.CapsuleRepo
+import com.aboutcapsule.android.util.GlobalAplication
 
 class MainPageVistiedCapsuleListFragment : Fragment() , MainPageVisitedFragment.DataPassListner {
 
@@ -28,6 +29,8 @@ class MainPageVistiedCapsuleListFragment : Fragment() , MainPageVisitedFragment.
     private var latitude : Double = 0.0
     private var longitude : Double = 0.0
 
+    private var memberId = GlobalAplication.preferences.getInt("currentUser",-1)
+    private var userNickname = GlobalAplication.preferences.getString("currentUserNickname","null")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +63,7 @@ class MainPageVistiedCapsuleListFragment : Fragment() , MainPageVisitedFragment.
             override fun onItemClick(position: Int) {
                 val dialog = CustomDialogMainpage()
                 val bundle = Bundle()
-                val capsuleId = viewModel.myCapsuleList.value?.openedCapsuleDtoList?.get(position)!!.capsuleId
+                val capsuleId = viewModel.visitedCapsuleList.value?.openedCapsuleDtoList?.get(position)!!.capsuleId
 
                 bundle.putInt("capsuleId", capsuleId)
                 bundle.putDouble("lat", latitude)
@@ -82,7 +85,7 @@ class MainPageVistiedCapsuleListFragment : Fragment() , MainPageVisitedFragment.
         val capsuleViewModelFactory = CapsuleViewModelFactory(repository)
         viewModel = ViewModelProvider(this, capsuleViewModelFactory)[CapsuleViewModel::class.java]
 
-        viewModel.getVisitedCapsuleList(1)
+        viewModel.getVisitedCapsuleList(memberId)
         viewModel.visitedCapsuleList.observe(viewLifecycleOwner){
             setVisitedView(it.openedCapsuleDtoList)
         }
