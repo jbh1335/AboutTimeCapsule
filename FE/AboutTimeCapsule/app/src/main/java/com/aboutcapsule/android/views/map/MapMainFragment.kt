@@ -281,6 +281,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
         mMap.setOnMyLocationClickListener(this)
         enableMyLocation()
 
+
         // 마커 클릭 이벤트 처리
         mMap.setOnMarkerClickListener(this)
 
@@ -449,6 +450,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             viewModel.getAroundCapsuleInMap(datas)
             viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner) {
                 setMarkers(it.mapAroundCapsuleResList)
+//                dontOpenMarker()
             }
         } else{
             Log.d("체크","체크 ")
@@ -475,7 +477,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
                     .fillColor(Color.parseColor("#88B0E0E6"))
                 previousCircle = mMap.addCircle(currCircle) // 새로운 반경원 추가
 
-
+//                callingApi()
             }
         }
     }
@@ -489,6 +491,8 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
 
     // 버튼 클릭 시 내 현재 위치로 이동
     override fun onMyLocationButtonClick(): Boolean {
+//        callingApi()
+
         return false
     }
 
@@ -511,9 +515,9 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             if(isLocked){
                 setCustomMarker(R.drawable.locked_marker)
             }else if(isMine){
-                setCustomMarker(R.drawable.mine_marker)
-            }else{
                 setCustomMarker(R.drawable.friend_marker)
+            }else{
+                setCustomMarker(R.drawable.mine_marker)
             }
 
             marker = mMap.addMarker(markerOptions.position(currLocation))!!
@@ -522,6 +526,18 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
 
             mapMarkerList!!.add(marker) // 나중에 제거하기 위해 리스트에 넣어주기
 
+        }
+    }
+    fun dontOpenMarker(){
+        mMap.setOnMarkerClickListener { marker ->
+            val tag = marker.tag as? Pair<Boolean, String>
+            if(tag?.first == true ) {
+                Toast.makeText(requireContext(),"100m 이내에서만 확인 가능합니다 ", Toast.LENGTH_SHORT).show()
+                return@setOnMarkerClickListener true
+            }else {
+                onMarkerClick(marker)
+                false
+            }
         }
     }
     //이전 모든 마커들 제거
@@ -560,14 +576,14 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             val capsuleId = tag.second
             Log.d("마커 값","$isAllowedDistance / $capsuleId")
 
-            val dialog = CustomDialogCapsuleInfoFragment()
-            dialog.setCallback(this) // 콜백 인터페이스 설정
-            val bundle = Bundle()
-            bundle.putInt("capsuleId",capsuleId)
-            bundle.putDouble("lat" , lastKnownLocation!!.latitude)
-            bundle.putDouble("lng" , lastKnownLocation!!.longitude)
-            dialog.arguments = bundle
-        dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
+                val dialog = CustomDialogCapsuleInfoFragment()
+                dialog.setCallback(this) // 콜백 인터페이스 설정
+                val bundle = Bundle()
+                bundle.putInt("capsuleId", capsuleId)
+                bundle.putDouble("lat", lastKnownLocation!!.latitude)
+                bundle.putDouble("lng", lastKnownLocation!!.longitude)
+                dialog.arguments = bundle
+                dialog.show(parentFragmentManager, "customDialogCapsuleInfoFragment")
 
         }
 
