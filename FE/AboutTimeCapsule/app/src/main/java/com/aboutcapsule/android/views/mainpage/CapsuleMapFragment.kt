@@ -152,28 +152,28 @@ class CapsuleMapFragment : Fragment() , OnMapReadyCallback ,
     }
 
     fun setCustomOpenMarker(openFlag : Boolean , lockFlag : Boolean,flag : Int){
-        if(flag==1) {
+        if(flag==1) { // 나
             if (lockFlag) {
                 var bitmapdraw: BitmapDrawable =
                     resources.getDrawable(R.drawable.locked_marker) as BitmapDrawable
                 var bitmap = bitmapdraw.bitmap
                 var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
-            } else if (openFlag) {
+            } else  {
                 var bitmapdraw: BitmapDrawable =
                     resources.getDrawable(R.drawable.friend_marker) as BitmapDrawable
                 var bitmap = bitmapdraw.bitmap
                 var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
             }
-        }else{
+        }else { // 친구
             if (lockFlag) {
                 var bitmapdraw: BitmapDrawable =
                     resources.getDrawable(R.drawable.locked_marker) as BitmapDrawable
                 var bitmap = bitmapdraw.bitmap
                 var customMarker = Bitmap.createScaledBitmap(bitmap, 90, 120, false)
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(customMarker))
-            } else if (openFlag) {
+            } else {
                 var bitmapdraw: BitmapDrawable =
                     resources.getDrawable(R.drawable.mine_marker) as BitmapDrawable
                 var bitmap = bitmapdraw.bitmap
