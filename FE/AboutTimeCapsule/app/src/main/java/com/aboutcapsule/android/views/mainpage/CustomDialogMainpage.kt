@@ -120,7 +120,7 @@ class CustomDialogMainpage() : DialogFragment(), OnMapReadyCallback  {
 
         markerOptions = MarkerOptions()
         val user = LatLng(userLat, userLng)
-        setCustomMarker(R.drawable.mine_marker)
+        setCustomMarker(R.drawable.friend_marker)
         marker = mMap.addMarker(markerOptions.position(user))!!
 
         markerOptions = MarkerOptions()
@@ -128,7 +128,7 @@ class CustomDialogMainpage() : DialogFragment(), OnMapReadyCallback  {
         if(isLocked){
             setCustomMarker(R.drawable.locked_marker)
         }else{
-            setCustomMarker(R.drawable.friend_marker)
+            setCustomMarker(R.drawable.mine_marker)
         }
         marker = mMap.addMarker(markerOptions.position(place))!!
 
