@@ -81,16 +81,16 @@
 
 ### 🐶프론트엔드
 
-- 카카오 로그인 SDK 2.13.0
-- 네이버 로그인 SDK 5.5.0
-- retrofit 2.9.0
-- coroutine 1.3.9
-- lifecycle-viewModel 2.4.0
-- glide 4.15.1
-- jetpack navigation 2.5.3
-- FireBase-bom 32.0.0
-- FireBase-messaging 23.1.2
-- AR Core 1.37.0
+- 카카오 로그인 SDK `2.13.0`
+- 네이버 로그인 SDK `5.5.0`
+- retrofit `2.9.0`
+- coroutine `1.3.9`
+- lifecycle-viewModel `2.4.0`
+- glide `4.15.1`
+- jetpack navigation `2.5.3`
+- FireBase-bom `32.0.0`
+- FireBase-messaging `23.1.2`
+- AR Core `1.37.0`
 
 ### 🐥백엔드
 
