@@ -132,7 +132,7 @@ class CustomDialogMainpage() : DialogFragment(), OnMapReadyCallback  {
         }
         marker = mMap.addMarker(markerOptions.position(place))!!
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(user,14f))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(place,14f))
     }
 
     fun setCustomMarker(img : Int){
