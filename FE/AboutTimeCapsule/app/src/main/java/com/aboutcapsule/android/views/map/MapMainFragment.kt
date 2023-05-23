@@ -204,7 +204,7 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
             val lat : Double = lastKnownLocation?.latitude!!
             val lng : Double = lastKnownLocation?.longitude!!
 
-            val addressInfo = geocoder.getFromLocation(lat,lng,1)
+            val addressInfo = geocoder.getFromLocation(lat,lng,memberId)
             val address = addressInfo?.get(0)?.getAddressLine(0)
             Log.d("address" , address.toString())
             GlobalAplication.preferences.setString("lat",lat.toString())
@@ -445,7 +445,9 @@ class MapMainFragment : Fragment() ,OnMapReadyCallback
     }
 
     fun callingApi(){
-        val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+//        val datas = MapAroundCapsuleReq(memberId, lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+
+        val datas = MapAroundCapsuleReq(memberId, 36.35496,127.29862833)
         if(view!= null ) {
             viewModel.getAroundCapsuleInMap(datas)
             viewModel.aroundCapsuleInMapList.observe(viewLifecycleOwner) {
