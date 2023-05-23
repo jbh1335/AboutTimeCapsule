@@ -63,6 +63,7 @@ class MainPageMainFragment : Fragment() {
 
         private var lat: Double =  36.355059
         private var lng: Double = 127.298374
+
     }
 
     override fun onCreateView(
@@ -125,7 +126,6 @@ class MainPageMainFragment : Fragment() {
 
 
         // 2번째 , 내 주변의 타임 캡슐 세팅
-        memberId = 1 // 임시
         Log.d("main/2section" ,"$memberId / $lat / $lng")
         var aroundCapsuleReq = AroundCapsuleReq(memberId,lat,lng)
         viewModel.getAroundCapsuleList(aroundCapsuleReq)
@@ -192,7 +192,7 @@ class MainPageMainFragment : Fragment() {
 
     // 내 주변 캡슐 아이템 세팅 및 , 데이터 클릭 리스너 생성
     private fun setAroundCapsule(list : MutableList<AroundCapsuleDto>){
-
+        Log.d("여기 오니?", "${list}")
         section2adapter = Section2Adapter(object : OnItemClickListener{
             override fun onItemClick(position: Int) {
                 val dialog=CustomDialogMainpage()
@@ -207,8 +207,9 @@ class MainPageMainFragment : Fragment() {
         })
 
         //       어댑터에 api로 받아온 데이터 넘겨주기
-        section2adapter.itemList = list
         binding.section2RecyclerView.adapter = section2adapter
+        section2adapter.itemList = list
+
     }
 
     private fun setSection3View(){
