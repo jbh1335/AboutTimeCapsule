@@ -299,7 +299,9 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                 if(response.isSuccessful){
                     val jsonString = response.body()?.string()
                     val jsonObject = JSONObject(jsonString)
+                    Log.d("jsonObject", "${jsonObject}")
                     val aroundCapsuleDto = jsonObject.getJSONArray("data")
+                    Log.d("aroundCapsuleDto", "${aroundCapsuleDto}")
                     aroundCapsuleDtoList = mutableListOf()
                     for(i in 0 until aroundCapsuleDto.length()){
                         val curr = aroundCapsuleDto.getJSONObject(i)
@@ -308,8 +310,10 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
                         val address = curr.getString("address")
                         aroundCapsuleDtoList.add(AroundCapsuleDto(capsuleId,memberNickname,address))
                     }
+                    Log.d("aroundCapsuleDtoList", "${aroundCapsuleDtoList}")
 
                     val getAroundCapsuleListRes = GetAroundCapsuleListRes(aroundCapsuleDtoList)
+                    Log.d("getAroundCapsuleListRes", "${getAroundCapsuleListRes}")
 
                     aroundCapsuleList.value = getAroundCapsuleListRes
 
@@ -385,6 +389,7 @@ class CapsuleViewModel(private val repository : CapsuleRepo) : ViewModel() {
             if(response.isSuccessful){
                 val jsonString = response.body()?.string()
                 val jsonObject = JSONObject(jsonString)
+                Log.d("jsonObject", "${jsonObject}")
                 val mapDto = jsonObject.getJSONArray("data")
                 aroundCapsuleInMapAroundCapsuleList = mutableListOf()
                 for(i in 0 until mapDto.length()){
