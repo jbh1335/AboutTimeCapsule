@@ -267,35 +267,35 @@
 
 ### 2. 캡슐 등록 → 개인/그룹
 
-<img src="./exec/README_assets/캡슐등록.gif" title="" alt="19" width="132">
+<img title="" src="file:///exec/README_assets/캡슐등록.gif" alt="19" width="132">
 
 ### 3. 추억 등록
 
-<img title="" src="./exec/README_assets/추억%20생성.gif" alt="19" width="133">
+<img title="" src="file:///exec/README_assets/추억%20생성.gif" alt="19" width="133">
 
 ### 4. 나의 캡슐/친구의 캡슐/나의 방문 기록
 
-<img title="" src="./exec/README_assets/나의캡슐조회.gif" alt="19" width="136"> <img title="" src="./exec/README_assets/친구캡슐조회.gif" alt="19" width="136">
+<img title="" src="file:///exec/README_assets/나의캡슐조회.gif" alt="19" width="136"> <img title="" src="file:///exec/README_assets/친구캡슐조회.gif" alt="19" width="136">
 
 ### 5. 지도에서 캡슐 조회
 
-<img title="" src="./exec/README_assets/지도에서 잠긴캡슐조회.gif" alt="19" width="138">
+<img title="" src="file:///exec/README_assets/지도에서 잠긴캡슐조회.gif" alt="19" width="138">
 
 ### 6. AR로 조회
 
-<img title="" src="./exec/README_assets/AR.gif" alt="19" width="137">
+<img title="" src="file:///exec/README_assets/AR.gif" alt="19" width="137">
 
 ### 7. 캡슐 열람
 
-<img src="./exec/README_assets/지도%20그룹캡슐조회.gif" title="" alt="19" width="137">
+<img title="" src="file:///exec/README_assets/지도%20그룹캡슐조회.gif" alt="19" width="137">
 
 ### 8. 마이페이지
 
-<img title="" src="./exec/README_assets/프로필 조회.gif" alt="19" width="137">
+<img title="" src="file:///exec/README_assets/프로필 조회.gif" alt="19" width="137">
 
 ### 9. 친구 관리
 
-<img title="" src="./exec/README_assets/모든 친구 조회.gif" alt="19" width="137">
+<img title="" src="file:///exec/README_assets/모든 친구 조회.gif" alt="19" width="137">
 
 # 💊기술 소개
 
