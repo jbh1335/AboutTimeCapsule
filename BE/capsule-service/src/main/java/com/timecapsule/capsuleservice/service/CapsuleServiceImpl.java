@@ -561,7 +561,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         SuccessRes<OpenedCapsuleListRes> openCapsule = getOpenCapsule(memberId);
 
         boolean isNewAlarm = true;
-        String newAlarm = String.valueOf(redisService.getDataValue("alarm_new", memberId));
+        String newAlarm = String.valueOf(redisService.getDataValue("alarm_new", String.valueOf(memberId)));
         if(newAlarm.equals("null") || newAlarm.equals("false")) isNewAlarm = false;
 
         CapsuleCountRes capsuleCountRes = CapsuleCountRes.builder()

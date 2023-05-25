@@ -61,7 +61,7 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("memoryId", String.valueOf(memory.getId()));
         dataMap.put("memberId", String.valueOf(memory.getMember().getId()));
 
-        String alarmToken = String.valueOf(redisService.getDataValue("alarm", memory.getMember().getId()));
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", String.valueOf(memory.getMember().getId())));
         if(alarmToken.equals("null")) return;
 
         sendMessage(MessageDto.builder()
@@ -85,7 +85,7 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("memoryId", String.valueOf(memory.getId()));
         dataMap.put("memberId", String.valueOf(memory.getId()));
 
-        String alarmToken = String.valueOf(redisService.getDataValue("alarm", member.getId()));
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", String.valueOf(member.getId())));
         if(alarmToken.equals("null")) return;
 
         sendMessage(MessageDto.builder()
@@ -106,7 +106,7 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("capsuleId", String.valueOf(capsule.getId()));
         dataMap.put("memberId", String.valueOf(me.getId()));
 
-        String alarmToken = String.valueOf(redisService.getDataValue("alarm", me.getId()));
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", String.valueOf(me.getId())));
         if(alarmToken.equals("null")) return;
 
         sendMessage(MessageDto.builder()

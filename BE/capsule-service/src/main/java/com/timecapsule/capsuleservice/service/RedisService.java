@@ -11,7 +11,6 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     public void setData(String key, Object field, Object value) {
         HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
-        System.out.println("key: " + key + " field: " + field + " value: " + value);
         hashOperations.put(key, field, value);
     }
 

@@ -55,7 +55,7 @@ public class AlarmServiceImpl implements AlarmService{
         Optional<Member> oMember = memberRepository.findById(memberId);
         Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        redisService.deleteData("alarm", memberId);
+        redisService.deleteData("alarm", String.valueOf(memberId));
         return new CommonRes(true, "알림 토큰을 삭제했습니다.");
     }
 }
