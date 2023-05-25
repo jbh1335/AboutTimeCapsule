@@ -37,7 +37,7 @@ public class AlarmServiceImpl implements AlarmService{
                 .categoryType(alarm.getCategoryType())
                 .build()));
 
-        redisService.setData("alarm_new", memberId, false);
+        redisService.setData("alarm_new", String.valueOf(memberId), false);
         return new SuccessRes<>(true, "알림 내역을 조회합니다.", alarmResList);
     }
 
@@ -46,7 +46,7 @@ public class AlarmServiceImpl implements AlarmService{
         Optional<Member> oMember = memberRepository.findById(alarmTokenReq.getMemberId());
         Member member = oMember.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        redisService.setData("alarm", member.getId(), alarmTokenReq.getToken());
+        redisService.setData("alarm", String.valueOf(member.getId()), alarmTokenReq.getToken());
         return new CommonRes(true, "알림 토큰을 저장했습니다.");
     }
 
