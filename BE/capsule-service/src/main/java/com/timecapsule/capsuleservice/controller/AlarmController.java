@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/alarm")
+@RequestMapping("/api/capsule/alarm")
 public class AlarmController {
     private final AlarmService alarmService;
     @GetMapping("list/{memberId}")
