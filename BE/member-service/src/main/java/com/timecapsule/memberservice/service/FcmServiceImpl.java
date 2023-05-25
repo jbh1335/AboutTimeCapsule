@@ -70,7 +70,7 @@ public class FcmServiceImpl implements FcmService {
         dataMap.put("memberId", String.valueOf(me.getId()));
         dataMap.put("friendId", String.valueOf(friend.getId()));
 
-        String alarmToken = String.valueOf(redisService.getDataValue("alarm", me.getId()));
+        String alarmToken = String.valueOf(redisService.getDataValue("alarm", String.valueOf(me.getId())));
         if(alarmToken.equals("null")) return;
 
         sendMessage(MessageDto.builder()
