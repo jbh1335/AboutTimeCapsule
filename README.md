@@ -263,7 +263,7 @@
 
 ### 1. 로그인
 
-<img title="" src="exec/readme_assets/로그인.gif" alt="19" width="132">
+<img title="" src="exec/readme_assets/login.gif" alt="19" width="132">
 
 ### 2. 캡슐 등록 → 개인/그룹
 
