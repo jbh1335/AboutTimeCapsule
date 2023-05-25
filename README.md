@@ -1,7 +1,7 @@
 # Readme
 
 # 💊프로젝트 소개
-
+![Frame 4](https://github.com/JinseonHeo/assignment/assets/31607944/c9b70f35-c276-47ac-bef2-080bf6c57a8d)
 ---
 
 ## 1. 프로젝트 일정
@@ -81,16 +81,16 @@
 
 ### 🐶프론트엔드
 
-- 카카오 로그인 SDK 2.13.0
-- 네이버 로그인 SDK 5.5.0
-- retrofit 2.9.0
-- coroutine 1.3.9
-- lifecycle-viewModel 2.4.0
-- glide 4.15.1
-- jetpack navigation 2.5.3
-- FireBase-bom 32.0.0
-- FireBase-messaging 23.1.2
-- AR Core 1.37.0
+- 카카오 로그인 SDK `2.13.0`
+- 네이버 로그인 SDK `5.5.0`
+- retrofit `2.9.0`
+- coroutine `1.3.9`
+- lifecycle-viewModel `2.4.0`
+- glide `4.15.1`
+- jetpack navigation `2.5.3`
+- FireBase-bom `32.0.0`
+- FireBase-messaging `23.1.2`
+- AR Core `1.37.0`
 
 ### 🐥백엔드
 
@@ -340,24 +340,28 @@
 
 ---
 
+
 ## 1. 아키텍처
 
-![어바웃타임캡슐ERD (1).png](https://file.notion.so/f/s/5dfc81ef-37a1-43f6-89e0-824dc7f67a28/%EC%96%B4%EB%B0%94%EC%9B%83%ED%83%80%EC%9E%84%EC%BA%A1%EC%8A%90ERD_(1).png?id=3452a68b-92f5-4f87-84eb-c55d6e1ab71b&table=block&spaceId=8bf3583c-fffa-40eb-97cf-88db41b9511e&expirationTimestamp=1684549655296&signature=w5vZ-R5q4XlbtxA_tK99JOGzCsPMr30tdBykxa8Phzw&downloadName=%EC%96%B4%EB%B0%94%EC%9B%83%ED%83%80%EC%9E%84%EC%BA%A1%EC%8A%90ERD+%281%29.png)
+![image](https://github.com/JinseonHeo/assignment/assets/31607944/981d63bc-f9f2-45ea-9cde-4299d8d5754d)
 
 ## 2. ERD
 
-![Untitled](https://file.notion.so/f/s/5ba70211-94a6-4410-92ec-73c68a890c9e/Untitled.png?id=9864f09c-0c33-4421-9b61-e674e4215918&table=block&spaceId=8bf3583c-fffa-40eb-97cf-88db41b9511e&expirationTimestamp=1684549692173&signature=AFD8C_dTRw3nFRPkgNJHeNSeRoCHtrt5d6tXUHYxB58&downloadName=Untitled.png)
+![image](https://github.com/JinseonHeo/assignment/assets/31607944/f175d4a3-4239-4459-bb60-2e55c718a446)
 
 ## 3. 기능 명세서
 
-![Untitled](https://file.notion.so/f/s/fb363621-3eda-4ec6-9aaa-742362a0ff7e/Untitled.png?id=ed5983eb-24b3-4354-81fd-067046d946ec&table=block&spaceId=8bf3583c-fffa-40eb-97cf-88db41b9511e&expirationTimestamp=1684549711889&signature=xm5grcYpyM4NLCckb1tP_YJt3eYj8HNrBnwJTibGuTg&downloadName=Untitled.png)
+![image](https://github.com/JinseonHeo/assignment/assets/31607944/aaa6a7a2-0603-45bf-aa8c-bc94a08b002a)
 
 ## 4. API 명세서
 
-![Untitled](https://file.notion.so/f/s/2b6d7aa7-9b34-4114-817f-31b620896794/Untitled.png?id=da166935-c5bb-4176-a0ef-d89b309085d5&table=block&spaceId=8bf3583c-fffa-40eb-97cf-88db41b9511e&expirationTimestamp=1684549749340&signature=IVxMkC1NrfGLYye-tU_jCGI-xVGjD_iNzmrLXrITb68&downloadName=Untitled.png)
+![image](https://github.com/JinseonHeo/assignment/assets/31607944/9e9f6815-cd3f-4c7c-919f-b4bcf77286dd)
 
 # 💊팀 소개
 
 ---
+| 👑김아린                                                                                                                                          | 🐶강정훈                                                                                                                                          | 🐸장별하                                                                                                                                          | 🐹장유범                                                                                                                                          | 🐻허진선                                                                                                                                          | 
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://avatars.githubusercontent.com/u/67595512?v=4" width = "100" height = "100"> | <img src="https://avatars.githubusercontent.com/u/109566855?v=4" width = "100" height = "100"> | <img src="https://avatars.githubusercontent.com/u/119313897?v=4" width = "100" height = "100"> | <img src="https://avatars.githubusercontent.com/u/96399409?s=400&u=31b8717e8e28885edadfd52403e851455a6bb8bc&v=4" width = "100" height = "100"> | <img src="https://avatars.githubusercontent.com/u/31607944?v=4" width = "100" height = "100"> |
+| <p>**팀장/백엔드**</p>Infra <br>아키텍쳐 <br> AR                                                                            | <p>**프론트**</p>마이페이지 구현<br>캡슐페이지 구현                                                                                                  | <p>**백엔드**</p> 캡슐 API 구현<br> 멤버 API 구현<br> 알림 서비스                                                                  | <p>**프론트**</p>지도페이지 구현<br>캡슐페이지 구현                                                                                                 | <p>**백엔드**</p> Auth API 구현                                                                                     
 
-![Blue Gradients Basic Simple Presentation.png](https://file.notion.so/f/s/554e2b9f-8b4b-484a-91d1-ba193a5610f2/Blue_Gradients_Basic_Simple_Presentation.png?id=513dd200-97af-4d98-bb85-d72ed31fc9ae&table=block&spaceId=8bf3583c-fffa-40eb-97cf-88db41b9511e&expirationTimestamp=1684549768313&signature=_PdcA7yqhnF3nCEkyrJRIB4RJVho8cG9FhUrNdeBwPU&downloadName=Blue+Gradients+Basic+Simple+Presentation.png)
